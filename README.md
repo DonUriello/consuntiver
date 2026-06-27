@@ -39,6 +39,27 @@ Disponibile su http://localhost:8080/h2-console con:
 - JDBC URL: `jdbc:h2:file:./data/consuntiver`
 - User: `sa` — Password: *(vuota)*
 
+## Deploy su Render
+
+Il repo include un **Blueprint** (`render.yaml`) che crea automaticamente sia il
+web service (build via `Dockerfile`) sia un database **PostgreSQL** gestito.
+
+1. Vai su [render.com](https://render.com), accedi e collega il tuo account GitHub.
+2. **New > Blueprint**, seleziona questo repository e il branch.
+3. Render legge `render.yaml`, crea il database `consuntiver-db` e il servizio web,
+   e collega in automatico le credenziali del DB tramite variabili d'ambiente.
+4. Al primo deploy l'app parte col profilo `prod` su PostgreSQL.
+
+> Nota: il piano free di Render mette in pausa il servizio dopo un periodo di
+> inattivita'; la prima richiesta dopo la pausa puo' impiegare qualche secondo.
+
+### Locale vs produzione
+
+- **Locale** (nessun profilo): usa **H2 su file** (`./data`). Nessuna configurazione.
+- **Produzione** (profilo `prod`): usa **PostgreSQL**. L'URL viene costruito dalle
+  variabili `DB_HOST`, `DB_PORT`, `DB_NAME`, piu' `SPRING_DATASOURCE_USERNAME` e
+  `SPRING_DATASOURCE_PASSWORD`, tutte iniettate da Render.
+
 ## Note tecniche
 
 - Gli orari sono salvati a DB in **UTC** (`Instant`) e mostrati nel fuso
