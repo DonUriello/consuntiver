@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accedi - Consuntiver</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+<div class="card">
+    <h1>Consuntiver</h1>
+    <p class="subtitle">Accedi per tracciare la tua giornata</p>
+
+    <div th:if="${param.registered}" class="alert success">
+        Registrazione completata. Ora puoi accedere.
+    </div>
+    <div th:if="${param.error}" class="alert error">
+        Username o password non corretti.
+    </div>
+    <div th:if="${param.logout}" class="alert success">
+        Sei uscito correttamente.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required autofocus>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Accedi</button>
+    </form>
+
+    <p class="switch">Non hai un account? <a th:href="@{/register}">Registrati</a></p>
+</div>
+</body>
+</html>

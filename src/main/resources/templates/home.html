@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consuntiver</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="app-page">
+<header class="app-header">
+    <div class="app-title">Consuntiver</div>
+    <div class="app-user">
+        <span th:text="${username}">utente</span>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="link-button">Esci</button>
+        </form>
+    </div>
+</header>
+
+<main class="history">
+    <h2>Oggi</h2>
+
+    <p th:if="${entries.isEmpty()}" class="empty">
+        Nessuna voce per oggi. Scrivi cosa stai facendo qui sotto.
+    </p>
+
+    <ul class="entry-list">
+        <li class="entry" th:each="entry : ${entries}">
+            <span class="entry-time" th:text="${timeFormat.format(entry.createdAt)}">09:30</span>
+            <span class="entry-text" th:text="${entry.description}">Descrizione</span>
+        </li>
+    </ul>
+</main>
+
+<form class="prompt-bar" th:action="@{/entries}" method="post">
+    <input type="text"
+           name="description"
+           placeholder="Su cosa stai lavorando ora?"
+           autocomplete="off"
+           autofocus
+           required>
+    <button type="submit">Registra</button>
+</form>
+</body>
+</html>

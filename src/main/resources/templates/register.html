@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrati - Consuntiver</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+<div class="card">
+    <h1>Consuntiver</h1>
+    <p class="subtitle">Crea il tuo account</p>
+
+    <form th:action="@{/register}" th:object="${form}" method="post">
+        <label for="username">Username</label>
+        <input type="text" id="username" th:field="*{username}" required autofocus>
+        <span class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" th:field="*{password}" required>
+        <span class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+
+        <button type="submit">Registrati</button>
+    </form>
+
+    <p class="switch">Hai gia' un account? <a th:href="@{/login}">Accedi</a></p>
+</div>
+</body>
+</html>
