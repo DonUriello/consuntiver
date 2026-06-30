@@ -33,11 +33,15 @@
         <div class="worktime-actions">
             <form th:action="@{/attendance/in}" method="post">
                 <button type="submit" class="btn-in"
-                        th:disabled="${summary.clockedIn()}">Entrata</button>
+                        th:disabled="${summary.clockedIn()}">Inizio</button>
             </form>
             <form th:action="@{/attendance/out}" method="post">
                 <button type="submit" class="btn-out"
-                        th:disabled="${!summary.clockedIn()}">Uscita</button>
+                        th:disabled="${!summary.clockedIn()}">Pausa</button>
+            </form>
+            <form th:action="@{/attendance/end}" method="post">
+                <button type="submit" class="btn-end"
+                        th:disabled="${!summary.clockedIn()}">Fine</button>
             </form>
         </div>
     </div>

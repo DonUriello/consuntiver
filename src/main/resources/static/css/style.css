@@ -313,6 +313,14 @@ button:hover {
     background: #a23123;
 }
 
+.btn-end {
+    background: #4b5563;
+}
+
+.btn-end:hover {
+    background: #374151;
+}
+
 button:disabled {
     opacity: 0.45;
     cursor: not-allowed;

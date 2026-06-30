@@ -86,4 +86,13 @@ public class HomeController {
         attendanceService.clockOut(principal.getName());
         return "redirect:/";
     }
+
+    /** Come la pausa (chiude la sessione) ma segna anche "Fine giornata" nello storico. */
+    @PostMapping("/attendance/end")
+    public String endDay(Principal principal) {
+        String username = principal.getName();
+        attendanceService.clockOut(username);
+        workEntryService.add(username, "Fine giornata");
+        return "redirect:/";
+    }
 }
