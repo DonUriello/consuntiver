@@ -4,6 +4,7 @@ import com.consuntiver.model.Attendance;
 import com.consuntiver.model.WorkEntry;
 import com.consuntiver.service.AttendanceService;
 import com.consuntiver.service.AttendanceService.WorkTimeSummary;
+import com.consuntiver.service.TaskLinkExtractor;
 import com.consuntiver.service.WorkEntryService;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.stereotype.Controller;
@@ -32,10 +33,14 @@ public class HomeController {
 
     private final WorkEntryService workEntryService;
     private final AttendanceService attendanceService;
+    private final TaskLinkExtractor taskLinkExtractor;
 
-    public HomeController(WorkEntryService workEntryService, AttendanceService attendanceService) {
+    public HomeController(WorkEntryService workEntryService,
+                          AttendanceService attendanceService,
+                          TaskLinkExtractor taskLinkExtractor) {
         this.workEntryService = workEntryService;
         this.attendanceService = attendanceService;
+        this.taskLinkExtractor = taskLinkExtractor;
     }
 
     @GetMapping("/")
@@ -47,6 +52,7 @@ public class HomeController {
         WorkTimeSummary summary = attendanceService.todaySummary(username, ZONE);
 
         model.addAttribute("entries", entries);
+        model.addAttribute("taskLinks", taskLinkExtractor.extract(entries));
         model.addAttribute("attendances", attendances);
         model.addAttribute("summary", summary);
         model.addAttribute("targetSeconds", TARGET_SECONDS);

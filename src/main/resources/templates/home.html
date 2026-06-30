@@ -18,6 +18,9 @@
     </div>
 </header>
 
+<div class="layout">
+<div class="main-col">
+
 <!-- ---------- Orario di lavoro ---------- -->
 <section class="worktime"
          id="worktime"
@@ -94,6 +97,25 @@
            required>
     <button type="submit">Registra</button>
 </form>
+
+</div><!-- /.main-col -->
+
+<!-- ---------- Colonna task ---------- -->
+<aside class="task-sidebar">
+    <h2>Task</h2>
+    <p th:if="${taskLinks.isEmpty()}" class="empty">
+        Nessun task rilevato. Cita un numero (es. #12345) in una riga e comparira' qui.
+    </p>
+    <ul class="task-list">
+        <li class="task" th:each="t : ${taskLinks}">
+            <a class="task-id" th:href="${t.url}" target="_blank" rel="noopener"
+               th:text="'#' + ${t.id}">#12345</a>
+            <span class="task-desc" th:text="${t.description}">descrizione della riga</span>
+        </li>
+    </ul>
+</aside>
+
+</div><!-- /.layout -->
 
 <script th:src="@{/js/app.js}"></script>
 </body>

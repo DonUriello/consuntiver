@@ -19,6 +19,11 @@ Lo storico della giornata appare nell'area sopra la barra.
     sessioni della giornata, mostra una barra di avanzamento e ti avvisa al
     raggiungimento delle **8 ore**
   - Pulsante **Easy** che apre https://prd.galileonetwork.it/easy/
+  - **Colonna task** a destra: rileva i numeri di task citati nelle righe
+    (es. `#12345` o `123456`) e ne crea il link verso Easy
+    (`.../easy/issues/<id>`), con la descrizione presa dalla riga.
+    I numeri "nudi" sono riconosciuti come task solo da 5 cifre in su, per
+    evitare falsi positivi (orari, anni); con il prefisso `#` basta una cifra.
 - Ogni utente vede e modifica **solo** le proprie voci e timbrature
 
 ## Stack
