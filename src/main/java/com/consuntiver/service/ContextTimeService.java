@@ -66,9 +66,10 @@ public class ContextTimeService {
 
         Map<Long, ContextButton> buttons = new HashMap<>();
         latestEntryByContext.forEach((context, entry) -> {
+            long seconds = totalSecondsByContext.getOrDefault(context, 0L);
             // Anche sotto il quarto d'ora si mostra comunque il bottone, con il minimo 0,25.
-            double quarters = Math.max(MIN_QUARTERS, roundToQuarter(totalSecondsByContext.getOrDefault(context, 0L)));
-            buttons.put(entry.getId(), new ContextButton(format(quarters), LINK_PLACEHOLDER));
+            double quarters = Math.max(MIN_QUARTERS, roundToQuarter(seconds));
+            buttons.put(entry.getId(), new ContextButton(format(quarters), formatActual(seconds), LINK_PLACEHOLDER));
         });
         return buttons;
     }
@@ -85,12 +86,21 @@ public class ContextTimeService {
         return "+" + number.replace('.', ',');
     }
 
+    /** Tempo effettivo (non arrotondato) come {@code h:mm}, es. {@code 0:47}, {@code 1:30}. */
+    private String formatActual(long seconds) {
+        long totalMinutes = Math.round(seconds / 60.0);
+        long hours = totalMinutes / 60;
+        long minutes = totalMinutes % 60;
+        return hours + ":" + (minutes < 10 ? "0" + minutes : Long.toString(minutes));
+    }
+
     /**
      * Bottone del tempo di contesto.
      *
-     * @param label etichetta da mostrare (es. {@code +0,75})
-     * @param url   link, al momento non definito
+     * @param label  etichetta arrotondata al quarto d'ora (es. {@code +0,75})
+     * @param actual tempo effettivo non arrotondato (es. {@code 0:47})
+     * @param url    link, al momento non definito
      */
-    public record ContextButton(String label, String url) {
+    public record ContextButton(String label, String actual, String url) {
     }
 }

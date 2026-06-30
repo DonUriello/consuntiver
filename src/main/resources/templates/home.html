@@ -79,10 +79,15 @@
             <div class="entry-view">
                 <span class="entry-time" th:text="${timeFormat.format(entry.createdAt)}">09:30</span>
                 <span class="entry-text" th:text="${entry.description}">Descrizione</span>
-                <a class="ctx-time-btn" th:if="${contextTimes.containsKey(entry.id)}"
-                   th:href="${contextTimes.get(entry.id).url}"
-                   th:title="'Tempo totale su questo argomento (ore)'"
-                   th:text="${contextTimes.get(entry.id).label}">+0,75</a>
+                <span class="ctx-time" th:if="${contextTimes.containsKey(entry.id)}">
+                    <a class="ctx-time-btn"
+                       th:href="${contextTimes.get(entry.id).url}"
+                       th:title="'Tempo totale su questo argomento (ore)'"
+                       th:text="${contextTimes.get(entry.id).label}">+0,75</a>
+                    <span class="ctx-time-actual"
+                          th:title="'Tempo effettivo'"
+                          th:text="'(' + ${contextTimes.get(entry.id).actual} + ')'">(0:47)</span>
+                </span>
                 <button type="button" class="edit-toggle link-button">Modifica</button>
             </div>
             <form class="entry-edit" th:action="@{'/entries/' + ${entry.id}}" method="post" hidden>

@@ -319,6 +319,19 @@ button:hover {
     opacity: 0.7;
 }
 
+.ctx-time {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3rem;
+}
+
+.ctx-time-actual {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
 .ctx-time-btn {
     flex-shrink: 0;
     display: inline-block;
