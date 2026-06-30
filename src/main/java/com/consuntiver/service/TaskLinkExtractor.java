@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +40,18 @@ public class TaskLinkExtractor {
             }
         }
         return new ArrayList<>(byId.values());
+    }
+
+    /** Il primo task citato in una riga, se presente: identifica il "contesto" della riga. */
+    public Optional<String> firstTaskId(String text) {
+        if (text == null) {
+            return Optional.empty();
+        }
+        Matcher matcher = TASK_PATTERN.matcher(text);
+        if (matcher.find()) {
+            return Optional.of(matcher.group(1) != null ? matcher.group(1) : matcher.group(2));
+        }
+        return Optional.empty();
     }
 
     /**

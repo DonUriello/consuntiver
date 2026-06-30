@@ -4,6 +4,7 @@ import com.consuntiver.model.Attendance;
 import com.consuntiver.model.WorkEntry;
 import com.consuntiver.service.AttendanceService;
 import com.consuntiver.service.AttendanceService.WorkTimeSummary;
+import com.consuntiver.service.ContextTimeService;
 import com.consuntiver.service.TaskLinkExtractor;
 import com.consuntiver.service.WorkEntryService;
 import jakarta.validation.constraints.NotBlank;
@@ -34,13 +35,16 @@ public class HomeController {
     private final WorkEntryService workEntryService;
     private final AttendanceService attendanceService;
     private final TaskLinkExtractor taskLinkExtractor;
+    private final ContextTimeService contextTimeService;
 
     public HomeController(WorkEntryService workEntryService,
                           AttendanceService attendanceService,
-                          TaskLinkExtractor taskLinkExtractor) {
+                          TaskLinkExtractor taskLinkExtractor,
+                          ContextTimeService contextTimeService) {
         this.workEntryService = workEntryService;
         this.attendanceService = attendanceService;
         this.taskLinkExtractor = taskLinkExtractor;
+        this.contextTimeService = contextTimeService;
     }
 
     @GetMapping("/")
@@ -52,6 +56,7 @@ public class HomeController {
         WorkTimeSummary summary = attendanceService.todaySummary(username, ZONE);
 
         model.addAttribute("entries", entries);
+        model.addAttribute("contextTimes", contextTimeService.compute(entries));
         model.addAttribute("taskLinks", taskLinkExtractor.extract(entries));
         model.addAttribute("attendances", attendances);
         model.addAttribute("summary", summary);
