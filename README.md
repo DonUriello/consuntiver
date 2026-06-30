@@ -5,14 +5,21 @@ durante la giornata. Quando vieni interrotto, scrivi nella barra in basso su
 cosa stai lavorando: viene salvata una riga con data/ora e descrizione.
 Lo storico della giornata appare nell'area sopra la barra.
 
-## Funzionalita' (MVP)
+## Funzionalita'
 
 - Registrazione utente (password cifrata con BCrypt)
 - Login / Logout
 - Pagina principale con:
   - storico delle voci **di oggi** (dalla piu' recente alla piu' vecchia)
   - barra di input in basso per registrare una nuova voce
-- Ogni utente vede **solo** le proprie voci
+  - **Modifica** del testo di ogni voce gia' inserita (in caso di errore)
+  - **Entrata / Uscita**: timbrature dell'orario di lavoro (supporta piu' coppie
+    al giorno, es. pausa pranzo)
+  - **Contatore live** che avanza ogni secondo mentre sei "in servizio", somma le
+    sessioni della giornata, mostra una barra di avanzamento e ti avvisa al
+    raggiungimento delle **8 ore**
+  - Pulsante **Easy** che apre https://prd.galileonetwork.it/easy/
+- Ogni utente vede e modifica **solo** le proprie voci e timbrature
 
 ## Stack
 

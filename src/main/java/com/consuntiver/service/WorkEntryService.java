@@ -4,6 +4,7 @@ import com.consuntiver.model.User;
 import com.consuntiver.model.WorkEntry;
 import com.consuntiver.repository.UserRepository;
 import com.consuntiver.repository.WorkEntryRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,20 @@ public class WorkEntryService {
     public WorkEntry add(String username, String description) {
         User user = requireUser(username);
         WorkEntry entry = new WorkEntry(Instant.now(), description.trim(), user);
+        return workEntryRepository.save(entry);
+    }
+
+    /**
+     * Modifica il testo di una voce esistente, solo se appartiene all'utente.
+     *
+     * @throws AccessDeniedException se la voce non e' dell'utente o non esiste
+     */
+    public WorkEntry updateDescription(String username, Long entryId, String description) {
+        User user = requireUser(username);
+        WorkEntry entry = workEntryRepository.findById(entryId)
+                .filter(e -> e.getUser().getId().equals(user.getId()))
+                .orElseThrow(() -> new AccessDeniedException("Voce non trovata o non accessibile"));
+        entry.setDescription(description.trim());
         return workEntryRepository.save(entry);
     }
 

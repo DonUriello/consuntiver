@@ -9,14 +9,53 @@
 <body class="app-page">
 <header class="app-header">
     <div class="app-title">Consuntiver</div>
-    <div class="app-user">
-        <span th:text="${username}">utente</span>
+    <div class="app-nav">
+        <a class="ext-link" href="https://prd.galileonetwork.it/easy/" target="_blank" rel="noopener">Easy ↗</a>
+        <span class="app-user" th:text="${username}">utente</span>
         <form th:action="@{/logout}" method="post" class="logout-form">
             <button type="submit" class="link-button">Esci</button>
         </form>
     </div>
 </header>
 
+<!-- ---------- Orario di lavoro ---------- -->
+<section class="worktime"
+         id="worktime"
+         th:attr="data-accumulated=${summary.accumulatedSeconds},
+                  data-open-since=${summary.openSinceMillis},
+                  data-server-now=${serverNowMillis},
+                  data-target=${targetSeconds}">
+    <div class="worktime-top">
+        <div class="worktime-counter">
+            <span id="wt-counter" class="wt-counter">00:00:00</span>
+            <span class="wt-target">/ 08:00:00</span>
+        </div>
+        <div class="worktime-actions">
+            <form th:action="@{/attendance/in}" method="post">
+                <button type="submit" class="btn-in"
+                        th:disabled="${summary.clockedIn()}">Entrata</button>
+            </form>
+            <form th:action="@{/attendance/out}" method="post">
+                <button type="submit" class="btn-out"
+                        th:disabled="${!summary.clockedIn()}">Uscita</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="wt-progress"><div id="wt-bar" class="wt-progress-fill"></div></div>
+    <div id="wt-status" class="wt-status">&nbsp;</div>
+
+    <ul class="punch-list" th:if="${!attendances.isEmpty()}">
+        <li th:each="a : ${attendances}">
+            <span class="punch-in" th:text="${timeFormat.format(a.clockIn)}">09:00</span>
+            <span class="punch-sep">→</span>
+            <span class="punch-out"
+                  th:text="${a.clockOut != null ? timeFormat.format(a.clockOut) : 'in corso…'}">18:00</span>
+        </li>
+    </ul>
+</section>
+
+<!-- ---------- Storico di oggi ---------- -->
 <main class="history">
     <h2>Oggi</h2>
 
@@ -26,12 +65,22 @@
 
     <ul class="entry-list">
         <li class="entry" th:each="entry : ${entries}">
-            <span class="entry-time" th:text="${timeFormat.format(entry.createdAt)}">09:30</span>
-            <span class="entry-text" th:text="${entry.description}">Descrizione</span>
+            <div class="entry-view">
+                <span class="entry-time" th:text="${timeFormat.format(entry.createdAt)}">09:30</span>
+                <span class="entry-text" th:text="${entry.description}">Descrizione</span>
+                <button type="button" class="edit-toggle link-button">Modifica</button>
+            </div>
+            <form class="entry-edit" th:action="@{'/entries/' + ${entry.id}}" method="post" hidden>
+                <input type="text" name="description" th:value="${entry.description}"
+                       autocomplete="off" required>
+                <button type="submit">Salva</button>
+                <button type="button" class="edit-cancel link-button">Annulla</button>
+            </form>
         </li>
     </ul>
 </main>
 
+<!-- ---------- Barra di inserimento ---------- -->
 <form class="prompt-bar" th:action="@{/entries}" method="post">
     <input type="text"
            name="description"
@@ -41,5 +90,7 @@
            required>
     <button type="submit">Registra</button>
 </form>
+
+<script th:src="@{/js/app.js}"></script>
 </body>
 </html>
