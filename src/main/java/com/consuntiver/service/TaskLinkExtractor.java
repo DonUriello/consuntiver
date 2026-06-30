@@ -20,8 +20,6 @@ import java.util.regex.Pattern;
 @Component
 public class TaskLinkExtractor {
 
-    private static final String BASE_URL = "https://prd.galileonetwork.it/easy/issues/";
-
     /** {@code #<cifre>} oppure un numero nudo di almeno 5 cifre non incollato ad altri caratteri. */
     private static final Pattern TASK_PATTERN =
             Pattern.compile("#(\\d+)|(?<![\\w.])(\\d{5,})(?![\\w.])");
@@ -37,7 +35,7 @@ public class TaskLinkExtractor {
             Matcher matcher = TASK_PATTERN.matcher(text);
             while (matcher.find()) {
                 String id = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
-                byId.putIfAbsent(id, new TaskLink(id, BASE_URL + id, text.trim()));
+                byId.putIfAbsent(id, new TaskLink(id, EasyLinks.issueUrl(id), text.trim()));
             }
         }
         return new ArrayList<>(byId.values());

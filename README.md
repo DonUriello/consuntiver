@@ -24,7 +24,10 @@ Lo storico della giornata appare nell'area sopra la barra.
     (`.../easy/issues/<id>`), con la descrizione presa dalla riga.
     I numeri "nudi" sono riconosciuti come task solo da 5 cifre in su, per
     evitare falsi positivi (orari, anni); con il prefisso `#` basta una cifra.
-- Ogni utente vede e modifica **solo** le proprie voci e timbrature
+  - Pagina **Task fissi**: task validi per un intero anno (es. manutenzioni
+    annuali), con numero task opzionale che genera il link a Easy (stessa
+    logica della colonna laterale), raggruppati per anno e con cancellazione
+- Ogni utente vede e modifica **solo** le proprie voci, timbrature e task fissi
 
 ## Stack
 

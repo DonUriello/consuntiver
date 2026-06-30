@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task fissi - Consuntiver</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="app-page">
+<header class="app-header">
+    <div class="app-title">Consuntiver</div>
+    <div class="app-nav">
+        <a class="ext-link" th:href="@{/}">← Home</a>
+        <a class="ext-link" href="https://prd.galileonetwork.it/easy/" target="_blank" rel="noopener">Easy ↗</a>
+        <span class="app-user" th:text="${username}">utente</span>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="link-button">Esci</button>
+        </form>
+    </div>
+</header>
+
+<main class="fixed-page">
+    <h1>Task fissi per anno</h1>
+    <p class="page-hint">
+        Task validi per un intero anno (es. manutenzioni annuali). Indica un numero
+        per creare il link a Easy; lascialo vuoto se il task non ne ha uno.
+    </p>
+
+    <!-- ---------- Form di inserimento ---------- -->
+    <form class="fixed-form" th:action="@{/fixed-tasks}" method="post">
+        <div class="field field-year">
+            <label for="year">Anno</label>
+            <input type="number" id="year" name="year" th:value="${currentYear}"
+                   min="2000" max="2100" required>
+        </div>
+        <div class="field field-num">
+            <label for="taskNumber">Numero task</label>
+            <input type="text" id="taskNumber" name="taskNumber" placeholder="es. 12345"
+                   inputmode="numeric" autocomplete="off">
+        </div>
+        <div class="field field-desc">
+            <label for="description">Descrizione</label>
+            <input type="text" id="description" name="description"
+                   placeholder="es. Manutenzione impianto" autocomplete="off" required>
+        </div>
+        <button type="submit">Aggiungi</button>
+    </form>
+
+    <!-- ---------- Elenco per anno ---------- -->
+    <p th:if="${groups.isEmpty()}" class="empty">Nessun task fisso inserito.</p>
+
+    <section class="year-group" th:each="g : ${groups}">
+        <h2 th:text="${g.year}">2026</h2>
+        <ul class="fixed-list">
+            <li class="fixed-item" th:each="t : ${g.tasks}">
+                <a class="task-id" th:if="${t.url != null}" th:href="${t.url}"
+                   target="_blank" rel="noopener" th:text="'#' + ${t.taskNumber}">#12345</a>
+                <span class="task-id no-link" th:if="${t.url == null}">—</span>
+                <span class="fixed-desc" th:text="${t.description}">descrizione</span>
+                <form th:action="@{'/fixed-tasks/' + ${t.id} + '/delete'}" method="post"
+                      class="delete-form"
+                      onsubmit="return confirm('Eliminare questo task fisso?');">
+                    <button type="submit" class="link-button delete-btn">Elimina</button>
+                </form>
+            </li>
+        </ul>
+    </section>
+</main>
+</body>
+</html>
