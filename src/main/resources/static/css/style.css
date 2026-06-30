@@ -612,6 +612,107 @@ button:disabled {
     font-size: 0.8rem;
 }
 
+/* ---------- Icona guida + pannello ---------- */
+.app-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.help {
+    position: relative;
+    display: inline-flex;
+}
+
+.help-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: help;
+    user-select: none;
+}
+
+.help-icon:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.help-popover {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 340px;
+    max-width: 80vw;
+    background: var(--card-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
+    padding: 1rem 1.1rem;
+    z-index: 100;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+}
+
+/* Ponte invisibile per non perdere l'hover nello spazio tra icona e pannello. */
+.help-popover::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    height: 10px;
+}
+
+.help:hover .help-popover,
+.help:focus-within .help-popover {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.help-title {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+}
+
+.help-text {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+}
+
+.help-list {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.help-list strong {
+    color: var(--text);
+}
+
+.help-foot {
+    display: block;
+    margin-top: 0.7rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+}
+
 /* ---------- Nav header ---------- */
 .app-nav {
     display: flex;

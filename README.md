@@ -29,6 +29,9 @@ Lo storico della giornata appare nell'area sopra la barra.
     logica della colonna laterale), raggruppati per anno e con cancellazione
 - Ogni utente vede e modifica **solo** le proprie voci, timbrature e task fissi
 
+> Guida d'uso completa: [`docs/GUIDA.md`](docs/GUIDA.md). In app è anche
+> raggiungibile passando il mouse sull'icona **?** accanto al nome.
+
 ## Stack
 
 - Java 21, Spring Boot 3

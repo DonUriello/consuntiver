@@ -8,7 +8,10 @@
 </head>
 <body class="app-page">
 <header class="app-header">
-    <div class="app-title">Consuntiver</div>
+    <div class="app-brand">
+        <span class="app-title">Consuntiver</span>
+        <th:block th:replace="~{fragments/help :: help}"></th:block>
+    </div>
     <div class="app-nav">
         <a class="ext-link" th:href="@{/fixed-tasks}">Task fissi</a>
         <a class="ext-link" href="https://prd.galileonetwork.it/easy/" target="_blank" rel="noopener">Easy ↗</a>

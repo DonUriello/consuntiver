@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Iconcina "?" accanto al nome: al passaggio del mouse mostra la descrizione. -->
+<span th:fragment="help" class="help">
+    <span class="help-icon" tabindex="0" role="button" aria-label="Come funziona Consuntiver">?</span>
+    <span class="help-popover">
+        <strong class="help-title">Come funziona</strong>
+        <span class="help-text">
+            Annota al volo cosa stai facendo: scrivi nella barra in basso e premi
+            <em>Registra</em> (o Invio); l'app salva una riga con orario e descrizione.
+        </span>
+        <ul class="help-list">
+            <li><strong>Storico "Oggi"</strong>: le righe della giornata, modificabili.</li>
+            <li><strong>Inizio / Pausa / Fine</strong>: timbrature dell'orario di lavoro, con
+                contatore live verso le 8 ore.</li>
+            <li><strong>Task</strong>: cita un numero (<em>#12345</em> o un numero da 5 cifre)
+                e a destra compare il link a Easy.</li>
+            <li><strong>Bottone azzurro</strong> (es. <em>+0,75</em>): tempo totale dedicato a
+                quell'argomento, arrotondato al quarto d'ora (minimo +0,25).</li>
+            <li><strong>Task fissi</strong>: pagina per i task validi un intero anno.</li>
+        </ul>
+        <span class="help-foot">Guida completa: <code>docs/GUIDA.md</code></span>
+    </span>
+</span>
+</body>
+</html>
