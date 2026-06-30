@@ -20,6 +20,8 @@ import java.util.Optional;
  * (quando si e' passati ad altro). La riga piu' recente in assoluto non ha una successiva,
  * quindi non contribuisce. I tempi delle righe dello stesso contesto vengono sommati e
  * arrotondati al quarto d'ora; il bottone compare sulla riga piu' recente del contesto.
+ * Anche quando il totale non raggiunge un quarto d'ora il bottone viene mostrato comunque,
+ * con il valore minimo di 0,25.
  */
 @Service
 public class ContextTimeService {
@@ -27,7 +29,7 @@ public class ContextTimeService {
     /** Link del bottone: non ancora definito. */
     private static final String LINK_PLACEHOLDER = "#";
 
-    /** Soglia minima per mostrare il bottone: un quarto d'ora. */
+    /** Valore minimo mostrato sul bottone: un quarto d'ora. */
     private static final double MIN_QUARTERS = 0.25;
 
     private final TaskLinkExtractor taskLinkExtractor;
@@ -64,10 +66,9 @@ public class ContextTimeService {
 
         Map<Long, ContextButton> buttons = new HashMap<>();
         latestEntryByContext.forEach((context, entry) -> {
-            double quarters = roundToQuarter(totalSecondsByContext.getOrDefault(context, 0L));
-            if (quarters >= MIN_QUARTERS) {
-                buttons.put(entry.getId(), new ContextButton(format(quarters), LINK_PLACEHOLDER));
-            }
+            // Anche sotto il quarto d'ora si mostra comunque il bottone, con il minimo 0,25.
+            double quarters = Math.max(MIN_QUARTERS, roundToQuarter(totalSecondsByContext.getOrDefault(context, 0L)));
+            buttons.put(entry.getId(), new ContextButton(format(quarters), LINK_PLACEHOLDER));
         });
         return buttons;
     }

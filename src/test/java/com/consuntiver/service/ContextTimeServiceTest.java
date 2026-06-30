@@ -37,9 +37,10 @@ class ContextTimeServiceTest {
         // #12345: 30 + 60 = 90 min = 1,5 h, mostrato sulla riga piu' recente (id 3)
         assertThat(buttons).containsKey(3L);
         assertThat(buttons.get(3L).label()).isEqualTo("+1,5");
-        // #99999: ultima riga senza successiva -> 0 -> nessun bottone
-        assertThat(buttons).doesNotContainKey(4L);
-        // le righe senza task non hanno bottone
+        // #99999: ultima riga senza successiva -> 0 min -> bottone comunque, con minimo +0,25
+        assertThat(buttons).containsKey(4L);
+        assertThat(buttons.get(4L).label()).isEqualTo("+0,25");
+        // le righe non piu' recenti del proprio contesto, o senza task, non hanno bottone
         assertThat(buttons).doesNotContainKey(1L);
         assertThat(buttons).doesNotContainKey(2L);
     }
@@ -58,11 +59,11 @@ class ContextTimeServiceTest {
                 entry(21, 120, "Stop")));
         assertThat(due.get(20L).label()).isEqualTo("+2");
 
-        // 7 minuti -> arrotonda a 0 -> sotto soglia, nessun bottone
+        // 7 minuti -> arrotonderebbe a 0 ma il minimo e' 0,25 -> bottone +0,25
         Map<Long, ContextButton> piccolo = service.compute(List.of(
                 entry(30, 0, "Task #33333"),
                 entry(31, 7, "Stop")));
-        assertThat(piccolo).isEmpty();
+        assertThat(piccolo.get(30L).label()).isEqualTo("+0,25");
     }
 
     @Test
