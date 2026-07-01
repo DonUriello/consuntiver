@@ -54,6 +54,19 @@ public class WorkEntryService {
         return workEntryRepository.save(entry);
     }
 
+    /**
+     * Cancella una voce, solo se appartiene all'utente.
+     *
+     * @throws AccessDeniedException se la voce non e' dell'utente o non esiste
+     */
+    public void delete(String username, Long entryId) {
+        User user = requireUser(username);
+        WorkEntry entry = workEntryRepository.findById(entryId)
+                .filter(e -> e.getUser().getId().equals(user.getId()))
+                .orElseThrow(() -> new AccessDeniedException("Voce non trovata o non accessibile"));
+        workEntryRepository.delete(entry);
+    }
+
     /** Voci di oggi per l'utente, dalla piu' recente alla piu' vecchia. */
     public List<WorkEntry> todayEntries(String username, ZoneId zone) {
         User user = requireUser(username);

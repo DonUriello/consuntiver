@@ -177,6 +177,12 @@ public class HomeController {
         return "redirect:/";
     }
 
+    @PostMapping("/entries/{id}/delete")
+    public String delete(@PathVariable("id") Long id, Principal principal) {
+        workEntryService.delete(principal.getName(), id);
+        return "redirect:/";
+    }
+
     @PostMapping("/attendance/in")
     public String clockIn(Principal principal) {
         attendanceService.clockIn(principal.getName());
