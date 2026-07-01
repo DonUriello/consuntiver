@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -78,6 +79,8 @@ public class HomeController {
         model.addAttribute("contextTotal", contextTimes);
         model.addAttribute("taskLinks", taskLinks);
         model.addAttribute("taskClipboard", buildTaskClipboard(taskLinks, entries, contextTimes));
+        model.addAttribute("taskColorCss", buildTaskColorCss(taskLinks));
+        model.addAttribute("entryTaskClass", buildEntryTaskClass(entries));
         model.addAttribute("homeUrl", config.getHomeUrl());
         model.addAttribute("attendances", attendances);
         model.addAttribute("summary", summary);
@@ -115,6 +118,35 @@ public class HomeController {
             clipboard.put(task.id(), time + " - " + descriptions);
         }
         return clipboard;
+    }
+
+    /**
+     * CSS con una classe {@code .tc-<idtask>} per ogni task, che imposta la variabile
+     * {@code --tc} col colore del task. La stessa classe colora orario, badge e colonna task.
+     */
+    private String buildTaskColorCss(List<TaskLinkExtractor.TaskLink> taskLinks) {
+        StringBuilder css = new StringBuilder();
+        for (TaskLinkExtractor.TaskLink task : taskLinks) {
+            css.append(".tc-").append(task.id())
+                    .append("{--tc:").append(colorFor(task.id())).append(";}");
+        }
+        return css.toString();
+    }
+
+    /** Mappa id-riga -> classe colore ({@code tc-<idtask>}) per le righe che citano un task. */
+    private Map<Long, String> buildEntryTaskClass(List<WorkEntry> entries) {
+        Map<Long, String> classes = new HashMap<>();
+        for (WorkEntry entry : entries) {
+            taskLinkExtractor.firstTaskId(entry.getDescription())
+                    .ifPresent(id -> classes.put(entry.getId(), "tc-" + id));
+        }
+        return classes;
+    }
+
+    /** Colore del task: tinta derivata (stabile) dal numero, cosi' non cambia a ogni ricarica. */
+    private static String colorFor(String taskId) {
+        int hue = Math.floorMod(taskId.hashCode(), 360);
+        return "hsl(" + hue + ", 65%, 45%)";
     }
 
     /** Rimuove il riferimento al task (es. "#129671") dalla descrizione, lasciando l'attivita'. */

@@ -232,14 +232,17 @@ button:hover {
 
 .task-head {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.5rem;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.task-head .task-time {
+    margin-left: auto;
 }
 
 .task-id {
     font-weight: 700;
-    color: var(--primary);
+    color: var(--tc, var(--primary));
     text-decoration: none;
     font-variant-numeric: tabular-nums;
 }
@@ -376,8 +379,18 @@ button:hover {
 }
 
 .entry-start {
-    color: var(--primary);
+    color: var(--tc, var(--primary));
     font-weight: 600;
+}
+
+/* Badge colorato del task (stesso colore --tc impostato dalla classe .tc-<idtask>). */
+.task-dot {
+    flex-shrink: 0;
+    align-self: center;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--tc, var(--muted));
 }
 
 .entry-end {

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consuntiver</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- Colori per task: una classe .tc-<idtask> per ciascun task, generata a runtime. -->
+    <style th:utext="${taskColorCss}"></style>
 </head>
 <body class="app-page">
 <header class="app-header">
@@ -76,13 +78,16 @@
     </p>
 
     <ul class="entry-list">
-        <li class="entry" th:each="entry : ${entries}">
+        <li class="entry" th:each="entry : ${entries}"
+            th:classappend="${entryTaskClass.containsKey(entry.id) ? entryTaskClass.get(entry.id) : ''}">
             <div class="entry-view">
                 <span class="entry-time">
                     <span class="entry-start" th:text="${dateTimeFormat.format(entry.startedAt)}">01/07 09:30</span>
                     <span class="entry-end"
                           th:text="${entry.endedAt != null ? '→ ' + timeFormat.format(entry.endedAt) : '→ …'}">→ 10:00</span>
                 </span>
+                <span class="task-dot" th:if="${entryTaskClass.containsKey(entry.id)}"
+                      title="Colore del task"></span>
                 <span class="entry-text" th:text="${entry.description}">Descrizione</span>
                 <span class="ctx-time" th:if="${contextTimes.containsKey(entry.id)}">
                     <a class="ctx-time-btn"
@@ -125,8 +130,9 @@
         Nessun task rilevato. Cita un numero (es. #12345) in una riga e comparira' qui.
     </p>
     <ul class="task-list">
-        <li class="task" th:each="t : ${taskLinks}">
+        <li class="task" th:each="t : ${taskLinks}" th:classappend="'tc-' + ${t.id}">
             <span class="task-head">
+                <span class="task-dot"></span>
                 <a class="task-id" th:href="${t.url}" target="_blank" rel="noopener"
                    th:attr="data-clipboard=${taskClipboard.get(t.id)}"
                    title="Copia il rapportino negli appunti e apri il task"
