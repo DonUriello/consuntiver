@@ -77,7 +77,11 @@
     <ul class="entry-list">
         <li class="entry" th:each="entry : ${entries}">
             <div class="entry-view">
-                <span class="entry-time" th:text="${timeFormat.format(entry.createdAt)}">09:30</span>
+                <span class="entry-time">
+                    <span class="entry-start" th:text="${dateTimeFormat.format(entry.startedAt)}">01/07 09:30</span>
+                    <span class="entry-end"
+                          th:text="${entry.endedAt != null ? '→ ' + timeFormat.format(entry.endedAt) : '→ …'}">→ 10:00</span>
+                </span>
                 <span class="entry-text" th:text="${entry.description}">Descrizione</span>
                 <span class="ctx-time" th:if="${contextTimes.containsKey(entry.id)}">
                     <a class="ctx-time-btn"

@@ -339,10 +339,21 @@ button:hover {
 
 .entry-time {
     flex-shrink: 0;
+    display: inline-flex;
+    flex-direction: column;
     font-variant-numeric: tabular-nums;
+    min-width: 5.5rem;
+    line-height: 1.2;
+}
+
+.entry-start {
     color: var(--primary);
     font-weight: 600;
-    min-width: 3rem;
+}
+
+.entry-end {
+    color: var(--muted);
+    font-size: 0.78rem;
 }
 
 .entry-text {
@@ -387,11 +398,16 @@ button:hover {
     background: #1f8fbf;
 }
 
+/* Nascosta di default: compare solo alla pressione di "Modifica". */
 .entry-edit {
-    display: flex;
+    display: none;
     gap: 0.5rem;
     align-items: center;
     margin-top: 0.4rem;
+}
+
+.entry-edit:not([hidden]) {
+    display: flex;
 }
 
 .entry-edit input {

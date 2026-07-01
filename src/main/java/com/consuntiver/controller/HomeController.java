@@ -29,6 +29,9 @@ public class HomeController {
     private static final ZoneId ZONE = ZoneId.of("Europe/Rome");
     private static final DateTimeFormatter TIME_FORMAT =
             DateTimeFormatter.ofPattern("HH:mm", Locale.ITALY).withZone(ZONE);
+    /** Data e ora di inizio riga (es. 01/07 09:30). */
+    private static final DateTimeFormatter DATE_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("dd/MM HH:mm", Locale.ITALY).withZone(ZONE);
 
     /** Obiettivo giornaliero: 8 ore, in secondi. */
     private static final long TARGET_SECONDS = 8 * 60 * 60;
@@ -66,6 +69,7 @@ public class HomeController {
         model.addAttribute("targetSeconds", TARGET_SECONDS);
         model.addAttribute("serverNowMillis", System.currentTimeMillis());
         model.addAttribute("timeFormat", TIME_FORMAT);
+        model.addAttribute("dateTimeFormat", DATE_TIME_FORMAT);
         model.addAttribute("username", username);
         return "home";
     }

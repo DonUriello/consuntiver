@@ -20,7 +20,10 @@ prossima annotazione.
 
 ### Storico "Oggi"
 Sopra la barra vedi le righe della giornata, dalla più recente alla più vecchia.
-Ogni riga ha un pulsante **Modifica** per correggere il testo in caso di errore.
+Ogni riga mostra **data e ora di inizio → fine**: l'inizio è quando l'hai scritta,
+la fine viene registrata quando inserisci la riga successiva (la riga in corso
+resta con `→ …`). Il pulsante **Modifica** apre il campo di modifica **solo**
+quando lo premi (non è più sempre visibile).
 
 ### Orario di lavoro (in alto)
 Tre pulsanti per le timbrature:
@@ -46,10 +49,12 @@ recente di quel task compare un bottone azzurro tipo **`+0,75 (0:47)`**:
   eccesso** al quarto d'ora (minimo `+0,25`);
 - tra parentesi (`0:47`) c'è il tempo **effettivo** non arrotondato.
 
-Il tempo è la somma degli intervalli tra le righe dello stesso task; la riga più
-recente (task "in corso") conta il tempo fino ad adesso. Il conteggio si
-**ri-adegua automaticamente** se correggi una riga. Il link del bottone è ancora
-da definire.
+Le righe con lo **stesso task oppure lo stesso testo** fanno parte dello stesso
+argomento. Il tempo di ogni riga è `fine − inizio`; la riga in corso conta fino
+ad adesso. I tempi vengono sommati e il totale compare **solo sulla riga più
+recente** dell'argomento (le righe più vecchie non mostrano il tempo). Il
+conteggio si **ri-adegua automaticamente** se correggi una riga. Il link del
+bottone è ancora da definire.
 
 Sotto la colonna dei task un riquadro mostra il **totale del tempo** della
 giornata, aggiornato a ogni nuova rilevazione.

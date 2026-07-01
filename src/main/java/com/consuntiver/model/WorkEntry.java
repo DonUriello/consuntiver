@@ -18,9 +18,19 @@ public class WorkEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** Momento in cui la voce e' stata scritta. Salvato sempre in UTC. */
-    @Column(nullable = false)
-    private Instant createdAt;
+    /**
+     * Inizio dell'attivita': scritto alla creazione della riga (Invio / Registra).
+     * Salvato in UTC. Colonna storica "created_at" per non perdere i dati esistenti.
+     */
+    @Column(name = "created_at", nullable = false)
+    private Instant startedAt;
+
+    /**
+     * Fine dell'attivita': valorizzata quando si inserisce una nuova riga.
+     * Null finche' la riga e' quella "in corso".
+     */
+    @Column(name = "ended_at")
+    private Instant endedAt;
 
     @Column(nullable = false, length = 2000)
     private String description;
@@ -31,8 +41,8 @@ public class WorkEntry {
     public WorkEntry() {
     }
 
-    public WorkEntry(Instant createdAt, String description, User user) {
-        this.createdAt = createdAt;
+    public WorkEntry(Instant startedAt, String description, User user) {
+        this.startedAt = startedAt;
         this.description = description;
         this.user = user;
     }
@@ -45,12 +55,20 @@ public class WorkEntry {
         this.id = id;
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
+    public Instant getStartedAt() {
+        return startedAt;
     }
 
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
+    public void setStartedAt(Instant startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public Instant getEndedAt() {
+        return endedAt;
+    }
+
+    public void setEndedAt(Instant endedAt) {
+        this.endedAt = endedAt;
     }
 
     public String getDescription() {

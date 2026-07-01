@@ -24,10 +24,19 @@ public class WorkEntryService {
         this.userRepository = userRepository;
     }
 
-    /** Salva una nuova voce per l'utente con l'ora corrente. */
+    /**
+     * Salva una nuova voce con l'ora corrente come inizio. All'inserimento della nuova riga
+     * la voce precedente ancora aperta viene chiusa: la sua fine diventa "adesso".
+     */
     public WorkEntry add(String username, String description) {
         User user = requireUser(username);
-        WorkEntry entry = new WorkEntry(Instant.now(), description.trim(), user);
+        Instant now = Instant.now();
+        workEntryRepository.findFirstByUserAndEndedAtIsNullOrderByStartedAtDesc(user)
+                .ifPresent(open -> {
+                    open.setEndedAt(now);
+                    workEntryRepository.save(open);
+                });
+        WorkEntry entry = new WorkEntry(now, description.trim(), user);
         return workEntryRepository.save(entry);
     }
 
@@ -51,7 +60,7 @@ public class WorkEntryService {
         LocalDate today = LocalDate.now(zone);
         Instant from = today.atStartOfDay(zone).toInstant();
         Instant to = today.plusDays(1).atStartOfDay(zone).toInstant();
-        return workEntryRepository.findByUserAndCreatedAtBetweenOrderByCreatedAtDesc(user, from, to);
+        return workEntryRepository.findByUserAndStartedAtBetweenOrderByStartedAtDesc(user, from, to);
     }
 
     private User requireUser(String username) {

@@ -18,12 +18,13 @@ import java.util.Optional;
  * dedicato, individua su quale riga mostrare il bottone col totale e fornisce il totale
  * complessivo della giornata.
  *
- * <p>Il tempo di una riga e' l'intervallo fino alla riga successiva in ordine cronologico
- * (quando si e' passati ad altro). La riga piu' recente in assoluto e' il task "in corso":
- * il suo tempo va da quando e' stata scritta fino ad <em>adesso</em>, cosi' il conteggio
- * resta corretto anche ripetendo lo stesso task. I tempi delle righe dello stesso contesto
- * vengono sommati e arrotondati <strong>per eccesso</strong> al quarto d'ora; il bottone
- * compare sulla riga piu' recente del contesto, con valore minimo 0,25.
+ * <p>Il tempo di una riga e' la differenza tra la sua fine e il suo inizio (salvati sulla
+ * riga stessa). La riga ancora aperta (senza fine) e' quella "in corso": conta fino ad
+ * <em>adesso</em>. Il contesto di una riga e' il suo task, oppure — se non ne cita nessuno —
+ * il testo inserito: righe con lo stesso task o lo stesso testo vengono raggruppate e i loro
+ * tempi sommati, arrotondati <strong>per eccesso</strong> al quarto d'ora (minimo 0,25).
+ * Il totale del contesto compare solo sulla riga piu' recente del contesto; le righe piu'
+ * vecchie dello stesso contesto non mostrano il tempo.
  *
  * <p>Essendo una funzione pura delle righe, viene rieseguita a ogni caricamento della pagina
  * (quindi anche dopo ogni modifica di una riga): il conteggio si ri-adegua automaticamente.
@@ -49,23 +50,19 @@ public class ContextTimeService {
      */
     public Result compute(List<WorkEntry> entries, Instant now) {
         List<WorkEntry> asc = new ArrayList<>(entries);
-        asc.sort(Comparator.comparing(WorkEntry::getCreatedAt));
-        int n = asc.size();
+        asc.sort(Comparator.comparing(WorkEntry::getStartedAt));
 
         Map<String, Long> totalSecondsByContext = new HashMap<>();
         Map<String, WorkEntry> latestEntryByContext = new HashMap<>();
 
-        for (int i = 0; i < n; i++) {
-            WorkEntry entry = asc.get(i);
-            Optional<String> context = taskLinkExtractor.firstTaskId(entry.getDescription());
-            if (context.isEmpty()) {
-                continue;
-            }
-            Instant end = (i < n - 1) ? asc.get(i + 1).getCreatedAt() : now;
-            long seconds = Math.max(0, Duration.between(entry.getCreatedAt(), end).getSeconds());
-            totalSecondsByContext.merge(context.get(), seconds, Long::sum);
+        for (WorkEntry entry : asc) {
+            String context = contextKey(entry.getDescription());
+            // Durata della riga: fine - inizio; se la riga e' aperta, conta fino ad adesso.
+            Instant end = entry.getEndedAt() != null ? entry.getEndedAt() : now;
+            long seconds = Math.max(0, Duration.between(entry.getStartedAt(), end).getSeconds());
+            totalSecondsByContext.merge(context, seconds, Long::sum);
             // asc e' in ordine crescente: l'ultimo assegnato e' la riga piu' recente del contesto
-            latestEntryByContext.put(context.get(), entry);
+            latestEntryByContext.put(context, entry);
         }
 
         Map<Long, ContextButton> buttons = new HashMap<>();
@@ -83,6 +80,19 @@ public class ContextTimeService {
 
         return new Result(buttons, !buttons.isEmpty(),
                 formatNumber(totalQuarters), formatActual(totalSeconds));
+    }
+
+    /**
+     * Chiave del contesto di una riga: il task citato, altrimenti il testo normalizzato.
+     * Cosi' righe con lo stesso task, o con lo stesso testo, finiscono nello stesso gruppo.
+     */
+    private String contextKey(String description) {
+        Optional<String> task = taskLinkExtractor.firstTaskId(description);
+        if (task.isPresent()) {
+            return "task:" + task.get();
+        }
+        String normalized = description == null ? "" : description.trim().toLowerCase().replaceAll("\\s+", " ");
+        return "text:" + normalized;
     }
 
     /** Ore arrotondate <strong>per eccesso</strong> al quarto d'ora. */

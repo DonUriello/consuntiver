@@ -6,10 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 public interface WorkEntryRepository extends JpaRepository<WorkEntry, Long> {
 
-    /** Voci dell'utente in un intervallo temporale, dalla piu' recente alla piu' vecchia. */
-    List<WorkEntry> findByUserAndCreatedAtBetweenOrderByCreatedAtDesc(
+    /** Voci dell'utente iniziate nell'intervallo, dalla piu' recente alla piu' vecchia. */
+    List<WorkEntry> findByUserAndStartedAtBetweenOrderByStartedAtDesc(
             User user, Instant from, Instant to);
+
+    /** L'eventuale voce ancora "in corso" (senza fine) dell'utente. */
+    Optional<WorkEntry> findFirstByUserAndEndedAtIsNullOrderByStartedAtDesc(User user);
 }
