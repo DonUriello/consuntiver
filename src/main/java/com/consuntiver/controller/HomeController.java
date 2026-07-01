@@ -6,6 +6,7 @@ import com.consuntiver.service.AttendanceService;
 import com.consuntiver.service.AttendanceService.WorkTimeSummary;
 import com.consuntiver.service.ContextTimeService;
 import com.consuntiver.service.TaskLinkExtractor;
+import com.consuntiver.service.UserConfigService;
 import com.consuntiver.service.WorkEntryService;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.stereotype.Controller;
@@ -40,15 +41,18 @@ public class HomeController {
     private final AttendanceService attendanceService;
     private final TaskLinkExtractor taskLinkExtractor;
     private final ContextTimeService contextTimeService;
+    private final UserConfigService userConfigService;
 
     public HomeController(WorkEntryService workEntryService,
                           AttendanceService attendanceService,
                           TaskLinkExtractor taskLinkExtractor,
-                          ContextTimeService contextTimeService) {
+                          ContextTimeService contextTimeService,
+                          UserConfigService userConfigService) {
         this.workEntryService = workEntryService;
         this.attendanceService = attendanceService;
         this.taskLinkExtractor = taskLinkExtractor;
         this.contextTimeService = contextTimeService;
+        this.userConfigService = userConfigService;
     }
 
     @GetMapping("/")
@@ -59,11 +63,13 @@ public class HomeController {
         List<Attendance> attendances = attendanceService.todayAttendances(username, ZONE);
         WorkTimeSummary summary = attendanceService.todaySummary(username, ZONE);
 
+        var config = userConfigService.get(username);
         ContextTimeService.Result contextTimes = contextTimeService.compute(entries, Instant.now());
         model.addAttribute("entries", entries);
         model.addAttribute("contextTimes", contextTimes.buttons());
         model.addAttribute("contextTotal", contextTimes);
-        model.addAttribute("taskLinks", taskLinkExtractor.extract(entries));
+        model.addAttribute("taskLinks", taskLinkExtractor.extract(entries, config.getTaskBaseUrl()));
+        model.addAttribute("homeUrl", config.getHomeUrl());
         model.addAttribute("attendances", attendances);
         model.addAttribute("summary", summary);
         model.addAttribute("targetSeconds", TARGET_SECONDS);

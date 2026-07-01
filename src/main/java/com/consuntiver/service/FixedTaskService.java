@@ -43,13 +43,13 @@ public class FixedTaskService {
     }
 
     /** Task fissi dell'utente raggruppati per anno (anni piu' recenti prima). */
-    public List<YearGroup> listGroupedByYear(String username) {
+    public List<YearGroup> listGroupedByYear(String username, String taskBaseUrl) {
         User user = requireUser(username);
         List<FixedTask> tasks = fixedTaskRepository.findByUserOrderByYearDescIdDesc(user);
 
         LinkedHashMap<Integer, List<FixedTaskView>> byYear = new LinkedHashMap<>();
         for (FixedTask t : tasks) {
-            String url = t.getTaskNumber() != null ? EasyLinks.issueUrl(t.getTaskNumber()) : null;
+            String url = t.getTaskNumber() != null ? EasyLinks.issueUrl(taskBaseUrl, t.getTaskNumber()) : null;
             byYear.computeIfAbsent(t.getYear(), y -> new ArrayList<>())
                     .add(new FixedTaskView(t.getId(), t.getTaskNumber(), url, t.getDescription()));
         }

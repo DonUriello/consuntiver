@@ -27,7 +27,19 @@ Lo storico della giornata appare nell'area sopra la barra.
   - Pagina **Task fissi**: task validi per un intero anno (es. manutenzioni
     annuali), con numero task opzionale che genera il link a Easy (stessa
     logica della colonna laterale), raggruppati per anno e con cancellazione
+  - Pagina **Impostazioni**: per utente si configurano l'indirizzo **Home**
+    (pulsante Easy) e l'**URL base** con cui si costruiscono i link ai task
 - Ogni utente vede e modifica **solo** le proprie voci, timbrature e task fissi
+
+## Account demo
+
+All'avvio è disponibile un account dimostrativo con una giornata di lavoro
+già simulata (task d'esempio, timbrature, contatore):
+
+- Username: `demo_galileo`
+- Password: `death_earth`
+
+I suoi dati vengono rigenerati a ogni avvio per mostrare sempre una giornata "di oggi".
 
 > Guida d'uso completa: [`docs/GUIDA.md`](docs/GUIDA.md). In app è anche
 > raggiungibile passando il mouse sull'icona **?** accanto al nome.

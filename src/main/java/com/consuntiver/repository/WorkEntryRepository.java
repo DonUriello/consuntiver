@@ -16,4 +16,6 @@ public interface WorkEntryRepository extends JpaRepository<WorkEntry, Long> {
 
     /** L'eventuale voce ancora "in corso" (senza fine) dell'utente. */
     Optional<WorkEntry> findFirstByUserAndEndedAtIsNullOrderByStartedAtDesc(User user);
+
+    void deleteByUser(User user);
 }

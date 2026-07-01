@@ -16,4 +16,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     /** L'eventuale sessione ancora aperta (senza uscita) dell'utente. */
     Optional<Attendance> findFirstByUserAndClockOutIsNullOrderByClockInDesc(User user);
+
+    void deleteByUser(User user);
 }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impostazioni - Consuntiver</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="app-page">
+<header class="app-header">
+    <div class="app-brand">
+        <span class="app-title">Consuntiver</span>
+        <th:block th:replace="~{fragments/help :: help}"></th:block>
+    </div>
+    <div class="app-nav">
+        <a class="ext-link" th:href="@{/}">← Home</a>
+        <a class="ext-link" th:href="${homeUrl}" target="_blank" rel="noopener">Easy ↗</a>
+        <span class="app-user" th:text="${username}">utente</span>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="link-button">Esci</button>
+        </form>
+    </div>
+</header>
+
+<main class="fixed-page">
+    <h1>Impostazioni</h1>
+    <p class="page-hint">
+        Configura il tuo sistema di consuntivazione. Questi indirizzi sono usati per il
+        pulsante "Easy" e per costruire i link ai task.
+    </p>
+
+    <div th:if="${param.saved}" class="alert success">Impostazioni salvate.</div>
+
+    <form class="fixed-form settings-form" th:action="@{/settings}" method="post">
+        <div class="field field-full">
+            <label for="homeUrl">Indirizzo Home</label>
+            <input type="url" id="homeUrl" name="homeUrl" th:value="${config.homeUrl}"
+                   placeholder="https://.../easy/" required>
+        </div>
+        <div class="field field-full">
+            <label for="taskBaseUrl">URL base per il link ai task</label>
+            <input type="url" id="taskBaseUrl" name="taskBaseUrl" th:value="${config.taskBaseUrl}"
+                   placeholder="https://.../easy/issues/" required>
+            <span class="field-hint">Al fondo viene accodato il numero del task (senza #).</span>
+        </div>
+        <button type="submit">Salva</button>
+    </form>
+</main>
+</body>
+</html>

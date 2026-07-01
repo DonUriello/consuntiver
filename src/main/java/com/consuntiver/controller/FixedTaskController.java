@@ -1,6 +1,8 @@
 package com.consuntiver.controller;
 
+import com.consuntiver.model.UserConfig;
 import com.consuntiver.service.FixedTaskService;
+import com.consuntiver.service.UserConfigService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,16 +20,21 @@ public class FixedTaskController {
     private static final ZoneId ZONE = ZoneId.of("Europe/Rome");
 
     private final FixedTaskService fixedTaskService;
+    private final UserConfigService userConfigService;
 
-    public FixedTaskController(FixedTaskService fixedTaskService) {
+    public FixedTaskController(FixedTaskService fixedTaskService, UserConfigService userConfigService) {
         this.fixedTaskService = fixedTaskService;
+        this.userConfigService = userConfigService;
     }
 
     @GetMapping("/fixed-tasks")
     public String page(Principal principal, Model model) {
-        model.addAttribute("groups", fixedTaskService.listGroupedByYear(principal.getName()));
+        UserConfig config = userConfigService.get(principal.getName());
+        model.addAttribute("groups",
+                fixedTaskService.listGroupedByYear(principal.getName(), config.getTaskBaseUrl()));
         model.addAttribute("currentYear", Year.now(ZONE).getValue());
         model.addAttribute("username", principal.getName());
+        model.addAttribute("homeUrl", config.getHomeUrl());
         return "fixed-tasks";
     }
 

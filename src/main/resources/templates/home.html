@@ -14,7 +14,8 @@
     </div>
     <div class="app-nav">
         <a class="ext-link" th:href="@{/fixed-tasks}">Task fissi</a>
-        <a class="ext-link" href="https://prd.galileonetwork.it/easy/" target="_blank" rel="noopener">Easy ↗</a>
+        <a class="ext-link" th:href="@{/settings}">Impostazioni</a>
+        <a class="ext-link" th:href="${homeUrl}" target="_blank" rel="noopener">Easy ↗</a>
         <span class="app-user" th:text="${username}">utente</span>
         <form th:action="@{/logout}" method="post" class="logout-form">
             <button type="submit" class="link-button">Esci</button>

@@ -28,15 +28,17 @@ public class TaskLinkExtractor {
     /**
      * Estrae i task dalle righe fornite. Un task citato in piu' righe compare una sola
      * volta (mantenendo la descrizione della prima riga in cui appare).
+     *
+     * @param taskBaseUrl URL base (configurato per utente) su cui costruire i link
      */
-    public List<TaskLink> extract(List<WorkEntry> entries) {
+    public List<TaskLink> extract(List<WorkEntry> entries, String taskBaseUrl) {
         LinkedHashMap<String, TaskLink> byId = new LinkedHashMap<>();
         for (WorkEntry entry : entries) {
             String text = entry.getDescription();
             Matcher matcher = TASK_PATTERN.matcher(text);
             while (matcher.find()) {
                 String id = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
-                byId.putIfAbsent(id, new TaskLink(id, EasyLinks.issueUrl(id), text.trim()));
+                byId.putIfAbsent(id, new TaskLink(id, EasyLinks.issueUrl(taskBaseUrl, id), text.trim()));
             }
         }
         return new ArrayList<>(byId.values());
