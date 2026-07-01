@@ -2,6 +2,7 @@ package com.consuntiver.service;
 
 import com.consuntiver.model.WorkEntry;
 import com.consuntiver.service.ContextTimeService.ContextButton;
+import com.consuntiver.service.ContextTimeService.Result;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -17,64 +18,107 @@ class ContextTimeServiceTest {
 
     private static final Instant BASE = Instant.parse("2026-06-30T07:00:00Z");
 
+    private Instant at(int minutes) {
+        return BASE.plus(minutes, ChronoUnit.MINUTES);
+    }
+
     private WorkEntry entry(long id, int minutesFromBase, String description) {
-        WorkEntry e = new WorkEntry(BASE.plus(minutesFromBase, ChronoUnit.MINUTES), description, null);
+        WorkEntry e = new WorkEntry(at(minutesFromBase), description, null);
         e.setId(id);
         return e;
     }
 
     @Test
-    void sommaIlTempoDelloStessoTaskSullaRigaPiuRecente() {
+    void sommaIlTempoDelloStessoTaskEForniIlTotale() {
         List<WorkEntry> entries = List.of(
                 entry(1, 0, "Lavoro su #12345"),     // 30 min su 12345
                 entry(2, 30, "Rispondo a una mail"),  // 30 min, nessun task
                 entry(3, 60, "Ancora su #12345"),     // 60 min su 12345
-                entry(4, 120, "Riunione #99999")      // ultima riga: 0 min
+                entry(4, 120, "Riunione #99999")      // in corso: 120 -> now(150) = 30 min
         );
 
-        Map<Long, ContextButton> buttons = service.compute(entries);
+        Result r = service.compute(entries, at(150));
+        Map<Long, ContextButton> b = r.buttons();
 
-        // #12345: 30 + 60 = 90 min = 1,5 h, mostrato sulla riga piu' recente (id 3)
-        assertThat(buttons).containsKey(3L);
-        assertThat(buttons.get(3L).label()).isEqualTo("+1,5");
-        assertThat(buttons.get(3L).actual()).isEqualTo("1:30"); // tempo effettivo
-        // #99999: ultima riga senza successiva -> 0 min -> bottone comunque, con minimo +0,25
-        assertThat(buttons).containsKey(4L);
-        assertThat(buttons.get(4L).label()).isEqualTo("+0,25");
-        assertThat(buttons.get(4L).actual()).isEqualTo("0:00"); // effettivo zero, ma bottone al minimo
-        // le righe non piu' recenti del proprio contesto, o senza task, non hanno bottone
-        assertThat(buttons).doesNotContainKey(1L);
-        assertThat(buttons).doesNotContainKey(2L);
+        // #12345: 30 + 60 = 90 min = 1,5 h, sulla riga piu' recente (id 3)
+        assertThat(b.get(3L).label()).isEqualTo("+1,5");
+        assertThat(b.get(3L).actual()).isEqualTo("1:30");
+        // #99999: riga in corso, 30 min fino ad adesso
+        assertThat(b.get(4L).label()).isEqualTo("+0,5");
+        assertThat(b.get(4L).actual()).isEqualTo("0:30");
+        // righe senza task o non piu' recenti del contesto: nessun bottone
+        assertThat(b).doesNotContainKeys(1L, 2L);
+
+        // Totale: 1,5 + 0,5 = 2 h ; effettivo 90 + 30 = 120 min
+        assertThat(r.totalLabel()).isEqualTo("2");
+        assertThat(r.totalActual()).isEqualTo("2:00");
     }
 
     @Test
-    void arrotondaAlQuartoDOraEFormattaConIlPiu() {
-        // 1 task con 22 minuti -> arrotonda a 0,25 h
-        Map<Long, ContextButton> q = service.compute(List.of(
-                entry(10, 0, "Task #11111"),
-                entry(11, 22, "Stop")));
-        assertThat(q.get(10L).label()).isEqualTo("+0,25");
+    void arrotondaSemprePerEccessoAlQuartoDOra() {
+        // 1 minuto -> per eccesso a 0,25
+        assertThat(quartersFor(1)).isEqualTo("+0,25");
+        // 15 minuti esatti -> resta 0,25
+        assertThat(quartersFor(15)).isEqualTo("+0,25");
+        // 16 minuti -> supera il quarto -> 0,5
+        assertThat(quartersFor(16)).isEqualTo("+0,5");
+        // 22 minuti -> 0,5
+        assertThat(quartersFor(22)).isEqualTo("+0,5");
+        // 46 minuti -> 0,75 arrotondato per eccesso a 1
+        assertThat(quartersFor(46)).isEqualTo("+1");
+    }
 
-        // 2 ore esatte -> "+2" (senza decimali)
-        Map<Long, ContextButton> due = service.compute(List.of(
-                entry(20, 0, "Task #22222"),
-                entry(21, 120, "Stop")));
-        assertThat(due.get(20L).label()).isEqualTo("+2");
-
-        // 7 minuti -> arrotonderebbe a 0 ma il minimo e' 0,25 -> bottone +0,25, effettivo 0:07
-        Map<Long, ContextButton> piccolo = service.compute(List.of(
-                entry(30, 0, "Task #33333"),
-                entry(31, 7, "Stop")));
-        assertThat(piccolo.get(30L).label()).isEqualTo("+0,25");
-        assertThat(piccolo.get(30L).actual()).isEqualTo("0:07");
+    /** Tempo su un task che NON e' l'ultima riga (segmento chiuso, indipendente da now). */
+    private String quartersFor(int minutes) {
+        Result r = service.compute(List.of(
+                entry(100, 0, "Task #11111"),
+                entry(101, minutes, "Altro senza task")), at(minutes + 5));
+        return r.buttons().get(100L).label();
     }
 
     @Test
-    void linkPlaceholderPresente() {
-        Map<Long, ContextButton> buttons = service.compute(List.of(
-                entry(40, 0, "Task #44444"),
-                entry(41, 45, "Stop")));
-        assertThat(buttons.get(40L).label()).isEqualTo("+0,75");
-        assertThat(buttons.get(40L).url()).isEqualTo("#");
+    void ripetereLoStessoTaskInCorsoConteggiaFinoAdAdesso() {
+        // Stesso task scritto due volte, ed e' il task in corso
+        List<WorkEntry> entries = List.of(
+                entry(10, 0, "#33333 inizio"),
+                entry(11, 30, "#33333 continuo"));
+        // 0->30 = 30 min, poi 30->now(50) = 20 min -> totale 50 min
+        Result r = service.compute(entries, at(50));
+        assertThat(r.buttons().get(11L).actual()).isEqualTo("0:50");
+        assertThat(r.buttons().get(11L).label()).isEqualTo("+1"); // 50 min -> per eccesso a 1 h
+    }
+
+    @Test
+    void laModificaDelTaskRiadeguaIlConteggioSenzaDuplicare() {
+        // Prima: la riga di mezzo ha il task SBAGLIATO (#44445 invece di #44444)
+        List<WorkEntry> prima = List.of(
+                entry(40, 0, "#44444 analisi"),
+                entry(41, 30, "#44445 sviluppo"),   // errore di battitura
+                entry(42, 60, "#44444 chiusura"));
+        Result r1 = service.compute(prima, at(90));
+        // #44444 = 30 (id40) + 30 (id42->now90) = 60 min ; #44445 = 30 min (riga id41)
+        assertThat(r1.buttons().get(42L).actual()).isEqualTo("1:00");
+        assertThat(r1.buttons().get(41L).actual()).isEqualTo("0:30");
+
+        // Dopo la correzione della riga 41 a #44444: ricalcolo sulla lista aggiornata
+        List<WorkEntry> dopo = List.of(
+                entry(40, 0, "#44444 analisi"),
+                entry(41, 30, "#44444 sviluppo"),   // corretto
+                entry(42, 60, "#44444 chiusura"));
+        Result r2 = service.compute(dopo, at(90));
+        // Ora tutto e' #44444 = 90 min, e #44445 non esiste piu' (nessun conteggio residuo)
+        assertThat(r2.buttons().get(42L).actual()).isEqualTo("1:30");
+        assertThat(r2.buttons()).doesNotContainKey(41L);
+        assertThat(r2.totalActual()).isEqualTo("1:30");
+        assertThat(r2.totalLabel()).isEqualTo("1,5");
+    }
+
+    @Test
+    void nessunTaskNessunTotale() {
+        Result r = service.compute(List.of(
+                entry(50, 0, "solo testo"),
+                entry(51, 30, "altro testo")), at(60));
+        assertThat(r.buttons()).isEmpty();
+        assertThat(r.hasTotal()).isFalse();
     }
 }

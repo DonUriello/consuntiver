@@ -126,6 +126,14 @@
             <span class="task-desc" th:text="${t.description}">descrizione della riga</span>
         </li>
     </ul>
+
+    <div class="task-total" th:if="${contextTotal.hasTotal}">
+        <span class="task-total-title">Totale tempo</span>
+        <span class="task-total-value">
+            <span class="task-total-quarters" th:text="${contextTotal.totalLabel} + ' h'">2,75 h</span>
+            <span class="task-total-actual" th:text="'(' + ${contextTotal.totalActual} + ')'">(2:32)</span>
+        </span>
+    </div>
 </aside>
 
 </div><!-- /.layout -->

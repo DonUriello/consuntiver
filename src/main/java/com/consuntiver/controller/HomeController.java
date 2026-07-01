@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -55,8 +56,10 @@ public class HomeController {
         List<Attendance> attendances = attendanceService.todayAttendances(username, ZONE);
         WorkTimeSummary summary = attendanceService.todaySummary(username, ZONE);
 
+        ContextTimeService.Result contextTimes = contextTimeService.compute(entries, Instant.now());
         model.addAttribute("entries", entries);
-        model.addAttribute("contextTimes", contextTimeService.compute(entries));
+        model.addAttribute("contextTimes", contextTimes.buttons());
+        model.addAttribute("contextTotal", contextTimes);
         model.addAttribute("taskLinks", taskLinkExtractor.extract(entries));
         model.addAttribute("attendances", attendances);
         model.addAttribute("summary", summary);

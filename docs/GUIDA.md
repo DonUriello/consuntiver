@@ -41,10 +41,18 @@ link verso Easy (`.../easy/issues/<numero>`):
 
 ### Bottone tempo per argomento (azzurro)
 Le righe che riguardano lo **stesso task** vengono raggruppate. Sulla riga più
-recente di quel task compare un bottone azzurro tipo **`+0,75`**: è il tempo
-totale dedicato a quell'argomento, calcolato come somma degli intervalli tra le
-righe dello stesso task, arrotondato al **quarto d'ora** (minimo `+0,25`).
-Il link del bottone è ancora da definire.
+recente di quel task compare un bottone azzurro tipo **`+0,75 (0:47)`**:
+- il numero (`+0,75`) è il tempo dedicato a quell'argomento arrotondato **per
+  eccesso** al quarto d'ora (minimo `+0,25`);
+- tra parentesi (`0:47`) c'è il tempo **effettivo** non arrotondato.
+
+Il tempo è la somma degli intervalli tra le righe dello stesso task; la riga più
+recente (task "in corso") conta il tempo fino ad adesso. Il conteggio si
+**ri-adegua automaticamente** se correggi una riga. Il link del bottone è ancora
+da definire.
+
+Sotto la colonna dei task un riquadro mostra il **totale del tempo** della
+giornata, aggiornato a ogni nuova rilevazione.
 
 ## Task fissi (pagina dedicata)
 Dal link **Task fissi** nell'header gestisci i task validi per un intero anno
