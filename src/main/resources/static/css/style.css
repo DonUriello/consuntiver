@@ -412,21 +412,26 @@ button:hover {
     flex: 1;
 }
 
-.edit-toggle {
+/* Azioni riga: icone impilate (matita sopra, cestino sotto) */
+.entry-actions {
     flex-shrink: 0;
-    font-size: 0.8rem;
-    opacity: 0.7;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.entry-actions .delete-form {
+    margin: 0;
+    display: flex;
 }
 
 /* Pulsanti-icona (matita / cestino) nelle righe */
 .icon-btn {
-    flex-shrink: 0;
-    align-self: center;
     background: none;
     border: none;
-    padding: 0.15rem;
+    padding: 0.1rem;
     cursor: pointer;
-    color: var(--muted);
     display: inline-flex;
     align-items: center;
     line-height: 0;
@@ -434,10 +439,14 @@ button:hover {
 
 .icon-btn:hover {
     background: none;
-    color: var(--text);
+    filter: brightness(0.85);
 }
 
-.icon-delete:hover {
+.edit-toggle {
+    color: var(--primary);
+}
+
+.icon-delete {
     color: #c0392b;
 }
 
