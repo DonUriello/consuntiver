@@ -249,7 +249,7 @@ button:hover {
 
 .task-time {
     flex-shrink: 0;
-    background: #29abe2;
+    background: var(--tc, #29abe2);
     color: #fff;
     border-radius: 999px;
     padding: 0.05rem 0.5rem;
@@ -435,7 +435,7 @@ button:hover {
     flex-shrink: 0;
     display: inline-block;
     padding: 0.15rem 0.55rem;
-    background: #29abe2;
+    background: var(--tc, #29abe2);
     color: #fff;
     border-radius: 999px;
     font-size: 0.8rem;
@@ -445,7 +445,7 @@ button:hover {
 }
 
 .ctx-time-btn:hover {
-    background: #1f8fbf;
+    filter: brightness(0.9);
 }
 
 /* Nascosta di default: compare solo alla pressione di "Modifica". */
