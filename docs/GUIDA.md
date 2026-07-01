@@ -37,7 +37,9 @@ giorno e ti avvisa quando raggiungi le **8 ore** (con barra di avanzamento).
 
 ### Task e link a Easy (colonna a destra)
 Se in una riga citi il numero di un task, l'app lo riconosce e a destra crea il
-link verso Easy (`.../easy/issues/<numero>`):
+link verso Easy, con accanto il **totale del tempo dedicato a quel task**. Gli
+indirizzi (home e base dei link) si impostano in **Impostazioni**, per utente.
+Formato del link: `<url base configurato><numero>`:
 - `#12345` → riconosciuto sempre (con il cancelletto basta una cifra);
 - `123456` → numero "nudo" riconosciuto da **5 cifre** in su (così non scambia
   per task orari o anni).

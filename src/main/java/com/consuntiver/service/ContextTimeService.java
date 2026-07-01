@@ -66,19 +66,25 @@ public class ContextTimeService {
         }
 
         Map<Long, ContextButton> buttons = new HashMap<>();
+        Map<String, ContextButton> taskTotals = new HashMap<>();
         double totalQuarters = 0;
         long totalSeconds = 0;
         for (Map.Entry<String, WorkEntry> e : latestEntryByContext.entrySet()) {
-            long seconds = totalSecondsByContext.getOrDefault(e.getKey(), 0L);
+            String context = e.getKey();
+            long seconds = totalSecondsByContext.getOrDefault(context, 0L);
             // Arrotondamento per eccesso; anche sotto il quarto d'ora si mostra il minimo 0,25.
             double quarters = Math.max(MIN_QUARTERS, ceilToQuarter(seconds));
-            buttons.put(e.getValue().getId(),
-                    new ContextButton(withPlus(quarters), formatActual(seconds), LINK_PLACEHOLDER));
+            ContextButton button = new ContextButton(withPlus(quarters), formatActual(seconds), LINK_PLACEHOLDER);
+            buttons.put(e.getValue().getId(), button);
+            // Totale per task (usato nella colonna task), indicizzato per numero del task.
+            if (context.startsWith("task:")) {
+                taskTotals.put(context.substring("task:".length()), button);
+            }
             totalQuarters += quarters;
             totalSeconds += seconds;
         }
 
-        return new Result(buttons, !buttons.isEmpty(),
+        return new Result(buttons, taskTotals, !buttons.isEmpty(),
                 formatNumber(totalQuarters), formatActual(totalSeconds));
     }
 
@@ -130,14 +136,15 @@ public class ContextTimeService {
     }
 
     /**
-     * Risultato del calcolo: bottoni per riga e totale complessivo della giornata.
+     * Risultato del calcolo: bottoni per riga, totali per task e totale complessivo.
      *
      * @param buttons     id-riga -> bottone, solo per le righe che devono mostrarlo
+     * @param taskTotals  numero-task -> totale del task (per la colonna dei task)
      * @param hasTotal    true se c'e' almeno un contesto (quindi un totale da mostrare)
      * @param totalLabel  totale in quarti d'ora sommati (es. {@code 2,75})
      * @param totalActual totale effettivo come {@code h:mm} (es. {@code 2:32})
      */
-    public record Result(Map<Long, ContextButton> buttons, boolean hasTotal,
-                         String totalLabel, String totalActual) {
+    public record Result(Map<Long, ContextButton> buttons, Map<String, ContextButton> taskTotals,
+                         boolean hasTotal, String totalLabel, String totalActual) {
     }
 }

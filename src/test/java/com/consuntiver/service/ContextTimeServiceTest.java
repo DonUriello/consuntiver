@@ -57,6 +57,9 @@ class ContextTimeServiceTest {
         // Totale: 1,5 + 0,5 + 0,5 = 2,5 h ; effettivo 90 + 30 + 30 = 150 min
         assertThat(r.totalLabel()).isEqualTo("2,5");
         assertThat(r.totalActual()).isEqualTo("2:30");
+        // Totale per task (per la colonna dei task): indicizzato per numero del task
+        assertThat(r.taskTotals().get("12345").actual()).isEqualTo("1:30");
+        assertThat(r.taskTotals().get("99999").actual()).isEqualTo("0:30");
     }
 
     @Test

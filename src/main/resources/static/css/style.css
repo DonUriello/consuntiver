@@ -230,10 +230,28 @@ button:hover {
     border-radius: 8px;
 }
 
+.task-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
 .task-id {
     font-weight: 700;
     color: var(--primary);
     text-decoration: none;
+    font-variant-numeric: tabular-nums;
+}
+
+.task-time {
+    flex-shrink: 0;
+    background: #29abe2;
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.05rem 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
 

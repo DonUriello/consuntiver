@@ -67,6 +67,7 @@ public class HomeController {
         ContextTimeService.Result contextTimes = contextTimeService.compute(entries, Instant.now());
         model.addAttribute("entries", entries);
         model.addAttribute("contextTimes", contextTimes.buttons());
+        model.addAttribute("taskTimes", contextTimes.taskTotals());
         model.addAttribute("contextTotal", contextTimes);
         model.addAttribute("taskLinks", taskLinkExtractor.extract(entries, config.getTaskBaseUrl()));
         model.addAttribute("homeUrl", config.getHomeUrl());

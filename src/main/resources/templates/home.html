@@ -126,8 +126,12 @@
     </p>
     <ul class="task-list">
         <li class="task" th:each="t : ${taskLinks}">
-            <a class="task-id" th:href="${t.url}" target="_blank" rel="noopener"
-               th:text="'#' + ${t.id}">#12345</a>
+            <span class="task-head">
+                <a class="task-id" th:href="${t.url}" target="_blank" rel="noopener"
+                   th:text="'#' + ${t.id}">#12345</a>
+                <span class="task-time" th:if="${taskTimes.containsKey(t.id)}"
+                      th:text="${taskTimes.get(t.id).label} + ' (' + ${taskTimes.get(t.id).actual} + ')'">+1 (1:00)</span>
+            </span>
             <span class="task-desc" th:text="${t.description}">descrizione della riga</span>
         </li>
     </ul>

@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -28,6 +30,7 @@ public class DemoDataSeeder implements ApplicationRunner {
 
     private static final String DEMO_USERNAME = "demo_galileo";
     private static final String DEMO_PASSWORD = "death_earth";
+    private static final ZoneId ZONE = ZoneId.of("Europe/Rome");
 
     private final UserRepository userRepository;
     private final UserConfigRepository userConfigRepository;
@@ -66,43 +69,44 @@ public class DemoDataSeeder implements ApplicationRunner {
         workEntryRepository.deleteByUser(demo);
         attendanceRepository.deleteByUser(demo);
 
-        // 5 task d'esempio (alcuni ripetuti) + una pausa, per mostrare l'accumulo del tempo.
+        // Giornata intera 08:00 -> 17:00 (di oggi, fuso Roma), tutte le righe chiuse.
+        // 5 task d'esempio, alcuni ripetuti, piu' la pausa pranzo. Somma = 540 min (9 ore).
         List<Segment> day = List.of(
-                new Segment(40, "#123456 analisi requisiti"),
-                new Segment(35, "#234567 fix bug login"),
-                new Segment(50, "#123456 sviluppo nuova feature"),
-                new Segment(45, "Pausa pranzo"),
-                new Segment(30, "#345678 review della pull request"),
-                new Segment(25, "#456789 riunione di team"),
-                new Segment(20, "#234567 test del fix"),
-                new Segment(30, "#567890 stesura documentazione"),
-                new Segment(15, "#345678 deploy in staging")   // ultima: in corso
+                new Segment(60, "#123456 analisi requisiti"),        // 08:00 - 09:00
+                new Segment(45, "#234567 fix bug login"),            // 09:00 - 09:45
+                new Segment(75, "#123456 sviluppo nuova feature"),   // 09:45 - 11:00
+                new Segment(40, "#345678 review della pull request"),// 11:00 - 11:40
+                new Segment(50, "#456789 riunione di team"),         // 11:40 - 12:30
+                new Segment(30, "#234567 test del fix"),             // 12:30 - 13:00
+                new Segment(60, "Pausa pranzo"),                     // 13:00 - 14:00
+                new Segment(60, "#567890 stesura documentazione"),   // 14:00 - 15:00
+                new Segment(45, "#123456 refactoring"),              // 15:00 - 15:45
+                new Segment(35, "#345678 deploy in staging"),        // 15:45 - 16:20
+                new Segment(40, "#567890 aggiornamento ticket")      // 16:20 - 17:00
         );
 
-        int totalMinutes = day.stream().mapToInt(Segment::minutes).sum();
-        Instant now = Instant.now();
-        Instant cursor = now.minus(totalMinutes, ChronoUnit.MINUTES);
-
-        for (int i = 0; i < day.size(); i++) {
-            Segment seg = day.get(i);
+        Instant cursor = LocalDate.now(ZONE).atTime(8, 0).atZone(ZONE).toInstant();
+        for (Segment seg : day) {
             Instant start = cursor;
-            boolean last = (i == day.size() - 1);
+            Instant end = start.plus(seg.minutes(), ChronoUnit.MINUTES);
             WorkEntry entry = new WorkEntry(start, seg.description(), demo);
-            if (!last) {
-                entry.setEndedAt(start.plus(seg.minutes(), ChronoUnit.MINUTES));
-            }
+            entry.setEndedAt(end); // giornata completata: ogni riga ha una fine
             workEntryRepository.save(entry);
-            cursor = start.plus(seg.minutes(), ChronoUnit.MINUTES);
+            cursor = end;
         }
 
-        // Timbrature: mattina chiusa prima della pausa, pomeriggio ancora in servizio.
-        Instant dayStart = now.minus(totalMinutes, ChronoUnit.MINUTES);
+        // Timbrature: mattina 08:00 -> 13:00, pomeriggio 14:00 -> 17:00 (8 ore lavorate).
+        Instant dayStart = LocalDate.now(ZONE).atTime(8, 0).atZone(ZONE).toInstant();
+        Instant lunchStart = LocalDate.now(ZONE).atTime(13, 0).atZone(ZONE).toInstant();
+        Instant lunchEnd = LocalDate.now(ZONE).atTime(14, 0).atZone(ZONE).toInstant();
+        Instant dayEnd = LocalDate.now(ZONE).atTime(17, 0).atZone(ZONE).toInstant();
+
         Attendance morning = new Attendance(dayStart, demo);
-        morning.setClockOut(dayStart.plus(40 + 35 + 50, ChronoUnit.MINUTES)); // fino alla pausa
+        morning.setClockOut(lunchStart);
         attendanceRepository.save(morning);
 
-        Attendance afternoon = new Attendance(
-                dayStart.plus(40 + 35 + 50 + 45, ChronoUnit.MINUTES), demo); // dopo la pausa, aperta
+        Attendance afternoon = new Attendance(lunchEnd, demo);
+        afternoon.setClockOut(dayEnd);
         attendanceRepository.save(afternoon);
     }
 }

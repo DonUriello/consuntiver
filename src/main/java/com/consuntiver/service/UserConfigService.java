@@ -19,14 +19,14 @@ public class UserConfigService {
     }
 
     /**
-     * Configurazione dell'utente; se non esiste viene creata con i valori di default
-     * (gli stessi attualmente in uso).
+     * Configurazione dell'utente. Se non esiste NON viene applicato alcun default:
+     * si restituisce una configurazione vuota (da compilare in Impostazioni), non
+     * persistita finche' l'utente non salva.
      */
     public UserConfig get(String username) {
         User user = requireUser(username);
         return userConfigRepository.findByUser(user)
-                .orElseGet(() -> userConfigRepository.save(
-                        new UserConfig(user, EasyLinks.DEFAULT_HOME_URL, EasyLinks.DEFAULT_ISSUE_BASE_URL)));
+                .orElseGet(() -> new UserConfig(user, "", ""));
     }
 
     /** Aggiorna gli indirizzi della configurazione dell'utente. */
