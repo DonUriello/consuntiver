@@ -255,6 +255,17 @@ button:hover {
     font-variant-numeric: tabular-nums;
 }
 
+.task-id {
+    cursor: pointer;
+}
+
+.copied-badge {
+    margin-left: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #1e7a3c;
+}
+
 .task-id:hover {
     text-decoration: underline;
 }

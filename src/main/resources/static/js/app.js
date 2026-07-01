@@ -71,4 +71,25 @@
             li.querySelector(".entry-view").hidden = false;
         });
     });
+
+    // ---------- Click su un task: copia il rapportino negli appunti ----------
+    // Il link apre comunque il task in una nuova scheda (azione nativa dell'ancora).
+    document.querySelectorAll(".task-id[data-clipboard]").forEach(function (link) {
+        link.addEventListener("click", function () {
+            var text = link.getAttribute("data-clipboard");
+            if (navigator.clipboard && text) {
+                navigator.clipboard.writeText(text).then(function () {
+                    flashCopied(link);
+                }).catch(function () { /* clipboard non disponibile (serve https o localhost) */ });
+            }
+        });
+    });
+
+    function flashCopied(link) {
+        var badge = document.createElement("span");
+        badge.className = "copied-badge";
+        badge.textContent = "copiato ✓";
+        link.parentNode.appendChild(badge);
+        setTimeout(function () { badge.remove(); }, 1500);
+    }
 })();

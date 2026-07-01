@@ -70,19 +70,19 @@ public class DemoDataSeeder implements ApplicationRunner {
         attendanceRepository.deleteByUser(demo);
 
         // Giornata intera 08:00 -> 17:00 (di oggi, fuso Roma), tutte le righe chiuse.
-        // 5 task d'esempio, alcuni ripetuti, piu' la pausa pranzo. Somma = 540 min (9 ore).
+        // Solo 3 task reali (alcuni ripetuti) piu' la pausa pranzo. Somma = 540 min (9 ore).
         List<Segment> day = List.of(
-                new Segment(60, "#123456 analisi requisiti"),        // 08:00 - 09:00
-                new Segment(45, "#234567 fix bug login"),            // 09:00 - 09:45
-                new Segment(75, "#123456 sviluppo nuova feature"),   // 09:45 - 11:00
-                new Segment(40, "#345678 review della pull request"),// 11:00 - 11:40
-                new Segment(50, "#456789 riunione di team"),         // 11:40 - 12:30
-                new Segment(30, "#234567 test del fix"),             // 12:30 - 13:00
+                new Segment(60, "#129671 analisi requisiti"),        // 08:00 - 09:00
+                new Segment(45, "#119971 fix bug login"),            // 09:00 - 09:45
+                new Segment(75, "#129671 sviluppo nuova feature"),   // 09:45 - 11:00
+                new Segment(40, "#119995 review della pull request"),// 11:00 - 11:40
+                new Segment(50, "#119971 riunione di team"),         // 11:40 - 12:30
+                new Segment(30, "#129671 correzioni post review"),   // 12:30 - 13:00
                 new Segment(60, "Pausa pranzo"),                     // 13:00 - 14:00
-                new Segment(60, "#567890 stesura documentazione"),   // 14:00 - 15:00
-                new Segment(45, "#123456 refactoring"),              // 15:00 - 15:45
-                new Segment(35, "#345678 deploy in staging"),        // 15:45 - 16:20
-                new Segment(40, "#567890 aggiornamento ticket")      // 16:20 - 17:00
+                new Segment(60, "#119995 stesura documentazione"),   // 14:00 - 15:00
+                new Segment(45, "#119971 refactoring"),              // 15:00 - 15:45
+                new Segment(35, "#119995 deploy in staging"),        // 15:45 - 16:20
+                new Segment(40, "#129671 aggiornamento ticket")      // 16:20 - 17:00
         );
 
         Instant cursor = LocalDate.now(ZONE).atTime(8, 0).atZone(ZONE).toInstant();

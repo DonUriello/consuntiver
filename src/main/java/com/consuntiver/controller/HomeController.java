@@ -20,8 +20,13 @@ import java.security.Principal;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -65,11 +70,14 @@ public class HomeController {
 
         var config = userConfigService.get(username);
         ContextTimeService.Result contextTimes = contextTimeService.compute(entries, Instant.now());
+        List<TaskLinkExtractor.TaskLink> taskLinks = taskLinkExtractor.extract(entries, config.getTaskBaseUrl());
+
         model.addAttribute("entries", entries);
         model.addAttribute("contextTimes", contextTimes.buttons());
         model.addAttribute("taskTimes", contextTimes.taskTotals());
         model.addAttribute("contextTotal", contextTimes);
-        model.addAttribute("taskLinks", taskLinkExtractor.extract(entries, config.getTaskBaseUrl()));
+        model.addAttribute("taskLinks", taskLinks);
+        model.addAttribute("taskClipboard", buildTaskClipboard(taskLinks, entries, contextTimes));
         model.addAttribute("homeUrl", config.getHomeUrl());
         model.addAttribute("attendances", attendances);
         model.addAttribute("summary", summary);
@@ -79,6 +87,43 @@ public class HomeController {
         model.addAttribute("dateTimeFormat", DATE_TIME_FORMAT);
         model.addAttribute("username", username);
         return "home";
+    }
+
+    /**
+     * Per ogni task costruisce il testo da copiare negli appunti:
+     * {@code <tempo dedicato> - <descrizioni delle attivita' separate da virgola>}.
+     */
+    private Map<String, String> buildTaskClipboard(List<TaskLinkExtractor.TaskLink> taskLinks,
+                                                   List<WorkEntry> entries,
+                                                   ContextTimeService.Result contextTimes) {
+        // Righe in ordine cronologico (entries arriva dalla piu' recente alla piu' vecchia).
+        List<WorkEntry> ascending = new ArrayList<>(entries);
+        Collections.reverse(ascending);
+
+        Map<String, String> clipboard = new LinkedHashMap<>();
+        for (TaskLinkExtractor.TaskLink task : taskLinks) {
+            String descriptions = ascending.stream()
+                    .filter(e -> task.id().equals(taskLinkExtractor.firstTaskId(e.getDescription()).orElse(null)))
+                    .map(e -> stripTaskToken(e.getDescription(), task.id()))
+                    .filter(s -> !s.isBlank())
+                    .distinct()
+                    .collect(Collectors.joining(", "));
+
+            String time = contextTimes.taskTotals().containsKey(task.id())
+                    ? contextTimes.taskTotals().get(task.id()).label().replace("+", "")
+                    : "";
+            clipboard.put(task.id(), time + " - " + descriptions);
+        }
+        return clipboard;
+    }
+
+    /** Rimuove il riferimento al task (es. "#129671") dalla descrizione, lasciando l'attivita'. */
+    private static String stripTaskToken(String description, String taskId) {
+        return description
+                .replace("#" + taskId, "")
+                .replaceAll("(?<![0-9])" + taskId + "(?![0-9])", "")
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 
     @PostMapping("/entries")
