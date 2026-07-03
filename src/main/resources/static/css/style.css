@@ -212,19 +212,24 @@ body {
 .worktime-actions button::before { content: "[ "; }
 .worktime-actions button::after { content: " ]"; }
 
+/* INIZIO: pulsante primario, piu' grande ed evidente */
 .btn-in {
-    background: var(--green);
+    background: var(--green) !important;
     color: var(--on-green) !important;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 6px 22px;
+    box-shadow: 0 0 0 1px var(--green), 0 0 14px rgba(74, 222, 128, 0.55);
+}
+
+.btn-in:hover:not(:disabled) {
+    filter: brightness(1.15);
+    box-shadow: 0 0 0 1px var(--green), 0 0 20px rgba(74, 222, 128, 0.75);
 }
 
 .btn-out {
     border-color: var(--red) !important;
     color: var(--red) !important;
-}
-
-.btn-end {
-    border-color: var(--disabled) !important;
-    color: var(--muted) !important;
 }
 
 .worktime-actions button:hover:not(:disabled) {
@@ -321,11 +326,8 @@ button:disabled {
 
 .entry-end { color: var(--muted); }
 
-/* Simboli di stato ANSI */
-.entry-sym { flex: none; font-weight: 700; }
-.sym-done { color: var(--green); }
-.sym-corso { color: var(--yellow); }
-.sym-late { color: var(--red); }
+/* Simbolo identificativo: colorato col colore del task (--tc), distingue task/righe */
+.entry-sym { flex: none; font-weight: 700; color: var(--tc, var(--muted)); }
 
 .entry-text {
     color: var(--text);
@@ -380,6 +382,7 @@ button:disabled {
 .icon-btn:hover { filter: brightness(1.2); }
 .edit-toggle { color: var(--cyan); }
 .icon-delete { color: var(--red); }
+.icon-end { color: var(--green); }
 
 /* Modifica inline (nascosta finche' non si preme la matita) */
 .entry-edit {
@@ -497,12 +500,6 @@ button:disabled {
     color: var(--muted);
     padding-left: 20px;
     word-break: break-word;
-}
-
-.task-legend {
-    padding-top: 10px;
-    color: var(--muted);
-    font-size: 11px;
 }
 
 .copied-badge {

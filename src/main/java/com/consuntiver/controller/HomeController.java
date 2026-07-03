@@ -84,12 +84,6 @@ public class HomeController {
         model.addAttribute("taskClipboard", buildTaskClipboard(taskLinks, entries, contextTimes));
         model.addAttribute("taskColorCss", buildTaskColorCss(taskLinks));
         model.addAttribute("entryTaskClass", buildEntryTaskClass(entries));
-        // Task attualmente "in corso" (quello della riga aperta): serve per il simbolo di stato.
-        model.addAttribute("openTaskId", entries.stream()
-                .filter(e -> e.getEndedAt() == null)
-                .findFirst()
-                .flatMap(e -> taskLinkExtractor.firstTaskId(e.getDescription()))
-                .orElse(null));
         model.addAttribute("homeUrl", config.getHomeUrl());
         model.addAttribute("attendances", attendances);
         model.addAttribute("summary", summary);
@@ -184,6 +178,12 @@ public class HomeController {
         if (description != null && !description.isBlank()) {
             workEntryService.updateDescription(principal.getName(), id, description);
         }
+        return "redirect:/";
+    }
+
+    @PostMapping("/entries/{id}/end")
+    public String endActivity(@PathVariable("id") Long id, Principal principal) {
+        workEntryService.endActivity(principal.getName(), id);
         return "redirect:/";
     }
 

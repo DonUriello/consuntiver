@@ -55,6 +55,23 @@ public class WorkEntryService {
     }
 
     /**
+     * Termina un'attivita' ancora aperta: ne imposta la fine ad "adesso".
+     * Non fa nulla se la voce ha gia' una fine.
+     *
+     * @throws AccessDeniedException se la voce non e' dell'utente o non esiste
+     */
+    public void endActivity(String username, Long entryId) {
+        User user = requireUser(username);
+        WorkEntry entry = workEntryRepository.findById(entryId)
+                .filter(e -> e.getUser().getId().equals(user.getId()))
+                .orElseThrow(() -> new AccessDeniedException("Voce non trovata o non accessibile"));
+        if (entry.getEndedAt() == null) {
+            entry.setEndedAt(Instant.now());
+            workEntryRepository.save(entry);
+        }
+    }
+
+    /**
      * Cancella una voce, solo se appartiene all'utente.
      *
      * @throws AccessDeniedException se la voce non e' dell'utente o non esiste
