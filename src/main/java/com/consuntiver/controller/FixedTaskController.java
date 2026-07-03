@@ -1,6 +1,5 @@
 package com.consuntiver.controller;
 
-import com.consuntiver.model.UserConfig;
 import com.consuntiver.service.FixedTaskService;
 import com.consuntiver.service.UserConfigService;
 import org.springframework.stereotype.Controller;
@@ -29,7 +28,7 @@ public class FixedTaskController {
 
     @GetMapping("/fixed-tasks")
     public String page(Principal principal, Model model) {
-        UserConfig config = userConfigService.get(principal.getName());
+        UserConfigService.ConfigView config = userConfigService.get(principal.getName());
         model.addAttribute("groups",
                 fixedTaskService.listGroupedByYear(principal.getName(), config.getTaskBaseUrl()));
         model.addAttribute("currentYear", Year.now(ZONE).getValue());
@@ -40,11 +39,14 @@ public class FixedTaskController {
 
     @PostMapping("/fixed-tasks")
     public String add(@RequestParam(value = "taskNumber", required = false) String taskNumber,
-                      @RequestParam("description") String description,
+                      @RequestParam(value = "name", required = false) String name,
+                      @RequestParam(value = "description", required = false) String description,
                       @RequestParam("year") int year,
                       Principal principal) {
-        if (description != null && !description.isBlank()) {
-            fixedTaskService.add(principal.getName(), taskNumber, description, year);
+        boolean hasName = name != null && !name.isBlank();
+        boolean hasNumber = taskNumber != null && !taskNumber.isBlank();
+        if (hasName || hasNumber) {
+            fixedTaskService.add(principal.getName(), taskNumber, name, description, year);
         }
         return "redirect:/fixed-tasks";
     }

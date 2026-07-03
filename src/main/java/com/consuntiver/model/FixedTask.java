@@ -5,40 +5,45 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 /**
- * Un task "fisso" valido per un intero anno (es. una manutenzione annuale).
- * Il numero del task e' opzionale: se presente serve a costruire il link verso Easy.
+ * Un task riutilizzabile (per-utente, con anno di validita'). Puo' essere creato a mano
+ * (task fisso) o automaticamente quando un'attivita' cita un #codice non ancora presente.
  */
 @Entity
-@Table(name = "fixed_tasks")
+@Table(name = "task")
 public class FixedTask {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** Numero del task su Easy (solo cifre, senza '#'). Puo' essere null. */
-    @Column(name = "task_number")
+    /** Numero del ticket sul portale (es. 129671), senza '#'. Facoltativo. */
+    @Column(name = "cod_task", length = 50)
     private String taskNumber;
 
-    @Column(nullable = false, length = 1000)
+    @Column(nullable = false)
+    private String name;
+
+    @Column(length = 1000)
     private String description;
 
-    /** Anno di validita' del task. Nome colonna esplicito per evitare parole riservate. */
-    @Column(name = "task_year", nullable = false)
+    @Column(name = "year", nullable = false)
     private int year;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "id_user")
     private User user;
 
     public FixedTask() {
     }
 
-    public FixedTask(String taskNumber, String description, int year, User user) {
+    public FixedTask(String taskNumber, String name, String description, int year, User user) {
         this.taskNumber = taskNumber;
+        this.name = name;
         this.description = description;
         this.year = year;
         this.user = user;
@@ -58,6 +63,14 @@ public class FixedTask {
 
     public void setTaskNumber(String taskNumber) {
         this.taskNumber = taskNumber;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {

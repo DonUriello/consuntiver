@@ -45,9 +45,14 @@
                    inputmode="numeric" autocomplete="off">
         </div>
         <div class="field field-desc">
-            <label for="description">Descrizione</label>
-            <input type="text" id="description" name="description"
+            <label for="name">Nome</label>
+            <input type="text" id="name" name="name"
                    placeholder="es. Manutenzione impianto" autocomplete="off" required>
+        </div>
+        <div class="field field-desc">
+            <label for="description">Descrizione <span class="opt">(facoltativa)</span></label>
+            <input type="text" id="description" name="description"
+                   placeholder="dettagli" autocomplete="off">
         </div>
         <button type="submit">Aggiungi</button>
     </form>
@@ -62,7 +67,11 @@
                 <a class="task-id" th:if="${t.url != null}" th:href="${t.url}"
                    target="_blank" rel="noopener" th:text="'#' + ${t.taskNumber}">#12345</a>
                 <span class="task-id no-link" th:if="${t.url == null}">—</span>
-                <span class="fixed-desc" th:text="${t.description}">descrizione</span>
+                <span class="fixed-desc">
+                    <strong th:text="${t.name}">Nome</strong>
+                    <span class="fixed-desc-detail" th:if="${t.description != null}"
+                          th:text="' — ' + ${t.description}"></span>
+                </span>
                 <form th:action="@{'/fixed-tasks/' + ${t.id} + '/delete'}" method="post"
                       class="delete-form"
                       onsubmit="return confirm('Eliminare questo task fisso?');">

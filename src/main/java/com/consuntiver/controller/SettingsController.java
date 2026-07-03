@@ -1,6 +1,5 @@
 package com.consuntiver.controller;
 
-import com.consuntiver.model.UserConfig;
 import com.consuntiver.service.UserConfigService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,7 +20,7 @@ public class SettingsController {
 
     @GetMapping("/settings")
     public String page(Principal principal, Model model) {
-        UserConfig config = userConfigService.get(principal.getName());
+        UserConfigService.ConfigView config = userConfigService.get(principal.getName());
         model.addAttribute("config", config);
         model.addAttribute("homeUrl", config.getHomeUrl());
         model.addAttribute("username", principal.getName());

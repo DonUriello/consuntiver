@@ -5,30 +5,32 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import java.time.Instant;
 
 /**
- * Una timbratura: orario di entrata e (quando chiusa) di uscita.
- * Una sessione "aperta" ha clockOut == null. Tutti gli istanti sono in UTC.
+ * Una sessione di presenza (timbratura): orario di entrata e (quando chiusa) di uscita.
+ * clockOut null = sessione aperta ("in servizio"). Tutti gli istanti sono in UTC.
  */
 @Entity
-@Table(name = "attendances")
+@Table(name = "work_session")
 public class Attendance {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "clock_in", nullable = false)
     private Instant clockIn;
 
-    @Column
+    @Column(name = "clock_out")
     private Instant clockOut;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "id_user")
     private User user;
 
     public Attendance() {

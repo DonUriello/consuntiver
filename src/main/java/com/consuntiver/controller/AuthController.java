@@ -1,6 +1,7 @@
 package com.consuntiver.controller;
 
 import com.consuntiver.service.UserService;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.stereotype.Controller;
@@ -41,7 +42,7 @@ public class AuthController {
             return "register";
         }
         try {
-            userService.register(form.getUsername().trim(), form.getPassword());
+            userService.register(form.getUsername().trim(), form.getPassword(), form.getEmail());
         } catch (IllegalArgumentException ex) {
             bindingResult.rejectValue("username", "duplicate", ex.getMessage());
             return "register";
@@ -59,6 +60,10 @@ public class AuthController {
         @Size(min = 6, max = 100, message = "La password deve avere almeno 6 caratteri")
         private String password;
 
+        /** Facoltativa. */
+        @Email(message = "Email non valida")
+        private String email;
+
         public String getUsername() {
             return username;
         }
@@ -73,6 +78,14 @@ public class AuthController {
 
         public void setPassword(String password) {
             this.password = password;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
         }
     }
 }

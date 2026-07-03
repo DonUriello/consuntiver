@@ -39,7 +39,8 @@ già simulata (task d'esempio, timbrature, contatore):
 - Username: `demo_galileo`
 - Password: `death_earth`
 
-I suoi dati vengono rigenerati a ogni avvio per mostrare sempre una giornata "di oggi".
+In locale i suoi dati vengono rigenerati a ogni avvio (seeder, solo fuori dal profilo
+`prod`). In produzione la demo si inizializza con [`docs/demo_galileo.sql`](docs/demo_galileo.sql).
 
 > Guida d'uso completa: [`docs/GUIDA.md`](docs/GUIDA.md). In app è anche
 > raggiungibile passando il mouse sull'icona **?** accanto al nome.
@@ -49,7 +50,15 @@ I suoi dati vengono rigenerati a ogni avvio per mostrare sempre una giornata "di
 - Java 21, Spring Boot 3
 - Spring Web + Thymeleaf
 - Spring Security
-- Spring Data JPA + H2 (database su file, persistente tra i riavvii)
+- Spring Data JPA — **H2** in locale (sviluppo), **PostgreSQL/Supabase** in produzione
+
+## Database
+
+- Schema: [`docs/schema-supabase.sql`](docs/schema-supabase.sql) (tabelle `users`,
+  `task`, `activity`, `work_session`, `settings`).
+- Inizializzazione demo su Supabase: [`docs/demo_galileo.sql`](docs/demo_galileo.sql).
+- In produzione lo schema è gestito su Supabase (Hibernate lo **valida** soltanto,
+  `ddl-auto=validate`); in locale su H2 viene generato dalle entità.
 
 ## Avvio
 

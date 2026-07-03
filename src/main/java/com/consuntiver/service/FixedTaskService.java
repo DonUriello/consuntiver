@@ -25,12 +25,17 @@ public class FixedTaskService {
 
     /**
      * Crea un task fisso. Il numero task viene normalizzato a sole cifre (via '#' e spazi);
-     * se non resta nulla viene salvato come assente (nessun link).
+     * se non resta nulla viene salvato come assente (nessun link). Il nome, se vuoto, ricade
+     * sul codice (o su "Task").
      */
-    public FixedTask add(String username, String taskNumberRaw, String description, int year) {
+    public FixedTask add(String username, String taskNumberRaw, String name, String description, int year) {
         User user = requireUser(username);
         String taskNumber = normalizeTaskNumber(taskNumberRaw);
-        return fixedTaskRepository.save(new FixedTask(taskNumber, description.trim(), year, user));
+        String finalName = (name != null && !name.isBlank())
+                ? name.trim()
+                : (taskNumber != null ? "#" + taskNumber : "Task");
+        String finalDescription = (description != null && !description.isBlank()) ? description.trim() : null;
+        return fixedTaskRepository.save(new FixedTask(taskNumber, finalName, finalDescription, year, user));
     }
 
     /** Cancella un task fisso, solo se appartiene all'utente. */
@@ -51,7 +56,7 @@ public class FixedTaskService {
         for (FixedTask t : tasks) {
             String url = t.getTaskNumber() != null ? EasyLinks.issueUrl(taskBaseUrl, t.getTaskNumber()) : null;
             byYear.computeIfAbsent(t.getYear(), y -> new ArrayList<>())
-                    .add(new FixedTaskView(t.getId(), t.getTaskNumber(), url, t.getDescription()));
+                    .add(new FixedTaskView(t.getId(), t.getTaskNumber(), url, t.getName(), t.getDescription()));
         }
 
         List<YearGroup> groups = new ArrayList<>();
@@ -78,7 +83,7 @@ public class FixedTaskService {
      *
      * @param url link a Easy, oppure null se il task non ha un numero
      */
-    public record FixedTaskView(Long id, String taskNumber, String url, String description) {
+    public record FixedTaskView(Long id, String taskNumber, String url, String name, String description) {
     }
 
     /** Gruppo di task fissi di uno stesso anno. */

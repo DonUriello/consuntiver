@@ -17,15 +17,16 @@ public class UserService {
     }
 
     /**
-     * Registra un nuovo utente con password cifrata (BCrypt).
+     * Registra un nuovo utente con password cifrata (BCrypt). L'email e' facoltativa.
      *
      * @throws IllegalArgumentException se lo username e' gia' in uso.
      */
-    public User register(String username, String rawPassword) {
+    public User register(String username, String rawPassword, String email) {
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("Username gia' in uso");
         }
-        User user = new User(username, passwordEncoder.encode(rawPassword));
+        String normalizedEmail = (email != null && !email.isBlank()) ? email.trim() : null;
+        User user = new User(username, passwordEncoder.encode(rawPassword), normalizedEmail);
         return userRepository.save(user);
     }
 }

@@ -1,7 +1,9 @@
 package com.consuntiver.service;
 
+import com.consuntiver.model.FixedTask;
 import com.consuntiver.model.User;
 import com.consuntiver.model.WorkEntry;
+import com.consuntiver.repository.FixedTaskRepository;
 import com.consuntiver.repository.UserRepository;
 import com.consuntiver.repository.WorkEntryRepository;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,21 +14,32 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class WorkEntryService {
 
+    private static final ZoneId ZONE = ZoneId.of("Europe/Rome");
+
     private final WorkEntryRepository workEntryRepository;
     private final UserRepository userRepository;
+    private final FixedTaskRepository fixedTaskRepository;
+    private final TaskLinkExtractor taskLinkExtractor;
 
-    public WorkEntryService(WorkEntryRepository workEntryRepository, UserRepository userRepository) {
+    public WorkEntryService(WorkEntryRepository workEntryRepository,
+                            UserRepository userRepository,
+                            FixedTaskRepository fixedTaskRepository,
+                            TaskLinkExtractor taskLinkExtractor) {
         this.workEntryRepository = workEntryRepository;
         this.userRepository = userRepository;
+        this.fixedTaskRepository = fixedTaskRepository;
+        this.taskLinkExtractor = taskLinkExtractor;
     }
 
     /**
      * Salva una nuova voce con l'ora corrente come inizio. All'inserimento della nuova riga
      * la voce precedente ancora aperta viene chiusa: la sua fine diventa "adesso".
+     * Se il testo cita un #codice, il task viene trovato o creato e collegato.
      */
     public WorkEntry add(String username, String description) {
         User user = requireUser(username);
@@ -37,11 +50,13 @@ public class WorkEntryService {
                     workEntryRepository.save(open);
                 });
         WorkEntry entry = new WorkEntry(now, description.trim(), user);
+        entry.setTask(resolveTask(user, entry.getDescription()));
         return workEntryRepository.save(entry);
     }
 
     /**
      * Modifica il testo di una voce esistente, solo se appartiene all'utente.
+     * Ri-risolve il task collegato in base al nuovo testo.
      *
      * @throws AccessDeniedException se la voce non e' dell'utente o non esiste
      */
@@ -51,7 +66,23 @@ public class WorkEntryService {
                 .filter(e -> e.getUser().getId().equals(user.getId()))
                 .orElseThrow(() -> new AccessDeniedException("Voce non trovata o non accessibile"));
         entry.setDescription(description.trim());
+        entry.setTask(resolveTask(user, entry.getDescription()));
         return workEntryRepository.save(entry);
+    }
+
+    /**
+     * Ricava il task dal testo: se cita un #codice, cerca il task dell'utente per codice/anno
+     * corrente e, se non esiste, lo crea. Restituisce null se il testo non cita alcun task.
+     */
+    private FixedTask resolveTask(User user, String description) {
+        Optional<String> code = taskLinkExtractor.firstTaskId(description);
+        if (code.isEmpty()) {
+            return null;
+        }
+        int year = LocalDate.now(ZONE).getYear();
+        return fixedTaskRepository.findFirstByUserAndTaskNumberAndYear(user, code.get(), year)
+                .orElseGet(() -> fixedTaskRepository.save(
+                        new FixedTask(code.get(), "#" + code.get(), null, year, user)));
     }
 
     /**

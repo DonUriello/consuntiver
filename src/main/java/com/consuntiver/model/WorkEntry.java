@@ -5,38 +5,40 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import java.time.Instant;
 
+/** Un'attivita' (riga di log): interruzione giornaliera con inizio, fine ed eventuale task. */
 @Entity
-@Table(name = "work_entries")
+@Table(name = "activity")
 public class WorkEntry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * Inizio dell'attivita': scritto alla creazione della riga (Invio / Registra).
-     * Salvato in UTC. Colonna storica "created_at" per non perdere i dati esistenti.
-     */
-    @Column(name = "created_at", nullable = false)
+    /** Inizio dell'attivita' (scritto alla creazione). UTC. */
+    @Column(name = "start_at", nullable = false)
     private Instant startedAt;
 
-    /**
-     * Fine dell'attivita': valorizzata quando si inserisce una nuova riga.
-     * Null finche' la riga e' quella "in corso".
-     */
-    @Column(name = "ended_at")
+    /** Fine dell'attivita' (valorizzata all'inserimento della successiva). Null = in corso. */
+    @Column(name = "end_at")
     private Instant endedAt;
 
     @Column(nullable = false, length = 2000)
     private String description;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "id_user")
     private User user;
+
+    /** Task collegato (facoltativo: null per righe senza task, es. "Pausa pranzo"). */
+    @ManyToOne
+    @JoinColumn(name = "id_task")
+    private FixedTask task;
 
     public WorkEntry() {
     }
@@ -85,5 +87,13 @@ public class WorkEntry {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public FixedTask getTask() {
+        return task;
+    }
+
+    public void setTask(FixedTask task) {
+        this.task = task;
     }
 }

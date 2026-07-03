@@ -2,15 +2,15 @@ package com.consuntiver.config;
 
 import com.consuntiver.model.Attendance;
 import com.consuntiver.model.User;
-import com.consuntiver.model.UserConfig;
 import com.consuntiver.model.WorkEntry;
 import com.consuntiver.repository.AttendanceRepository;
-import com.consuntiver.repository.UserConfigRepository;
 import com.consuntiver.repository.UserRepository;
 import com.consuntiver.repository.WorkEntryRepository;
 import com.consuntiver.service.EasyLinks;
+import com.consuntiver.service.UserConfigService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +22,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
- * All'avvio crea (se manca) l'utente demo e ne rigenera una giornata di lavoro simulata,
- * ancorata ad "adesso" cosi' che sia sempre visibile nella vista di oggi.
+ * Seeder per lo sviluppo locale: all'avvio crea (se manca) l'utente demo e ne rigenera una
+ * giornata di lavoro simulata, ancorata ad "adesso". In produzione (profilo prod, Supabase)
+ * NON viene eseguito: lì la demo si inizializza via script SQL.
  */
 @Component
+@Profile("!prod")
 public class DemoDataSeeder implements ApplicationRunner {
 
     private static final String DEMO_USERNAME = "demo_galileo";
@@ -33,18 +35,18 @@ public class DemoDataSeeder implements ApplicationRunner {
     private static final ZoneId ZONE = ZoneId.of("Europe/Rome");
 
     private final UserRepository userRepository;
-    private final UserConfigRepository userConfigRepository;
+    private final UserConfigService userConfigService;
     private final WorkEntryRepository workEntryRepository;
     private final AttendanceRepository attendanceRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DemoDataSeeder(UserRepository userRepository,
-                          UserConfigRepository userConfigRepository,
+                          UserConfigService userConfigService,
                           WorkEntryRepository workEntryRepository,
                           AttendanceRepository attendanceRepository,
                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.userConfigRepository = userConfigRepository;
+        this.userConfigService = userConfigService;
         this.workEntryRepository = workEntryRepository;
         this.attendanceRepository = attendanceRepository;
         this.passwordEncoder = passwordEncoder;
@@ -60,17 +62,14 @@ public class DemoDataSeeder implements ApplicationRunner {
         User demo = userRepository.findByUsername(DEMO_USERNAME).orElseGet(() ->
                 userRepository.save(new User(DEMO_USERNAME, passwordEncoder.encode(DEMO_PASSWORD))));
 
-        if (userConfigRepository.findByUser(demo).isEmpty()) {
-            userConfigRepository.save(new UserConfig(demo,
-                    EasyLinks.DEFAULT_HOME_URL, EasyLinks.DEFAULT_ISSUE_BASE_URL));
-        }
+        // Configurazione demo (URL Galileo di default).
+        userConfigService.update(DEMO_USERNAME, EasyLinks.DEFAULT_HOME_URL, EasyLinks.DEFAULT_ISSUE_BASE_URL);
 
         // Rigenera ogni avvio, cosi' la demo mostra sempre una giornata "di oggi".
         workEntryRepository.deleteByUser(demo);
         attendanceRepository.deleteByUser(demo);
 
         // Giornata intera 08:00 -> 17:00 (di oggi, fuso Roma), tutte le righe chiuse.
-        // Solo 3 task reali (alcuni ripetuti) piu' la pausa pranzo. Somma = 540 min (9 ore).
         List<Segment> day = List.of(
                 new Segment(60, "#129671 analisi requisiti"),        // 08:00 - 09:00
                 new Segment(45, "#119971 fix bug login"),            // 09:00 - 09:45
@@ -90,7 +89,7 @@ public class DemoDataSeeder implements ApplicationRunner {
             Instant start = cursor;
             Instant end = start.plus(seg.minutes(), ChronoUnit.MINUTES);
             WorkEntry entry = new WorkEntry(start, seg.description(), demo);
-            entry.setEndedAt(end); // giornata completata: ogni riga ha una fine
+            entry.setEndedAt(end);
             workEntryRepository.save(entry);
             cursor = end;
         }

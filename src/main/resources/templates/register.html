@@ -22,6 +22,10 @@
         <input type="password" id="password" th:field="*{password}" required>
         <span class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
 
+        <label for="email">Email <span class="opt">(facoltativa)</span></label>
+        <input type="email" id="email" th:field="*{email}" autocomplete="email">
+        <span class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+
         <button type="submit">Registrati</button>
     </form>
 
