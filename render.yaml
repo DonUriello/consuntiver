@@ -1,11 +1,9 @@
-# Blueprint Render: crea il web service (Docker) + un database PostgreSQL gestito.
-# Su Render: New > Blueprint > seleziona questo repo. Render legge questo file.
-databases:
-  - name: consuntiver-db
-    plan: free
-    databaseName: consuntiver
-    user: consuntiver
-
+# Blueprint Render: solo il web service. Il database e' su Supabase.
+# Le credenziali del datasource NON stanno qui (sono segreti): vanno impostate
+# come variabili d'ambiente del servizio nella dashboard Render:
+#   SPRING_DATASOURCE_URL       jdbc:postgresql://<host-supabase>:5432/postgres?sslmode=require
+#   SPRING_DATASOURCE_USERNAME  postgres.<project-ref>   (session pooler) oppure postgres (direct)
+#   SPRING_DATASOURCE_PASSWORD  <password del database Supabase>
 services:
   - type: web
     name: consuntiver
@@ -15,23 +13,3 @@ services:
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: DB_HOST
-        fromDatabase:
-          name: consuntiver-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: consuntiver-db
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: consuntiver-db
-          property: database
-      - key: SPRING_DATASOURCE_USERNAME
-        fromDatabase:
-          name: consuntiver-db
-          property: user
-      - key: SPRING_DATASOURCE_PASSWORD
-        fromDatabase:
-          name: consuntiver-db
-          property: password
