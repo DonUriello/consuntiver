@@ -39,6 +39,9 @@ public class HomeController {
     /** Data e ora di inizio riga (es. 01/07 09:30). */
     private static final DateTimeFormatter DATE_TIME_FORMAT =
             DateTimeFormatter.ofPattern("dd/MM HH:mm", Locale.ITALY).withZone(ZONE);
+    /** Solo data, per l'etichetta del pannello OGGI (es. 03/07). */
+    private static final DateTimeFormatter DATE_FORMAT =
+            DateTimeFormatter.ofPattern("dd/MM", Locale.ITALY).withZone(ZONE);
 
     /** Obiettivo giornaliero: 8 ore, in secondi. */
     private static final long TARGET_SECONDS = 8 * 60 * 60;
@@ -81,6 +84,12 @@ public class HomeController {
         model.addAttribute("taskClipboard", buildTaskClipboard(taskLinks, entries, contextTimes));
         model.addAttribute("taskColorCss", buildTaskColorCss(taskLinks));
         model.addAttribute("entryTaskClass", buildEntryTaskClass(entries));
+        // Task attualmente "in corso" (quello della riga aperta): serve per il simbolo di stato.
+        model.addAttribute("openTaskId", entries.stream()
+                .filter(e -> e.getEndedAt() == null)
+                .findFirst()
+                .flatMap(e -> taskLinkExtractor.firstTaskId(e.getDescription()))
+                .orElse(null));
         model.addAttribute("homeUrl", config.getHomeUrl());
         model.addAttribute("attendances", attendances);
         model.addAttribute("summary", summary);
@@ -88,6 +97,7 @@ public class HomeController {
         model.addAttribute("serverNowMillis", System.currentTimeMillis());
         model.addAttribute("timeFormat", TIME_FORMAT);
         model.addAttribute("dateTimeFormat", DATE_TIME_FORMAT);
+        model.addAttribute("todayLabel", DATE_FORMAT.format(Instant.now()));
         model.addAttribute("username", username);
         return "home";
     }

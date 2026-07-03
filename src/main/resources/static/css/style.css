@@ -1,15 +1,23 @@
+/* ===========================================================================
+   Consuntiver — tema "anni '80 / CLI" (variante 1a: ANSI multicolore su nero)
+   =========================================================================== */
 :root {
-    --bg: #f4f5f7;
-    --card-bg: #ffffff;
-    --primary: #2d6cdf;
-    --primary-dark: #1f55b5;
-    --text: #1f2430;
-    --muted: #6b7280;
-    --border: #e2e5ea;
-    --success-bg: #e6f5ea;
-    --success-text: #1e7a3c;
-    --error-bg: #fdecec;
-    --error-text: #c0392b;
+    --bg: #17181c;
+    --panel-bg: #0f0f12;
+    --border: #4a4a52;        /* doppia linea neutra */
+    --divider: #26262c;       /* tratteggio interno */
+    --divider2: #33333b;
+    --text: #e8e8ee;          /* primario */
+    --text2: #d6d6dc;         /* secondario */
+    --muted: #8a8a94;
+    --disabled: #5a5a64;
+    --green: #4ade80;
+    --yellow: #facc15;
+    --red: #f87171;
+    --cyan: #67e8f9;
+    --on-green: #08120b;
+    --on-cyan: #08171a;
+    --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 * {
@@ -18,335 +26,258 @@
 
 body {
     margin: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.5;
     background: var(--bg);
-    color: var(--text);
+    color: var(--text2);
 }
 
-/* ---------- Pagine di autenticazione ---------- */
-.auth-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 1rem;
+/* ---------- Contenitore schermo (card con cornice a doppia linea) ---------- */
+.screen {
+    max-width: 1180px;
+    margin: 20px auto;
+    background: var(--panel-bg);
+    border: 3px double var(--border);
 }
 
-.card {
-    background: var(--card-bg);
-    width: 100%;
-    max-width: 360px;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-}
-
-.card h1 {
-    margin: 0 0 0.25rem;
-    font-size: 1.6rem;
-}
-
-.subtitle {
-    margin: 0 0 1.5rem;
-    color: var(--muted);
-    font-size: 0.95rem;
-}
-
-.card form {
-    display: flex;
-    flex-direction: column;
-}
-
-.card label {
-    margin-bottom: 0.3rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.card input {
-    margin-bottom: 1rem;
-    padding: 0.6rem 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
-.card input:focus {
-    outline: none;
-    border-color: var(--primary);
-}
-
-button {
-    cursor: pointer;
-    border: none;
-    background: var(--primary);
-    color: #fff;
-    padding: 0.7rem 1rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-button:hover {
-    background: var(--primary-dark);
-}
-
-.switch {
-    margin-top: 1.25rem;
-    text-align: center;
-    font-size: 0.9rem;
-    color: var(--muted);
-}
-
-.switch a {
-    color: var(--primary);
-    text-decoration: none;
-}
-
-.alert {
-    padding: 0.6rem 0.75rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-}
-
-.alert.success {
-    background: var(--success-bg);
-    color: var(--success-text);
-}
-
-.alert.error {
-    background: var(--error-bg);
-    color: var(--error-text);
-}
-
-.field-error {
-    color: var(--error-text);
-    font-size: 0.8rem;
-    margin: -0.75rem 0 0.85rem;
-}
-
-/* ---------- App principale ---------- */
-.app-page {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-}
-
+/* ---------- Header / brand / nav ---------- */
 .app-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.85rem 1.25rem;
-    background: var(--card-bg);
-    border-bottom: 1px solid var(--border);
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 12px 20px;
+    border-bottom: 3px double var(--border);
+}
+
+.app-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
 }
 
 .app-title {
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 15px;
+    color: var(--cyan);
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
-.app-user {
+.brand-ver {
+    color: var(--disabled);
+    font-size: 12px;
+}
+
+.app-nav {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 0.9rem;
+    align-items: baseline;
+    gap: 18px;
+    font-size: 12px;
+    flex-wrap: wrap;
+}
+
+.ext-link {
+    color: var(--cyan);
+    text-decoration: none;
+}
+
+.ext-link:hover {
+    text-decoration: underline;
+}
+
+.nav-cyan { color: var(--cyan); }
+.nav-yellow { color: var(--yellow); }
+.nav-red { color: var(--red); }
+
+.app-user {
     color: var(--muted);
 }
 
 .logout-form {
     margin: 0;
+    display: inline;
 }
 
 .link-button {
     background: none;
-    color: var(--primary);
+    border: none;
     padding: 0;
-    font-size: 0.9rem;
-    font-weight: 600;
+    cursor: pointer;
+    font: inherit;
+    color: var(--cyan);
+}
+
+.link-button.nav-red {
+    color: var(--red);
 }
 
 .link-button:hover {
-    background: none;
     text-decoration: underline;
 }
+
+/* ---------- Pannelli a doppia cornice con etichetta a linguetta ---------- */
+.panel {
+    position: relative;
+    border: 3px double var(--pc, var(--border));
+    background: var(--panel-bg);
+    padding: 18px;
+}
+
+.panel-label {
+    position: absolute;
+    top: -11px;
+    left: 14px;
+    background: var(--panel-bg);
+    padding: 0 8px;
+    color: var(--pc, var(--text2));
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.panel--green { --pc: var(--green); }
+.panel--yellow { --pc: var(--yellow); }
 
 /* ---------- Layout a due colonne ---------- */
 .layout {
-    flex: 1;
-    display: flex;
-    min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr 330px;
+    gap: 22px;
+    padding: 22px 20px 20px;
 }
 
 .main-col {
-    flex: 1;
-    min-width: 0;
     display: flex;
     flex-direction: column;
-}
-
-.history {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.25rem;
-    max-width: 760px;
-    width: 100%;
-    margin: 0 auto;
+    gap: 20px;
+    min-width: 0;
 }
 
 .task-sidebar {
-    width: 300px;
-    flex-shrink: 0;
-    overflow-y: auto;
-    padding: 1.25rem;
-    background: var(--card-bg);
-    border-left: 1px solid var(--border);
-}
-
-.task-sidebar h2 {
-    margin: 0 0 1rem;
-    font-size: 1rem;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.task-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    gap: 20px;
 }
 
-.task {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    padding: 0.6rem 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-}
-
-.task-head {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-
-.task-head .task-time {
-    margin-left: auto;
-}
-
-.task-id {
-    font-weight: 700;
-    color: var(--tc, var(--primary));
-    text-decoration: none;
-    font-variant-numeric: tabular-nums;
-}
-
-.task-time {
-    flex-shrink: 0;
-    background: var(--tc, #29abe2);
-    color: #fff;
-    border-radius: 999px;
-    padding: 0.05rem 0.5rem;
-    font-size: 0.78rem;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-}
-
-.task-id {
-    cursor: pointer;
-}
-
-.copied-badge {
-    margin-left: 0.4rem;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: #1e7a3c;
-}
-
-.task-id:hover {
-    text-decoration: underline;
-}
-
-.task-desc {
-    font-size: 0.85rem;
-    color: var(--muted);
-    word-break: break-word;
-}
-
-.task-total {
-    margin-top: 1rem;
-    padding: 0.75rem 0.85rem;
-    background: #eaf6fc;
-    border: 1px solid #bfe3f4;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.task-total-title {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--muted);
-    font-weight: 600;
-}
-
-.task-total-value {
+/* ---------- Pannello TIMER ---------- */
+.worktime-top {
     display: flex;
     align-items: baseline;
-    gap: 0.4rem;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
-.task-total-quarters {
-    font-size: 1.3rem;
+.worktime-counter {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.wt-counter {
+    font-size: 34px;
     font-weight: 700;
-    color: #1f8fbf;
+    color: var(--text);
+    letter-spacing: 1px;
     font-variant-numeric: tabular-nums;
 }
 
-.task-total-actual {
-    font-size: 0.85rem;
+.wt-target {
     color: var(--muted);
     font-variant-numeric: tabular-nums;
 }
 
-@media (max-width: 800px) {
-    .layout {
-        flex-direction: column;
-        overflow-y: auto;
-    }
-
-    .main-col {
-        flex: none;
-    }
-
-    .history {
-        flex: none;
-        overflow-y: visible;
-    }
-
-    .task-sidebar {
-        width: auto;
-        border-left: none;
-        border-top: 1px solid var(--border);
-    }
+.worktime-actions {
+    display: flex;
+    gap: 10px;
 }
 
-.history h2 {
-    margin: 0 0 1rem;
-    font-size: 1rem;
-    color: var(--muted);
+.worktime-actions button {
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 3px 12px;
+    border: 1px solid transparent;
+    background: none;
+    cursor: pointer;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.5px;
+    color: var(--text2);
 }
 
+.worktime-actions button::before { content: "[ "; }
+.worktime-actions button::after { content: " ]"; }
+
+.btn-in {
+    background: var(--green);
+    color: var(--on-green) !important;
+}
+
+.btn-out {
+    border-color: var(--red) !important;
+    color: var(--red) !important;
+}
+
+.btn-end {
+    border-color: var(--disabled) !important;
+    color: var(--muted) !important;
+}
+
+.worktime-actions button:hover:not(:disabled) {
+    filter: brightness(1.1);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.wt-progress {
+    margin-top: 12px;
+    height: 12px;
+    background: #1a1a20;
+    border: 1px solid var(--divider2);
+    overflow: hidden;
+}
+
+.wt-progress-fill {
+    height: 100%;
+    width: 0;
+    background: var(--green);
+    transition: width 0.4s ease;
+}
+
+.wt-progress-fill.done { background: var(--green); }
+
+.wt-status {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--green);
+}
+
+.punch-list {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 10px 0 0;
+    border-top: 1px dashed var(--divider2);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+}
+
+.punch-list li { display: flex; gap: 6px; }
+.punch-in { color: var(--green); }
+.punch-sep { color: var(--divider2); }
+.punch-out { color: var(--red); }
+
+/* ---------- Pannello OGGI (log) ---------- */
 .empty {
     color: var(--muted);
     font-style: italic;
@@ -356,63 +287,76 @@ button:hover {
     list-style: none;
     margin: 0;
     padding: 0;
+    max-height: 46vh;
+    overflow-y: auto;
 }
 
 .entry {
-    padding: 0.65rem 0;
-    border-bottom: 1px solid var(--border);
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--divider);
 }
 
 .entry-view {
     display: flex;
-    gap: 0.85rem;
     align-items: baseline;
+    gap: 12px;
 }
 
 .entry-time {
     flex-shrink: 0;
     display: inline-flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.15rem;
+    align-items: baseline;
+    gap: 6px;
     font-variant-numeric: tabular-nums;
-    min-width: 5.5rem;
-    line-height: 1.2;
 }
 
-/* L'orario e' un badge con lo stesso colore del task (--tc). */
+/* L'orario di inizio e' un badge (angoli vivi) col colore del task (--tc). */
 .entry-start {
-    display: inline-block;
-    background: var(--tc, var(--primary));
+    background: var(--tc, var(--divider2));
     color: #fff;
     font-weight: 600;
-    padding: 0.08rem 0.5rem;
-    border-radius: 999px;
+    padding: 1px 7px;
     white-space: nowrap;
 }
 
-/* Badge colorato del task (stesso colore --tc impostato dalla classe .tc-<idtask>). */
-.task-dot {
-    flex-shrink: 0;
-    align-self: center;
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: var(--tc, var(--muted));
-}
+.entry-end { color: var(--muted); }
 
-.entry-end {
-    color: var(--muted);
-    font-size: 0.78rem;
-}
+/* Simboli di stato ANSI */
+.entry-sym { flex: none; font-weight: 700; }
+.sym-done { color: var(--green); }
+.sym-corso { color: var(--yellow); }
+.sym-late { color: var(--red); }
 
 .entry-text {
-    white-space: pre-wrap;
-    word-break: break-word;
+    color: var(--text);
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-/* Azioni riga: icone impilate (matita sopra, cestino sotto) */
+.ctx-time {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3rem;
+}
+
+.ctx-time-btn {
+    display: inline-block;
+    padding: 1px 8px;
+    background: var(--tc, var(--cyan));
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    font-variant-numeric: tabular-nums;
+}
+
+.ctx-time-btn:hover { filter: brightness(1.1); }
+.ctx-time-actual { color: var(--muted); }
+
+/* Icone azione (matita / cestino), impilate */
 .entry-actions {
     flex-shrink: 0;
     align-self: center;
@@ -421,12 +365,8 @@ button:hover {
     gap: 0.15rem;
 }
 
-.entry-actions .delete-form {
-    margin: 0;
-    display: flex;
-}
+.entry-actions .delete-form { margin: 0; display: flex; }
 
-/* Pulsanti-icona (matita / cestino) nelle righe */
 .icon-btn {
     background: none;
     border: none;
@@ -437,50 +377,11 @@ button:hover {
     line-height: 0;
 }
 
-.icon-btn:hover {
-    background: none;
-    filter: brightness(0.85);
-}
+.icon-btn:hover { filter: brightness(1.2); }
+.edit-toggle { color: var(--cyan); }
+.icon-delete { color: var(--red); }
 
-.edit-toggle {
-    color: var(--primary);
-}
-
-.icon-delete {
-    color: #c0392b;
-}
-
-.ctx-time {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.3rem;
-}
-
-.ctx-time-actual {
-    font-size: 0.78rem;
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
-}
-
-.ctx-time-btn {
-    flex-shrink: 0;
-    display: inline-block;
-    padding: 0.15rem 0.55rem;
-    background: var(--tc, #29abe2);
-    color: #fff;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-decoration: none;
-    font-variant-numeric: tabular-nums;
-}
-
-.ctx-time-btn:hover {
-    filter: brightness(0.9);
-}
-
-/* Nascosta di default: compare solo alla pressione di "Modifica". */
+/* Modifica inline (nascosta finche' non si preme la matita) */
 .entry-edit {
     display: none;
     gap: 0.5rem;
@@ -488,174 +389,279 @@ button:hover {
     margin-top: 0.4rem;
 }
 
-.entry-edit:not([hidden]) {
-    display: flex;
-}
+.entry-edit:not([hidden]) { display: flex; }
 
 .entry-edit input {
     flex: 1;
-    padding: 0.5rem 0.7rem;
-    border: 1px solid var(--primary);
-    border-radius: 8px;
-    font-size: 1rem;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--cyan);
+    background: #1a1a20;
+    color: var(--text);
+    font: inherit;
 }
 
-.entry-edit input:focus {
-    outline: none;
-}
+.entry-edit input:focus { outline: none; }
 
 .entry-edit button[type="submit"] {
-    padding: 0.5rem 0.9rem;
-    font-size: 0.9rem;
+    padding: 0.35rem 0.8rem;
+    background: var(--cyan);
+    color: var(--on-cyan);
+    border: none;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
 }
 
-/* ---------- Sezione orario di lavoro ---------- */
-.worktime {
-    max-width: 760px;
-    width: 100%;
-    margin: 1rem auto 0;
-    padding: 1rem 1.25rem;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-}
-
-.worktime-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.worktime-counter {
+/* ---------- Riga di inserimento ---------- */
+.prompt-bar {
     display: flex;
     align-items: baseline;
-    gap: 0.4rem;
+    gap: 10px;
+    padding-top: 14px;
+    margin-top: 4px;
 }
 
-.wt-counter {
-    font-size: 2rem;
+.prompt-caret {
+    color: var(--green);
     font-weight: 700;
-    font-variant-numeric: tabular-nums;
+}
+
+.prompt-bar input {
+    flex: 1;
+    min-width: 0;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--border);
     color: var(--text);
+    font: inherit;
+    padding-bottom: 3px;
 }
 
-.wt-target {
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
+.prompt-bar input::placeholder { color: var(--muted); }
+.prompt-bar input:focus { outline: none; border-bottom-color: var(--cyan); }
+
+.prompt-bar button {
+    flex-shrink: 0;
+    background: var(--cyan);
+    color: var(--on-cyan);
+    border: none;
+    font: inherit;
+    font-weight: 600;
+    padding: 3px 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.worktime-actions {
-    display: flex;
-    gap: 0.6rem;
-}
+.prompt-bar button::before { content: "[ "; }
+.prompt-bar button::after { content: " ]"; }
+.prompt-bar button:hover { filter: brightness(1.1); }
 
-.btn-in {
-    background: #1e7a3c;
-}
-
-.btn-in:hover {
-    background: #176030;
-}
-
-.btn-out {
-    background: #c0392b;
-}
-
-.btn-out:hover {
-    background: #a23123;
-}
-
-.btn-end {
-    background: #4b5563;
-}
-
-.btn-end:hover {
-    background: #374151;
-}
-
-button:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-}
-
-.wt-progress {
-    margin-top: 0.9rem;
-    height: 8px;
-    background: var(--border);
-    border-radius: 999px;
-    overflow: hidden;
-}
-
-.wt-progress-fill {
-    height: 100%;
-    width: 0;
-    background: var(--primary);
-    transition: width 0.4s ease;
-}
-
-.wt-progress-fill.done {
-    background: #1e7a3c;
-}
-
-.wt-status {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--muted);
-}
-
-.punch-list {
+/* ---------- Pannello TASK ---------- */
+.task-list {
     list-style: none;
-    margin: 0.85rem 0 0;
-    padding: 0.75rem 0 0;
-    border-top: 1px solid var(--border);
+    margin: 0;
+    padding: 0;
+}
+
+.task {
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--divider);
+}
+
+.task-head {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.25rem;
-    font-size: 0.9rem;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.task-id {
+    font-weight: 700;
+    color: var(--tc, var(--cyan));
+    text-decoration: none;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+}
+
+.task-id:hover { text-decoration: underline; }
+
+.task-time {
+    margin-left: auto;
+    font-weight: 600;
+    color: var(--tc, var(--cyan));
     font-variant-numeric: tabular-nums;
 }
 
-.punch-list li {
-    display: flex;
-    gap: 0.4rem;
-}
-
-.punch-in {
-    color: #1e7a3c;
-    font-weight: 600;
-}
-
-.punch-sep {
+.task-desc {
+    display: block;
     color: var(--muted);
+    padding-left: 20px;
+    word-break: break-word;
 }
 
-.punch-out {
-    color: #c0392b;
+.task-legend {
+    padding-top: 10px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.copied-badge {
+    margin-left: 0.4rem;
+    font-size: 0.72rem;
     font-weight: 600;
+    color: var(--green);
 }
 
-/* ---------- Pagina Task fissi ---------- */
+/* ---------- Pannello TOTALE TEMPO ---------- */
+.task-total-value {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.task-total-quarters {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--yellow);
+    font-variant-numeric: tabular-nums;
+}
+
+.task-total-actual { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* ---------- Icona guida [?] + pannello ---------- */
+.help { position: relative; display: inline-flex; }
+
+.help-icon {
+    color: var(--disabled);
+    cursor: help;
+    font-size: 12px;
+    user-select: none;
+}
+
+.help-icon::before { content: "["; }
+.help-icon::after { content: "]"; }
+
+.help-popover {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: 340px;
+    max-width: 80vw;
+    background: var(--panel-bg);
+    color: var(--text2);
+    border: 3px double var(--border);
+    padding: 1rem 1.1rem;
+    z-index: 100;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.15s ease, visibility 0.15s;
+}
+
+.help-popover::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+}
+
+.help:hover .help-popover,
+.help:focus-within .help-popover {
+    visibility: visible;
+    opacity: 1;
+}
+
+.help-title { display: block; color: var(--cyan); font-size: 1rem; margin-bottom: 0.4rem; }
+.help-text { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.6rem; }
+.help-list { margin: 0; padding-left: 1.1rem; font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.help-list strong { color: var(--text); }
+.help-foot { display: block; margin-top: 0.7rem; font-size: 0.78rem; color: var(--muted); }
+
+/* ===========================================================================
+   Pagine secondarie (login, registrazione, task fissi, impostazioni)
+   =========================================================================== */
+.app-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Login / Registrazione */
+.auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.card {
+    background: var(--panel-bg);
+    width: 100%;
+    max-width: 380px;
+    padding: 2rem;
+    border: 3px double var(--border);
+}
+
+.card h1 {
+    margin: 0 0 0.25rem;
+    font-size: 1.4rem;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.subtitle { margin: 0 0 1.5rem; color: var(--muted); font-size: 0.9rem; }
+
+.card form { display: flex; flex-direction: column; }
+.card label { margin-bottom: 0.3rem; font-size: 0.8rem; font-weight: 600; color: var(--text2); }
+
+.card input {
+    margin-bottom: 1rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--border);
+    background: #1a1a20;
+    color: var(--text);
+    font: inherit;
+}
+
+.card input:focus { outline: none; border-color: var(--cyan); }
+
+button {
+    cursor: pointer;
+    border: none;
+    background: var(--cyan);
+    color: var(--on-cyan);
+    padding: 0.6rem 1rem;
+    font: inherit;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+button:hover:not(:disabled) { filter: brightness(1.1); }
+
+.switch { margin-top: 1.25rem; text-align: center; font-size: 0.9rem; color: var(--muted); }
+.switch a { color: var(--cyan); text-decoration: none; }
+
+.alert { padding: 0.6rem 0.75rem; margin-bottom: 1rem; font-size: 0.9rem; border: 1px solid; }
+.alert.success { border-color: var(--green); color: var(--green); }
+.alert.error { border-color: var(--red); color: var(--red); }
+.field-error { color: var(--red); font-size: 0.8rem; margin: -0.75rem 0 0.85rem; }
+
+/* Task fissi + Impostazioni */
 .fixed-page {
     flex: 1;
     overflow-y: auto;
-    max-width: 760px;
+    max-width: 820px;
     width: 100%;
     margin: 0 auto;
     padding: 1.5rem 1.25rem;
 }
 
-.fixed-page h1 {
-    margin: 0 0 0.35rem;
-    font-size: 1.4rem;
-}
-
-.page-hint {
-    margin: 0 0 1.25rem;
-    color: var(--muted);
-    font-size: 0.9rem;
-}
+.fixed-page h1 { margin: 0 0 0.35rem; font-size: 1.3rem; color: var(--cyan); text-transform: uppercase; letter-spacing: 1px; }
+.page-hint { margin: 0 0 1.25rem; color: var(--muted); font-size: 0.9rem; }
 
 .fixed-form {
     display: flex;
@@ -663,270 +669,61 @@ button:disabled {
     gap: 0.75rem;
     align-items: flex-end;
     padding: 1rem;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--panel-bg);
+    border: 3px double var(--border);
     margin-bottom: 1.5rem;
 }
 
-.fixed-form .field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-}
-
-.fixed-form .field-desc {
-    flex: 1;
-    min-width: 180px;
-}
-
-.fixed-form .field-year {
-    width: 90px;
-}
-
-.fixed-form .field-num {
-    width: 130px;
-}
-
-.fixed-form label {
-    font-size: 0.8rem;
-    font-weight: 600;
-}
+.fixed-form .field { display: flex; flex-direction: column; gap: 0.3rem; }
+.fixed-form .field-desc { flex: 1; min-width: 180px; }
+.fixed-form .field-year { width: 90px; }
+.fixed-form .field-num { width: 130px; }
+.fixed-form label { font-size: 0.78rem; font-weight: 600; color: var(--text2); }
 
 .fixed-form input {
-    padding: 0.55rem 0.7rem;
+    padding: 0.5rem 0.65rem;
     border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 1rem;
+    background: #1a1a20;
+    color: var(--text);
+    font: inherit;
 }
 
-.fixed-form input:focus {
-    outline: none;
-    border-color: var(--primary);
-}
+.fixed-form input:focus { outline: none; border-color: var(--cyan); }
 
-.fixed-form button[type="submit"] {
-    padding: 0.6rem 1.1rem;
-}
+.settings-form { flex-direction: column; align-items: stretch; }
+.settings-form .field-full { width: 100%; }
+.settings-form .field-full input { width: 100%; }
+.settings-form .field-hint { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+.settings-form button[type="submit"] { align-self: flex-start; }
 
-.settings-form {
-    flex-direction: column;
-    align-items: stretch;
-}
-
-.settings-form .field-full {
-    width: 100%;
-}
-
-.settings-form .field-full input {
-    width: 100%;
-}
-
-.settings-form .field-hint {
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-top: 0.2rem;
-}
-
-.settings-form button[type="submit"] {
-    align-self: flex-start;
-}
-
-.year-group {
-    margin-bottom: 1.5rem;
-}
-
+.year-group { margin-bottom: 1.5rem; }
 .year-group h2 {
     margin: 0 0 0.6rem;
     font-size: 1rem;
     color: var(--muted);
-    border-bottom: 2px solid var(--border);
+    border-bottom: 1px dashed var(--border);
     padding-bottom: 0.3rem;
-    font-variant-numeric: tabular-nums;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.fixed-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
+.fixed-list { list-style: none; margin: 0; padding: 0; }
 .fixed-item {
     display: flex;
     align-items: baseline;
     gap: 0.85rem;
     padding: 0.6rem 0;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px dashed var(--divider);
 }
 
-.fixed-item .task-id {
-    flex-shrink: 0;
-    min-width: 4.5rem;
-}
+.fixed-item .task-id { flex-shrink: 0; min-width: 4.5rem; color: var(--cyan); }
+.fixed-item .task-id.no-link { color: var(--muted); font-weight: 400; }
+.fixed-desc { flex: 1; word-break: break-word; color: var(--text2); }
+.delete-form { margin: 0; flex-shrink: 0; }
+.delete-btn { color: var(--red); font-size: 0.8rem; }
 
-.fixed-item .task-id.no-link {
-    color: var(--muted);
-    font-weight: 400;
-}
-
-.fixed-desc {
-    flex: 1;
-    word-break: break-word;
-}
-
-.delete-form {
-    margin: 0;
-    flex-shrink: 0;
-}
-
-.delete-btn {
-    color: #c0392b;
-    font-size: 0.8rem;
-}
-
-/* ---------- Icona guida + pannello ---------- */
-.app-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.help {
-    position: relative;
-    display: inline-flex;
-}
-
-.help-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: #fff;
-    font-size: 0.8rem;
-    font-weight: 700;
-    cursor: help;
-    user-select: none;
-}
-
-.help-icon:focus {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
-}
-
-.help-popover {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    width: 340px;
-    max-width: 80vw;
-    background: var(--card-bg);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
-    padding: 1rem 1.1rem;
-    z-index: 100;
-    visibility: hidden;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
-}
-
-/* Ponte invisibile per non perdere l'hover nello spazio tra icona e pannello. */
-.help-popover::before {
-    content: "";
-    position: absolute;
-    top: -10px;
-    left: 0;
-    right: 0;
-    height: 10px;
-}
-
-.help:hover .help-popover,
-.help:focus-within .help-popover {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.help-title {
-    display: block;
-    font-size: 1rem;
-    margin-bottom: 0.4rem;
-}
-
-.help-text {
-    display: block;
-    font-size: 0.85rem;
-    color: var(--muted);
-    margin-bottom: 0.6rem;
-}
-
-.help-list {
-    margin: 0;
-    padding-left: 1.1rem;
-    font-size: 0.85rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-}
-
-.help-list strong {
-    color: var(--text);
-}
-
-.help-foot {
-    display: block;
-    margin-top: 0.7rem;
-    font-size: 0.78rem;
-    color: var(--muted);
-}
-
-/* ---------- Nav header ---------- */
-.app-nav {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 0.9rem;
-}
-
-.ext-link {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.ext-link:hover {
-    text-decoration: underline;
-}
-
-.prompt-bar {
-    display: flex;
-    gap: 0.75rem;
-    padding: 1rem 1.25rem;
-    background: var(--card-bg);
-    border-top: 1px solid var(--border);
-    max-width: 760px;
-    width: 100%;
-    margin: 0 auto;
-}
-
-.prompt-bar input {
-    flex: 1;
-    padding: 0.7rem 0.9rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
-.prompt-bar input:focus {
-    outline: none;
-    border-color: var(--primary);
-}
-
-.prompt-bar button {
-    flex-shrink: 0;
+/* ---------- Responsive: colonna singola su schermi stretti ---------- */
+@media (max-width: 820px) {
+    .layout { grid-template-columns: 1fr; }
+    .entry-list { max-height: none; }
 }

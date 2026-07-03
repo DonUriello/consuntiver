@@ -4,171 +4,189 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consuntiver</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <!-- Colori per task: una classe .tc-<idtask> per ciascun task, generata a runtime. -->
     <style th:utext="${taskColorCss}"></style>
 </head>
-<body class="app-page">
-<header class="app-header">
-    <div class="app-brand">
-        <span class="app-title">Consuntiver</span>
-        <th:block th:replace="~{fragments/help :: help}"></th:block>
-    </div>
-    <div class="app-nav">
-        <a class="ext-link" th:href="@{/fixed-tasks}">Task fissi</a>
-        <a class="ext-link" th:href="@{/settings}">Impostazioni</a>
-        <a class="ext-link" th:href="${homeUrl}" target="_blank" rel="noopener">Easy ↗</a>
-        <span class="app-user" th:text="${username}">utente</span>
-        <form th:action="@{/logout}" method="post" class="logout-form">
-            <button type="submit" class="link-button">Esci</button>
-        </form>
-    </div>
-</header>
+<body class="term">
+<div class="screen">
 
-<div class="layout">
-<div class="main-col">
-
-<!-- ---------- Orario di lavoro ---------- -->
-<section class="worktime"
-         id="worktime"
-         th:attr="data-accumulated=${summary.accumulatedSeconds},
-                  data-open-since=${summary.openSinceMillis},
-                  data-server-now=${serverNowMillis},
-                  data-target=${targetSeconds}">
-    <div class="worktime-top">
-        <div class="worktime-counter">
-            <span id="wt-counter" class="wt-counter">00:00:00</span>
-            <span class="wt-target">/ 08:00:00</span>
+    <header class="app-header">
+        <div class="app-brand">
+            <span class="app-title">Consuntiver</span>
+            <span class="brand-ver">v1.0</span>
+            <th:block th:replace="~{fragments/help :: help}"></th:block>
         </div>
-        <div class="worktime-actions">
-            <form th:action="@{/attendance/in}" method="post">
-                <button type="submit" class="btn-in"
-                        th:disabled="${summary.clockedIn()}">Inizio</button>
-            </form>
-            <form th:action="@{/attendance/out}" method="post">
-                <button type="submit" class="btn-out"
-                        th:disabled="${!summary.clockedIn()}">Pausa</button>
-            </form>
-            <form th:action="@{/attendance/end}" method="post">
-                <button type="submit" class="btn-end"
-                        th:disabled="${!summary.clockedIn()}">Fine</button>
+        <div class="app-nav">
+            <a class="ext-link nav-cyan" th:href="@{/fixed-tasks}">[task fissi]</a>
+            <a class="ext-link nav-cyan" th:href="@{/settings}">[impostazioni]</a>
+            <a class="ext-link nav-yellow" th:href="${homeUrl}" target="_blank" rel="noopener">[easy ↗]</a>
+            <span class="app-user" th:text="${username}">utente</span>
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="link-button nav-red">[esci]</button>
             </form>
         </div>
-    </div>
+    </header>
 
-    <div class="wt-progress"><div id="wt-bar" class="wt-progress-fill"></div></div>
-    <div id="wt-status" class="wt-status">&nbsp;</div>
+    <div class="layout">
+        <div class="main-col">
 
-    <ul class="punch-list" th:if="${!attendances.isEmpty()}">
-        <li th:each="a : ${attendances}">
-            <span class="punch-in" th:text="${timeFormat.format(a.clockIn)}">09:00</span>
-            <span class="punch-sep">→</span>
-            <span class="punch-out"
-                  th:text="${a.clockOut != null ? timeFormat.format(a.clockOut) : 'in corso…'}">18:00</span>
-        </li>
-    </ul>
-</section>
+            <!-- ---------- TIMER ---------- -->
+            <section class="panel panel--green worktime"
+                     id="worktime"
+                     th:attr="data-accumulated=${summary.accumulatedSeconds},
+                              data-open-since=${summary.openSinceMillis},
+                              data-server-now=${serverNowMillis},
+                              data-target=${targetSeconds}">
+                <span class="panel-label">╡ TIMER ╞</span>
+                <div class="worktime-top">
+                    <div class="worktime-counter">
+                        <span id="wt-counter" class="wt-counter">00:00:00</span>
+                        <span class="wt-target">/ 08:00:00</span>
+                    </div>
+                    <div class="worktime-actions">
+                        <form th:action="@{/attendance/in}" method="post">
+                            <button type="submit" class="btn-in"
+                                    th:disabled="${summary.clockedIn()}">Inizio</button>
+                        </form>
+                        <form th:action="@{/attendance/out}" method="post">
+                            <button type="submit" class="btn-out"
+                                    th:disabled="${!summary.clockedIn()}">Pausa</button>
+                        </form>
+                        <form th:action="@{/attendance/end}" method="post">
+                            <button type="submit" class="btn-end"
+                                    th:disabled="${!summary.clockedIn()}">Fine</button>
+                        </form>
+                    </div>
+                </div>
 
-<!-- ---------- Storico di oggi ---------- -->
-<main class="history">
-    <h2>Oggi</h2>
+                <div class="wt-progress"><div id="wt-bar" class="wt-progress-fill"></div></div>
+                <div id="wt-status" class="wt-status">&nbsp;</div>
 
-    <p th:if="${entries.isEmpty()}" class="empty">
-        Nessuna voce per oggi. Scrivi cosa stai facendo qui sotto.
-    </p>
+                <ul class="punch-list" th:if="${!attendances.isEmpty()}">
+                    <li th:each="a : ${attendances}">
+                        <span class="punch-in" th:text="${timeFormat.format(a.clockIn)}">09:00</span>
+                        <span class="punch-sep">→</span>
+                        <span class="punch-out"
+                              th:text="${a.clockOut != null ? timeFormat.format(a.clockOut) : 'in corso…'}">18:00</span>
+                    </li>
+                </ul>
+            </section>
 
-    <ul class="entry-list">
-        <li class="entry" th:each="entry : ${entries}"
-            th:classappend="${entryTaskClass.containsKey(entry.id) ? entryTaskClass.get(entry.id) : ''}">
-            <div class="entry-view">
-                <span class="entry-time">
-                    <span class="entry-start" th:text="${dateTimeFormat.format(entry.startedAt)}">01/07 09:30</span>
-                    <span class="entry-end"
-                          th:text="${entry.endedAt != null ? '→ ' + timeFormat.format(entry.endedAt) : '→ …'}">→ 10:00</span>
-                </span>
-                <span class="task-dot" th:if="${entryTaskClass.containsKey(entry.id)}"
-                      title="Colore del task"></span>
-                <span class="entry-text" th:text="${entry.description}">Descrizione</span>
-                <span class="ctx-time" th:if="${contextTimes.containsKey(entry.id)}">
-                    <a class="ctx-time-btn"
-                       th:href="${contextTimes.get(entry.id).url}"
-                       th:title="'Tempo totale su questo argomento (ore)'"
-                       th:text="${contextTimes.get(entry.id).label}">+0,75</a>
-                    <span class="ctx-time-actual"
-                          th:title="'Tempo effettivo'"
-                          th:text="'(' + ${contextTimes.get(entry.id).actual} + ')'">(0:47)</span>
-                </span>
-                <span class="entry-actions">
-                <button type="button" class="icon-btn edit-toggle" title="Modifica" aria-label="Modifica">
-                    <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">
-                        <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                    </svg>
-                </button>
-                <form class="delete-form" th:action="@{'/entries/' + ${entry.id} + '/delete'}" method="post"
-                      onsubmit="return confirm('Eliminare questa riga?');">
-                    <button type="submit" class="icon-btn icon-delete" title="Elimina" aria-label="Elimina">
-                        <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">
-                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                        </svg>
-                    </button>
+            <!-- ---------- OGGI (log + input) ---------- -->
+            <section class="panel history">
+                <span class="panel-label" th:text="'╡ OGGI ── ' + ${todayLabel} + ' ╞'">╡ OGGI ╞</span>
+
+                <p th:if="${entries.isEmpty()}" class="empty">
+                    Nessuna voce per oggi. Scrivi cosa stai facendo qui sotto.
+                </p>
+
+                <ul class="entry-list">
+                    <li class="entry" th:each="entry : ${entries}"
+                        th:classappend="${entryTaskClass.containsKey(entry.id) ? entryTaskClass.get(entry.id) : ''}">
+                        <div class="entry-view">
+                            <span class="entry-time">
+                                <span class="entry-start" th:text="${dateTimeFormat.format(entry.startedAt)}">01/07 09:30</span>
+                                <span class="entry-end"
+                                      th:text="${entry.endedAt != null ? '→ ' + timeFormat.format(entry.endedAt) : '→ …'}">→ 10:00</span>
+                            </span>
+                            <span class="entry-sym"
+                                  th:classappend="${entry.endedAt == null ? 'sym-corso' : 'sym-done'}"
+                                  th:text="${entry.endedAt == null ? '◐' : '●'}">●</span>
+                            <span class="entry-text" th:text="${entry.description}">Descrizione</span>
+                            <span class="ctx-time" th:if="${contextTimes.containsKey(entry.id)}">
+                                <a class="ctx-time-btn"
+                                   th:href="${contextTimes.get(entry.id).url}"
+                                   th:title="'Tempo totale su questo argomento (ore)'"
+                                   th:text="${contextTimes.get(entry.id).label}">+0,75</a>
+                                <span class="ctx-time-actual"
+                                      th:title="'Tempo effettivo'"
+                                      th:text="'(' + ${contextTimes.get(entry.id).actual} + ')'">(0:47)</span>
+                            </span>
+                            <span class="entry-actions">
+                                <button type="button" class="icon-btn edit-toggle" title="Modifica" aria-label="Modifica">
+                                    <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">
+                                        <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                    </svg>
+                                </button>
+                                <form class="delete-form" th:action="@{'/entries/' + ${entry.id} + '/delete'}" method="post"
+                                      onsubmit="return confirm('Eliminare questa riga?');">
+                                    <button type="submit" class="icon-btn icon-delete" title="Elimina" aria-label="Elimina">
+                                        <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </span>
+                        </div>
+                        <form class="entry-edit" th:action="@{'/entries/' + ${entry.id}}" method="post" hidden>
+                            <input type="text" name="description" th:value="${entry.description}"
+                                   autocomplete="off" required>
+                            <button type="submit">Salva</button>
+                            <button type="button" class="edit-cancel link-button">Annulla</button>
+                        </form>
+                    </li>
+                </ul>
+
+                <!-- riga di inserimento -->
+                <form class="prompt-bar" th:action="@{/entries}" method="post">
+                    <span class="prompt-caret">&gt;</span>
+                    <input type="text"
+                           name="description"
+                           placeholder="Su cosa stai lavorando ora?"
+                           autocomplete="off"
+                           autofocus
+                           required>
+                    <button type="submit">Registra</button>
                 </form>
+            </section>
+        </div><!-- /.main-col -->
+
+        <!-- ---------- colonna destra: TASK + TOTALE ---------- -->
+        <aside class="task-sidebar">
+            <section class="panel">
+                <span class="panel-label">╡ TASK ╞</span>
+                <p th:if="${taskLinks.isEmpty()}" class="empty">
+                    Nessun task rilevato. Cita un numero (es. #12345) in una riga.
+                </p>
+                <ul class="task-list">
+                    <li class="task" th:each="t : ${taskLinks}" th:classappend="'tc-' + ${t.id}">
+                        <span class="task-head">
+                            <span class="entry-sym"
+                                  th:classappend="${t.id == openTaskId ? 'sym-corso' : 'sym-done'}"
+                                  th:text="${t.id == openTaskId ? '◐' : '●'}">●</span>
+                            <a class="task-id" th:href="${t.url}" target="_blank" rel="noopener"
+                               th:attr="data-clipboard=${taskClipboard.get(t.id)}"
+                               title="Copia il rapportino negli appunti e apri il task"
+                               th:text="'#' + ${t.id}">#12345</a>
+                            <span class="task-time" th:if="${taskTimes.containsKey(t.id)}"
+                                  th:text="${taskTimes.get(t.id).label} + ' (' + ${taskTimes.get(t.id).actual} + ')'">+1 (1:00)</span>
+                        </span>
+                        <span class="task-desc" th:text="${t.description}">descrizione della riga</span>
+                    </li>
+                </ul>
+                <div class="task-legend">
+                    <span class="sym-done">●</span> in linea
+                    <span class="sym-corso">◐</span> in corso
+                    <span class="sym-late">○</span> in ritardo
+                </div>
+            </section>
+
+            <section class="panel panel--yellow task-total" th:if="${contextTotal.hasTotal}">
+                <span class="panel-label">╡ TOTALE TEMPO ╞</span>
+                <span class="task-total-value">
+                    <span class="task-total-quarters" th:text="${contextTotal.totalLabel} + ' h'">2,75 h</span>
+                    <span class="task-total-actual" th:text="'(' + ${contextTotal.totalActual} + ')'">(2:32)</span>
                 </span>
-            </div>
-            <form class="entry-edit" th:action="@{'/entries/' + ${entry.id}}" method="post" hidden>
-                <input type="text" name="description" th:value="${entry.description}"
-                       autocomplete="off" required>
-                <button type="submit">Salva</button>
-                <button type="button" class="edit-cancel link-button">Annulla</button>
-            </form>
-        </li>
-    </ul>
-</main>
+            </section>
+        </aside>
 
-<!-- ---------- Barra di inserimento ---------- -->
-<form class="prompt-bar" th:action="@{/entries}" method="post">
-    <input type="text"
-           name="description"
-           placeholder="Su cosa stai lavorando ora?"
-           autocomplete="off"
-           autofocus
-           required>
-    <button type="submit">Registra</button>
-</form>
-
-</div><!-- /.main-col -->
-
-<!-- ---------- Colonna task ---------- -->
-<aside class="task-sidebar">
-    <h2>Task</h2>
-    <p th:if="${taskLinks.isEmpty()}" class="empty">
-        Nessun task rilevato. Cita un numero (es. #12345) in una riga e comparira' qui.
-    </p>
-    <ul class="task-list">
-        <li class="task" th:each="t : ${taskLinks}" th:classappend="'tc-' + ${t.id}">
-            <span class="task-head">
-                <span class="task-dot"></span>
-                <a class="task-id" th:href="${t.url}" target="_blank" rel="noopener"
-                   th:attr="data-clipboard=${taskClipboard.get(t.id)}"
-                   title="Copia il rapportino negli appunti e apri il task"
-                   th:text="'#' + ${t.id}">#12345</a>
-                <span class="task-time" th:if="${taskTimes.containsKey(t.id)}"
-                      th:text="${taskTimes.get(t.id).label} + ' (' + ${taskTimes.get(t.id).actual} + ')'">+1 (1:00)</span>
-            </span>
-            <span class="task-desc" th:text="${t.description}">descrizione della riga</span>
-        </li>
-    </ul>
-
-    <div class="task-total" th:if="${contextTotal.hasTotal}">
-        <span class="task-total-title">Totale tempo</span>
-        <span class="task-total-value">
-            <span class="task-total-quarters" th:text="${contextTotal.totalLabel} + ' h'">2,75 h</span>
-            <span class="task-total-actual" th:text="'(' + ${contextTotal.totalActual} + ')'">(2:32)</span>
-        </span>
-    </div>
-</aside>
-
-</div><!-- /.layout -->
+    </div><!-- /.layout -->
+</div><!-- /.screen -->
 
 <script th:src="@{/js/app.js}"></script>
 </body>
