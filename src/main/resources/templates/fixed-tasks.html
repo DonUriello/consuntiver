@@ -64,22 +64,76 @@
         <h2 th:text="${g.year}">2026</h2>
         <ul class="fixed-list">
             <li class="fixed-item" th:each="t : ${g.tasks}">
-                <a class="task-id" th:if="${t.url != null}" th:href="${t.url}"
-                   target="_blank" rel="noopener" th:text="'#' + ${t.taskNumber}">#12345</a>
-                <span class="task-id no-link" th:if="${t.url == null}">—</span>
-                <span class="fixed-desc">
-                    <strong th:text="${t.name}">Nome</strong>
-                    <span class="fixed-desc-detail" th:if="${t.description != null}"
-                          th:text="' — ' + ${t.description}"></span>
-                </span>
-                <form th:action="@{'/fixed-tasks/' + ${t.id} + '/delete'}" method="post"
-                      class="delete-form"
-                      onsubmit="return confirm('Eliminare questo task fisso?');">
-                    <button type="submit" class="link-button delete-btn">Elimina</button>
+                <div class="fixed-view">
+                    <a class="task-id" th:if="${t.url != null}" th:href="${t.url}"
+                       target="_blank" rel="noopener" th:text="'#' + ${t.taskNumber}">#12345</a>
+                    <span class="task-id no-link" th:if="${t.url == null}">—</span>
+                    <span class="fixed-desc">
+                        <strong th:text="${t.name}">Nome</strong>
+                        <span class="fixed-desc-detail" th:if="${t.description != null}"
+                              th:text="' — ' + ${t.description}"></span>
+                    </span>
+                    <div class="fixed-actions">
+                        <button type="button" class="icon-btn edit-btn fixed-edit-toggle"
+                                title="Modifica" aria-label="Modifica">✎</button>
+                        <form th:action="@{'/fixed-tasks/' + ${t.id} + '/delete'}" method="post"
+                              class="delete-form"
+                              onsubmit="return confirm('Eliminare questo task fisso?');">
+                            <button type="submit" class="icon-btn delete-btn"
+                                    title="Elimina" aria-label="Elimina">✕</button>
+                        </form>
+                    </div>
+                </div>
+                <form class="fixed-form fixed-edit" hidden
+                      th:action="@{'/fixed-tasks/' + ${t.id} + '/update'}" method="post">
+                    <div class="field field-year">
+                        <label>Anno</label>
+                        <input type="number" name="year" th:value="${g.year}"
+                               min="2000" max="2100" required>
+                    </div>
+                    <div class="field field-num">
+                        <label>Numero task</label>
+                        <input type="text" name="taskNumber" th:value="${t.taskNumber}"
+                               placeholder="es. 12345" inputmode="numeric" autocomplete="off">
+                    </div>
+                    <div class="field field-desc">
+                        <label>Nome</label>
+                        <input type="text" name="name" th:value="${t.name}"
+                               placeholder="es. Manutenzione impianto" autocomplete="off" required>
+                    </div>
+                    <div class="field field-desc">
+                        <label>Descrizione <span class="opt">(facoltativa)</span></label>
+                        <input type="text" name="description" th:value="${t.description}"
+                               placeholder="dettagli" autocomplete="off">
+                    </div>
+                    <button type="submit">Salva</button>
+                    <button type="button" class="link-button fixed-edit-cancel">Annulla</button>
                 </form>
             </li>
         </ul>
     </section>
 </main>
+<script>
+    (function () {
+        "use strict";
+        document.querySelectorAll(".fixed-edit-toggle").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                var item = btn.closest(".fixed-item");
+                item.querySelector(".fixed-view").hidden = true;
+                var form = item.querySelector(".fixed-edit");
+                form.hidden = false;
+                var input = form.querySelector("input[name='name']");
+                if (input) { input.focus(); }
+            });
+        });
+        document.querySelectorAll(".fixed-edit-cancel").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                var item = btn.closest(".fixed-item");
+                item.querySelector(".fixed-edit").hidden = true;
+                item.querySelector(".fixed-view").hidden = false;
+            });
+        });
+    })();
+</script>
 </body>
 </html>

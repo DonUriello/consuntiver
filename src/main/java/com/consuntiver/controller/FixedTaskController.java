@@ -51,6 +51,21 @@ public class FixedTaskController {
         return "redirect:/fixed-tasks";
     }
 
+    @PostMapping("/fixed-tasks/{id}/update")
+    public String update(@PathVariable("id") Long id,
+                         @RequestParam(value = "taskNumber", required = false) String taskNumber,
+                         @RequestParam(value = "name", required = false) String name,
+                         @RequestParam(value = "description", required = false) String description,
+                         @RequestParam("year") int year,
+                         Principal principal) {
+        boolean hasName = name != null && !name.isBlank();
+        boolean hasNumber = taskNumber != null && !taskNumber.isBlank();
+        if (hasName || hasNumber) {
+            fixedTaskService.update(principal.getName(), id, taskNumber, name, description, year);
+        }
+        return "redirect:/fixed-tasks";
+    }
+
     @PostMapping("/fixed-tasks/{id}/delete")
     public String delete(@PathVariable("id") Long id, Principal principal) {
         fixedTaskService.delete(principal.getName(), id);

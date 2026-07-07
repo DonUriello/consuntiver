@@ -24,6 +24,12 @@
     box-sizing: border-box;
 }
 
+/* L'attributo hidden deve sempre nascondere l'elemento, anche se una regola
+   piu' specifica gli assegna display:flex (es. .fixed-form, .entry-edit). */
+[hidden] {
+    display: none !important;
+}
+
 body {
     margin: 0;
     font-family: var(--font-mono);
@@ -727,18 +733,36 @@ button:hover:not(:disabled) { filter: brightness(1.1); }
 
 .fixed-list { list-style: none; margin: 0; padding: 0; }
 .fixed-item {
+    padding: 0.6rem 0;
+    border-bottom: 1px dashed var(--divider);
+}
+
+.fixed-view {
     display: flex;
     align-items: baseline;
     gap: 0.85rem;
-    padding: 0.6rem 0;
-    border-bottom: 1px dashed var(--divider);
 }
 
 .fixed-item .task-id { flex-shrink: 0; min-width: 4.5rem; color: var(--cyan); }
 .fixed-item .task-id.no-link { color: var(--muted); font-weight: 400; }
 .fixed-desc { flex: 1; word-break: break-word; color: var(--text2); }
+
+/* Icone azione del task fisso (matita / cestino), affiancate */
+.fixed-actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.fixed-actions .delete-form { margin: 0; display: flex; }
+.fixed-actions .edit-btn { color: var(--cyan); }
+.fixed-actions .delete-btn { color: var(--red); }
+
+/* Form di modifica del task fisso (nascosto finche' non si preme la matita) */
+.fixed-edit { margin-top: 0.6rem; }
+.fixed-edit-cancel { color: var(--muted); }
+
 .delete-form { margin: 0; flex-shrink: 0; }
-.delete-btn { color: var(--red); font-size: 0.8rem; }
 
 /* ---------- Responsive: colonna singola su schermi stretti ---------- */
 @media (max-width: 820px) {

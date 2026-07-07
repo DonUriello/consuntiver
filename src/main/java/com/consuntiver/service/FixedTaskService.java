@@ -50,6 +50,23 @@ public class FixedTaskService {
         return new ArrayList<>(byCode.values());
     }
 
+    /** Modifica un task fisso, solo se appartiene all'utente. */
+    public FixedTask update(String username, Long id, String taskNumberRaw,
+                            String name, String description, int year) {
+        User user = requireUser(username);
+        FixedTask task = fixedTaskRepository.findById(id)
+                .filter(t -> t.getUser().getId().equals(user.getId()))
+                .orElseThrow(() -> new AccessDeniedException("Task non trovato o non accessibile"));
+        String taskNumber = normalizeTaskNumber(taskNumberRaw);
+        task.setTaskNumber(taskNumber);
+        task.setName((name != null && !name.isBlank())
+                ? name.trim()
+                : (taskNumber != null ? "#" + taskNumber : "Task"));
+        task.setDescription((description != null && !description.isBlank()) ? description.trim() : null);
+        task.setYear(year);
+        return fixedTaskRepository.save(task);
+    }
+
     /** Cancella un task fisso, solo se appartiene all'utente. */
     public void delete(String username, Long id) {
         User user = requireUser(username);
