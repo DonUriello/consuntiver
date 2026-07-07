@@ -92,4 +92,18 @@
         link.parentNode.appendChild(badge);
         setTimeout(function () { badge.remove(); }, 1500);
     }
+
+    // ---------- Selettore task: inserisce #codice come testo nell'input attivita' ----------
+    var picker = document.querySelector(".task-picker");
+    var promptInput = document.querySelector(".prompt-bar input[name='description']");
+    if (picker && promptInput) {
+        picker.addEventListener("change", function () {
+            if (picker.value) {
+                var cur = promptInput.value.replace(/\s+$/, "");
+                promptInput.value = (cur ? cur + " " : "") + picker.value + " ";
+                picker.value = "";
+                promptInput.focus();
+            }
+        });
+    }
 })();

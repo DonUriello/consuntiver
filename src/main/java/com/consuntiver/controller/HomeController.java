@@ -5,6 +5,7 @@ import com.consuntiver.model.WorkEntry;
 import com.consuntiver.service.AttendanceService;
 import com.consuntiver.service.AttendanceService.WorkTimeSummary;
 import com.consuntiver.service.ContextTimeService;
+import com.consuntiver.service.FixedTaskService;
 import com.consuntiver.service.TaskLinkExtractor;
 import com.consuntiver.service.UserConfigService;
 import com.consuntiver.service.WorkEntryService;
@@ -51,17 +52,20 @@ public class HomeController {
     private final TaskLinkExtractor taskLinkExtractor;
     private final ContextTimeService contextTimeService;
     private final UserConfigService userConfigService;
+    private final FixedTaskService fixedTaskService;
 
     public HomeController(WorkEntryService workEntryService,
                           AttendanceService attendanceService,
                           TaskLinkExtractor taskLinkExtractor,
                           ContextTimeService contextTimeService,
-                          UserConfigService userConfigService) {
+                          UserConfigService userConfigService,
+                          FixedTaskService fixedTaskService) {
         this.workEntryService = workEntryService;
         this.attendanceService = attendanceService;
         this.taskLinkExtractor = taskLinkExtractor;
         this.contextTimeService = contextTimeService;
         this.userConfigService = userConfigService;
+        this.fixedTaskService = fixedTaskService;
     }
 
     @GetMapping("/")
@@ -84,6 +88,7 @@ public class HomeController {
         model.addAttribute("taskClipboard", buildTaskClipboard(taskLinks, entries, contextTimes));
         model.addAttribute("taskColorCss", buildTaskColorCss(taskLinks));
         model.addAttribute("entryTaskClass", buildEntryTaskClass(entries));
+        model.addAttribute("myTasks", fixedTaskService.options(username));
         model.addAttribute("homeUrl", config.getHomeUrl());
         model.addAttribute("attendances", attendances);
         model.addAttribute("summary", summary);

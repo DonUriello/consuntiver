@@ -91,6 +91,16 @@
                             </span>
                             <span class="entry-sym" title="Colore del task">●</span>
                             <span class="entry-text" th:text="${entry.description}">Descrizione</span>
+                            <!-- Termina attività: a sinistra del tempo totale, solo sulla riga aperta -->
+                            <form th:if="${entry.endedAt == null}" class="end-form"
+                                  th:action="@{'/entries/' + ${entry.id} + '/end'}" method="post">
+                                <button type="submit" class="icon-btn icon-end"
+                                        title="Termina attività" aria-label="Termina attività">
+                                    <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">
+                                        <rect x="3" y="3" width="10" height="10" rx="1.5"/>
+                                    </svg>
+                                </button>
+                            </form>
                             <span class="ctx-time" th:if="${contextTimes.containsKey(entry.id)}">
                                 <a class="ctx-time-btn"
                                    th:href="${contextTimes.get(entry.id).url}"
@@ -101,15 +111,6 @@
                                       th:text="'(' + ${contextTimes.get(entry.id).actual} + ')'">(0:47)</span>
                             </span>
                             <span class="entry-actions">
-                                <form th:if="${entry.endedAt == null}" class="delete-form"
-                                      th:action="@{'/entries/' + ${entry.id} + '/end'}" method="post">
-                                    <button type="submit" class="icon-btn icon-end"
-                                            title="Termina attività" aria-label="Termina attività">
-                                        <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">
-                                            <rect x="3" y="3" width="10" height="10" rx="1.5"/>
-                                        </svg>
-                                    </button>
-                                </form>
                                 <button type="button" class="icon-btn edit-toggle" title="Modifica" aria-label="Modifica">
                                     <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">
                                         <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
@@ -138,6 +139,12 @@
                 <!-- riga di inserimento -->
                 <form class="prompt-bar" th:action="@{/entries}" method="post">
                     <span class="prompt-caret">&gt;</span>
+                    <select class="task-picker" th:if="${!myTasks.isEmpty()}" title="Inserisci un task nel testo">
+                        <option value="">+ task</option>
+                        <option th:each="o : ${myTasks}"
+                                th:value="'#' + ${o.code}"
+                                th:text="'#' + ${o.code} + ' — ' + ${o.name}">#12345 — Nome</option>
+                    </select>
                     <input type="text"
                            name="description"
                            placeholder="Su cosa stai lavorando ora?"

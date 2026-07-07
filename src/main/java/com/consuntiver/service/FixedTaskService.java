@@ -38,6 +38,18 @@ public class FixedTaskService {
         return fixedTaskRepository.save(new FixedTask(taskNumber, finalName, finalDescription, year, user));
     }
 
+    /** Task dell'utente che hanno un codice, per il selettore sulla barra attivita' (dedup per codice). */
+    public List<TaskOption> options(String username) {
+        User user = requireUser(username);
+        LinkedHashMap<String, TaskOption> byCode = new LinkedHashMap<>();
+        for (FixedTask t : fixedTaskRepository.findByUserOrderByYearDescIdDesc(user)) {
+            if (t.getTaskNumber() != null) {
+                byCode.putIfAbsent(t.getTaskNumber(), new TaskOption(t.getTaskNumber(), t.getName()));
+            }
+        }
+        return new ArrayList<>(byCode.values());
+    }
+
     /** Cancella un task fisso, solo se appartiene all'utente. */
     public void delete(String username, Long id) {
         User user = requireUser(username);
@@ -88,5 +100,9 @@ public class FixedTaskService {
 
     /** Gruppo di task fissi di uno stesso anno. */
     public record YearGroup(int year, List<FixedTaskView> tasks) {
+    }
+
+    /** Opzione del selettore task (codice + nome). */
+    public record TaskOption(String code, String name) {
     }
 }

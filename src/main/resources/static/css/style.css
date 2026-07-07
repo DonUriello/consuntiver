@@ -303,7 +303,7 @@ button:disabled {
 
 .entry-view {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     gap: 12px;
 }
 
@@ -333,9 +333,8 @@ button:disabled {
     color: var(--text);
     flex: 1;
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 
 .ctx-time {
@@ -384,6 +383,13 @@ button:disabled {
 .icon-delete { color: var(--red); }
 .icon-end { color: var(--green); }
 
+/* Form del bottone "termina attivita'": inline, a sinistra del tempo totale */
+.end-form {
+    margin: 0;
+    flex-shrink: 0;
+    display: inline-flex;
+}
+
 /* Modifica inline (nascosta finche' non si preme la matita) */
 .entry-edit {
     display: none;
@@ -428,6 +434,21 @@ button:disabled {
     color: var(--green);
     font-weight: 700;
 }
+
+/* Selettore task nella barra: inserisce #codice come testo nell'input */
+.task-picker {
+    flex-shrink: 0;
+    max-width: 150px;
+    background: #1a1a20;
+    color: var(--cyan);
+    border: 1px solid var(--border);
+    font: inherit;
+    font-size: 12px;
+    padding: 2px 4px;
+    cursor: pointer;
+}
+
+.task-picker:focus { outline: none; border-color: var(--cyan); }
 
 .prompt-bar input {
     flex: 1;
