@@ -26,14 +26,16 @@ resta con `→ …`). Il pulsante **Modifica** apre il campo di modifica **solo*
 quando lo premi (non è più sempre visibile).
 
 ### Orario di lavoro (in alto)
-Tre pulsanti per le timbrature:
-- **Inizio**: apre una sessione di lavoro.
-- **Pausa**: chiude la sessione in corso (es. pausa pranzo). Puoi fare più
-  coppie Inizio/Pausa nella stessa giornata: i tempi si sommano.
-- **Fine**: come la Pausa, ma scrive anche una riga "Fine giornata" nello storico.
+Quattro orari che inserisci a mano e poi salvi con **Salva orari**:
+- **Entrata**: avvia il timer delle 8 ore.
+- **Pausa pranzo** e **Rientro**: delimitano la pausa; il tempo tra i due non
+  conta come lavoro.
+- **Uscita**: chiude la giornata.
 
-Un **contatore live** avanza mentre sei "in servizio", somma le sessioni del
-giorno e ti avvisa quando raggiungi le **8 ore** (con barra di avanzamento).
+Un **contatore live** parte dall'orario di entrata e conta il **lavoro netto**
+(esclusa la pausa pranzo) verso le **8 ore**, con barra di avanzamento. La pausa
+è quella effettiva se hai indicato sia pausa che rientro, altrimenti si assume
+**1 ora**; in base a questo il timer stima anche l'orario di uscita previsto.
 
 ### Task e link a Easy (colonna a destra)
 Se in una riga citi il numero di un task, l'app lo riconosce e a destra crea il

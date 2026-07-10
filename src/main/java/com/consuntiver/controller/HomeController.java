@@ -1,13 +1,11 @@
 package com.consuntiver.controller;
 
-import com.consuntiver.model.Attendance;
 import com.consuntiver.model.WorkEntry;
-import com.consuntiver.service.AttendanceService;
-import com.consuntiver.service.AttendanceService.WorkTimeSummary;
 import com.consuntiver.service.ContextTimeService;
 import com.consuntiver.service.FixedTaskService;
 import com.consuntiver.service.TaskLinkExtractor;
 import com.consuntiver.service.UserConfigService;
+import com.consuntiver.service.WorkDayService;
 import com.consuntiver.service.WorkEntryService;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.stereotype.Controller;
@@ -44,24 +42,21 @@ public class HomeController {
     private static final DateTimeFormatter DATE_FORMAT =
             DateTimeFormatter.ofPattern("dd/MM", Locale.ITALY).withZone(ZONE);
 
-    /** Obiettivo giornaliero: 8 ore, in secondi. */
-    private static final long TARGET_SECONDS = 8 * 60 * 60;
-
     private final WorkEntryService workEntryService;
-    private final AttendanceService attendanceService;
+    private final WorkDayService workDayService;
     private final TaskLinkExtractor taskLinkExtractor;
     private final ContextTimeService contextTimeService;
     private final UserConfigService userConfigService;
     private final FixedTaskService fixedTaskService;
 
     public HomeController(WorkEntryService workEntryService,
-                          AttendanceService attendanceService,
+                          WorkDayService workDayService,
                           TaskLinkExtractor taskLinkExtractor,
                           ContextTimeService contextTimeService,
                           UserConfigService userConfigService,
                           FixedTaskService fixedTaskService) {
         this.workEntryService = workEntryService;
-        this.attendanceService = attendanceService;
+        this.workDayService = workDayService;
         this.taskLinkExtractor = taskLinkExtractor;
         this.contextTimeService = contextTimeService;
         this.userConfigService = userConfigService;
@@ -73,8 +68,7 @@ public class HomeController {
         String username = principal.getName();
 
         List<WorkEntry> entries = workEntryService.todayEntries(username, ZONE);
-        List<Attendance> attendances = attendanceService.todayAttendances(username, ZONE);
-        WorkTimeSummary summary = attendanceService.todaySummary(username, ZONE);
+        WorkDayService.WorkDayView workDay = workDayService.today(username, ZONE);
 
         var config = userConfigService.get(username);
         ContextTimeService.Result contextTimes = contextTimeService.compute(entries, Instant.now());
@@ -90,9 +84,9 @@ public class HomeController {
         model.addAttribute("entryTaskClass", buildEntryTaskClass(entries));
         model.addAttribute("myTasks", fixedTaskService.options(username));
         model.addAttribute("homeUrl", config.getHomeUrl());
-        model.addAttribute("attendances", attendances);
-        model.addAttribute("summary", summary);
-        model.addAttribute("targetSeconds", TARGET_SECONDS);
+        model.addAttribute("workDay", workDay);
+        model.addAttribute("targetSeconds", WorkDayService.TARGET_SECONDS);
+        model.addAttribute("defaultBreakSeconds", WorkDayService.DEFAULT_BREAK_SECONDS);
         model.addAttribute("serverNowMillis", System.currentTimeMillis());
         model.addAttribute("timeFormat", TIME_FORMAT);
         model.addAttribute("dateTimeFormat", DATE_TIME_FORMAT);
@@ -198,24 +192,14 @@ public class HomeController {
         return "redirect:/";
     }
 
-    @PostMapping("/attendance/in")
-    public String clockIn(Principal principal) {
-        attendanceService.clockIn(principal.getName());
-        return "redirect:/";
-    }
-
-    @PostMapping("/attendance/out")
-    public String clockOut(Principal principal) {
-        attendanceService.clockOut(principal.getName());
-        return "redirect:/";
-    }
-
-    /** Come la pausa (chiude la sessione) ma segna anche "Fine giornata" nello storico. */
-    @PostMapping("/attendance/end")
-    public String endDay(Principal principal) {
-        String username = principal.getName();
-        attendanceService.clockOut(username);
-        workEntryService.add(username, "Fine giornata");
+    /** Salva i quattro orari della giornata (entrata, pausa, rientro, uscita), inseriti a mano. */
+    @PostMapping("/worktimes")
+    public String saveWorkTimes(@RequestParam(value = "entry", required = false) String entry,
+                                @RequestParam(value = "lunchStart", required = false) String lunchStart,
+                                @RequestParam(value = "lunchEnd", required = false) String lunchEnd,
+                                @RequestParam(value = "exit", required = false) String exit,
+                                Principal principal) {
+        workDayService.saveTimes(principal.getName(), ZONE, entry, lunchStart, lunchEnd, exit);
         return "redirect:/";
     }
 }

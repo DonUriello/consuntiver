@@ -2,12 +2,21 @@
     "use strict";
 
     // ---------- Contatore live del tempo di lavoro ----------
+    // Il timer conta il lavoro NETTO (esclusa la pausa pranzo) verso le 8 ore, a
+    // partire dall'orario di entrata inserito a mano. La pausa e' quella effettiva
+    // se sono presenti sia inizio che rientro, altrimenti si assume 1 ora.
     var el = document.getElementById("worktime");
     if (el) {
-        var accumulated = parseInt(el.dataset.accumulated || "0", 10);
-        var openSinceRaw = el.dataset.openSince;
-        var openSince = openSinceRaw ? parseInt(openSinceRaw, 10) : null;
+        var num = function (key) {
+            var v = el.dataset[key];
+            return (v === undefined || v === "" || v === "null") ? null : parseInt(v, 10);
+        };
+        var entry = num("entry");
+        var lunchStart = num("lunchStart");
+        var lunchEnd = num("lunchEnd");
+        var exit = num("exit");
         var target = parseInt(el.dataset.target || "28800", 10);
+        var defaultBreak = parseInt(el.dataset.defaultBreak || "3600", 10) * 1000;
         var serverNow = parseInt(el.dataset.serverNow || Date.now(), 10);
         // Differenza tra orologio del server e del browser, per non sballare il conteggio.
         var offset = serverNow - Date.now();
@@ -16,38 +25,80 @@
         var barEl = document.getElementById("wt-bar");
         var statusEl = document.getElementById("wt-status");
 
+        var pad = function (n) { return n < 10 ? "0" + n : "" + n; };
+
         var fmt = function (totalSeconds) {
             var s = Math.max(0, Math.floor(totalSeconds));
-            var h = Math.floor(s / 3600);
-            var m = Math.floor((s % 3600) / 60);
-            var sec = s % 60;
-            var pad = function (n) { return n < 10 ? "0" + n : "" + n; };
-            return pad(h) + ":" + pad(m) + ":" + pad(sec);
+            return pad(Math.floor(s / 3600)) + ":" + pad(Math.floor((s % 3600) / 60)) + ":" + pad(s % 60);
+        };
+        var hm = function (totalSeconds) {
+            var s = Math.max(0, Math.floor(totalSeconds));
+            return pad(Math.floor(s / 3600)) + ":" + pad(Math.floor((s % 3600) / 60));
+        };
+        // Orario nel fuso Europe/Rome, coerente con quanto salvato lato server.
+        var clockLabel = function (ms) {
+            return new Date(ms).toLocaleTimeString("it-IT",
+                    { timeZone: "Europe/Rome", hour: "2-digit", minute: "2-digit" });
+        };
+
+        // Secondi di lavoro netto fino a "end" (ms).
+        var workedSeconds = function (end) {
+            if (end < entry) { end = entry; }
+            var ms;
+            if (lunchStart !== null && lunchEnd !== null) {
+                if (end <= lunchStart) { ms = end - entry; }
+                else if (end < lunchEnd) { ms = lunchStart - entry; }
+                else { ms = (lunchStart - entry) + (end - lunchEnd); }
+            } else if (lunchStart !== null) {
+                ms = (end <= lunchStart) ? (end - entry) : (lunchStart - entry);
+            } else {
+                ms = end - entry;
+            }
+            return ms / 1000;
         };
 
         var tick = function () {
-            var total = accumulated;
-            if (openSince !== null) {
-                total += (Date.now() + offset - openSince) / 1000;
+            var now = Date.now() + offset;
+            var end = (exit !== null) ? exit : now;
+            var onBreak = exit === null && lunchStart !== null && end > lunchStart
+                    && (lunchEnd === null || end < lunchEnd);
+
+            var worked = workedSeconds(end);
+            counterEl.textContent = fmt(worked);
+            barEl.style.width = Math.min(100, (worked / target) * 100).toFixed(1) + "%";
+            barEl.classList.toggle("done", worked >= target);
+
+            // Pausa considerata per stimare l'uscita: effettiva se completa, altrimenti 1h.
+            var breakMs = (lunchStart !== null && lunchEnd !== null)
+                    ? (lunchEnd - lunchStart) : defaultBreak;
+            if (onBreak && lunchEnd === null) {
+                breakMs = Math.max(defaultBreak, now - lunchStart);
             }
-            counterEl.textContent = fmt(total);
+            var expectedExit = entry + target * 1000 + breakMs;
 
-            var pct = Math.min(100, (total / target) * 100);
-            barEl.style.width = pct.toFixed(1) + "%";
-
-            if (total >= target) {
-                barEl.classList.add("done");
-                statusEl.textContent = "✅ Hai completato le 8 ore!";
-            } else if (openSince !== null) {
-                statusEl.textContent = "Mancano " + fmt(target - total) + " alle 8 ore";
+            if (exit !== null) {
+                statusEl.textContent = worked >= target
+                        ? "✅ Giornata completata: " + hm(worked) + " lavorate."
+                        : "Uscita registrata: " + hm(worked) + " lavorate (sotto le 8 ore).";
+            } else if (onBreak) {
+                statusEl.textContent = "⏸ In pausa pranzo — " + hm(worked) + " lavorate finora.";
+            } else if (worked >= target) {
+                statusEl.textContent = "✅ Hai completato le 8 ore! Puoi uscire.";
             } else {
-                statusEl.textContent = "Non sei in servizio";
+                statusEl.textContent = "Mancano " + hm(target - worked)
+                        + " alle 8 ore · uscita prevista ~" + clockLabel(expectedExit);
             }
         };
 
-        tick();
-        if (openSince !== null) {
-            setInterval(tick, 1000);
+        if (entry === null) {
+            counterEl.textContent = "00:00:00";
+            barEl.style.width = "0%";
+            statusEl.textContent = "Inserisci l'orario di entrata per avviare il timer.";
+        } else {
+            tick();
+            if (exit === null) {
+                setInterval(tick, 1000);
+            }
         }
     }
 

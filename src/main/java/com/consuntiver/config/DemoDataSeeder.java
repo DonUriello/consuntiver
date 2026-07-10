@@ -1,10 +1,10 @@
 package com.consuntiver.config;
 
-import com.consuntiver.model.Attendance;
 import com.consuntiver.model.User;
+import com.consuntiver.model.WorkDay;
 import com.consuntiver.model.WorkEntry;
-import com.consuntiver.repository.AttendanceRepository;
 import com.consuntiver.repository.UserRepository;
+import com.consuntiver.repository.WorkDayRepository;
 import com.consuntiver.repository.WorkEntryRepository;
 import com.consuntiver.service.EasyLinks;
 import com.consuntiver.service.UserConfigService;
@@ -37,18 +37,18 @@ public class DemoDataSeeder implements ApplicationRunner {
     private final UserRepository userRepository;
     private final UserConfigService userConfigService;
     private final WorkEntryRepository workEntryRepository;
-    private final AttendanceRepository attendanceRepository;
+    private final WorkDayRepository workDayRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DemoDataSeeder(UserRepository userRepository,
                           UserConfigService userConfigService,
                           WorkEntryRepository workEntryRepository,
-                          AttendanceRepository attendanceRepository,
+                          WorkDayRepository workDayRepository,
                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userConfigService = userConfigService;
         this.workEntryRepository = workEntryRepository;
-        this.attendanceRepository = attendanceRepository;
+        this.workDayRepository = workDayRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -67,7 +67,7 @@ public class DemoDataSeeder implements ApplicationRunner {
 
         // Rigenera ogni avvio, cosi' la demo mostra sempre una giornata "di oggi".
         workEntryRepository.deleteByUser(demo);
-        attendanceRepository.deleteByUser(demo);
+        workDayRepository.deleteByUser(demo);
 
         // Giornata intera 08:00 -> 17:00 (di oggi, fuso Roma), tutte le righe chiuse.
         List<Segment> day = List.of(
@@ -94,18 +94,13 @@ public class DemoDataSeeder implements ApplicationRunner {
             cursor = end;
         }
 
-        // Timbrature: mattina 08:00 -> 13:00, pomeriggio 14:00 -> 17:00 (8 ore lavorate).
-        Instant dayStart = LocalDate.now(ZONE).atTime(8, 0).atZone(ZONE).toInstant();
-        Instant lunchStart = LocalDate.now(ZONE).atTime(13, 0).atZone(ZONE).toInstant();
-        Instant lunchEnd = LocalDate.now(ZONE).atTime(14, 0).atZone(ZONE).toInstant();
-        Instant dayEnd = LocalDate.now(ZONE).atTime(17, 0).atZone(ZONE).toInstant();
-
-        Attendance morning = new Attendance(dayStart, demo);
-        morning.setClockOut(lunchStart);
-        attendanceRepository.save(morning);
-
-        Attendance afternoon = new Attendance(lunchEnd, demo);
-        afternoon.setClockOut(dayEnd);
-        attendanceRepository.save(afternoon);
+        // Orari giornata: entrata 08:00, pausa 13:00 -> 14:00, uscita 17:00 (8 ore lavorate).
+        LocalDate today = LocalDate.now(ZONE);
+        WorkDay workDay = new WorkDay(today, demo);
+        workDay.setEntryAt(today.atTime(8, 0).atZone(ZONE).toInstant());
+        workDay.setLunchStartAt(today.atTime(13, 0).atZone(ZONE).toInstant());
+        workDay.setLunchEndAt(today.atTime(14, 0).atZone(ZONE).toInstant());
+        workDay.setExitAt(today.atTime(17, 0).atZone(ZONE).toInstant());
+        workDayRepository.save(workDay);
     }
 }

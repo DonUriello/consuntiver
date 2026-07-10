@@ -37,39 +37,44 @@
             <!-- ---------- TIMER ---------- -->
             <section class="panel panel--green worktime"
                      id="worktime"
-                     th:attr="data-accumulated=${summary.accumulatedSeconds},
-                              data-open-since=${summary.openSinceMillis},
+                     th:attr="data-entry=${workDay.entryMillis},
+                              data-lunch-start=${workDay.lunchStartMillis},
+                              data-lunch-end=${workDay.lunchEndMillis},
+                              data-exit=${workDay.exitMillis},
                               data-server-now=${serverNowMillis},
-                              data-target=${targetSeconds}">
+                              data-target=${targetSeconds},
+                              data-default-break=${defaultBreakSeconds}">
                 <span class="panel-label">╡ TIMER ╞</span>
                 <div class="worktime-top">
                     <div class="worktime-counter">
                         <span id="wt-counter" class="wt-counter">00:00:00</span>
                         <span class="wt-target">/ 08:00:00</span>
                     </div>
-                    <div class="worktime-actions">
-                        <form th:action="@{/attendance/in}" method="post">
-                            <button type="submit" class="btn-in"
-                                    th:disabled="${summary.clockedIn()}">Inizio</button>
-                        </form>
-                        <form th:action="@{/attendance/out}" method="post">
-                            <button type="submit" class="btn-out"
-                                    th:disabled="${!summary.clockedIn()}">Pausa</button>
-                        </form>
-                    </div>
                 </div>
 
                 <div class="wt-progress"><div id="wt-bar" class="wt-progress-fill"></div></div>
                 <div id="wt-status" class="wt-status">&nbsp;</div>
 
-                <ul class="punch-list" th:if="${!attendances.isEmpty()}">
-                    <li th:each="a : ${attendances}">
-                        <span class="punch-in" th:text="${timeFormat.format(a.clockIn)}">09:00</span>
-                        <span class="punch-sep">→</span>
-                        <span class="punch-out"
-                              th:text="${a.clockOut != null ? timeFormat.format(a.clockOut) : 'in corso…'}">18:00</span>
-                    </li>
-                </ul>
+                <!-- Quattro orari inseriti a mano: entrata, pausa, rientro, uscita -->
+                <form class="worktime-form" th:action="@{/worktimes}" method="post">
+                    <div class="wt-field">
+                        <label for="wt-entry">Entrata</label>
+                        <input type="time" id="wt-entry" name="entry" th:value="${workDay.entry}">
+                    </div>
+                    <div class="wt-field">
+                        <label for="wt-lunch-start">Pausa pranzo</label>
+                        <input type="time" id="wt-lunch-start" name="lunchStart" th:value="${workDay.lunchStart}">
+                    </div>
+                    <div class="wt-field">
+                        <label for="wt-lunch-end">Rientro</label>
+                        <input type="time" id="wt-lunch-end" name="lunchEnd" th:value="${workDay.lunchEnd}">
+                    </div>
+                    <div class="wt-field">
+                        <label for="wt-exit">Uscita</label>
+                        <input type="time" id="wt-exit" name="exit" th:value="${workDay.exit}">
+                    </div>
+                    <button type="submit" class="btn-in">Salva orari</button>
+                </form>
             </section>
 
             <!-- ---------- OGGI (log + input) ---------- -->

@@ -66,14 +66,13 @@ LEFT JOIN task tk
       AND tk.year = EXTRACT(YEAR FROM CURRENT_DATE)::int
 WHERE u.username = 'demo_galileo';
 
--- 6) Timbrature: mattina 08:00 -> 13:00, pomeriggio 14:00 -> 17:00 (8 ore)
-INSERT INTO work_session (id_user, clock_in, clock_out)
+-- 6) Giornata: entrata 08:00, pausa 13:00 -> 14:00, uscita 17:00 (8 ore nette)
+INSERT INTO work_session (id_user, work_date, entry_at, lunch_start_at, lunch_end_at, exit_at)
 SELECT u.id,
-       (CURRENT_DATE + w.s) AT TIME ZONE 'Europe/Rome',
-       (CURRENT_DATE + w.e) AT TIME ZONE 'Europe/Rome'
+       CURRENT_DATE,
+       (CURRENT_DATE + TIME '08:00') AT TIME ZONE 'Europe/Rome',
+       (CURRENT_DATE + TIME '13:00') AT TIME ZONE 'Europe/Rome',
+       (CURRENT_DATE + TIME '14:00') AT TIME ZONE 'Europe/Rome',
+       (CURRENT_DATE + TIME '17:00') AT TIME ZONE 'Europe/Rome'
 FROM users u
-CROSS JOIN (VALUES
-    (TIME '08:00', TIME '13:00'),
-    (TIME '14:00', TIME '17:00')
-) AS w(s, e)
 WHERE u.username = 'demo_galileo';

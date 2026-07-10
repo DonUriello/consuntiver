@@ -197,49 +197,64 @@ body {
     font-variant-numeric: tabular-nums;
 }
 
-.worktime-actions {
+/* Form dei quattro orari inseriti a mano (entrata / pausa / rientro / uscita) */
+.worktime-form {
     display: flex;
-    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--divider2);
 }
 
-.worktime-actions button {
-    font-family: inherit;
+.wt-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.wt-field label {
+    font-size: 12px;
     font-weight: 600;
-    font-size: 13px;
-    padding: 3px 12px;
-    border: 1px solid transparent;
-    background: none;
-    cursor: pointer;
+    color: var(--text2);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: var(--text2);
 }
 
-.worktime-actions button::before { content: "[ "; }
-.worktime-actions button::after { content: " ]"; }
+.wt-field input[type="time"] {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 5px 8px;
+    background: #1a1a20;
+    border: 1px solid var(--divider2);
+    color: var(--text);
+    color-scheme: dark;
+}
 
-/* INIZIO: pulsante primario, piu' grande ed evidente */
+.wt-field input[type="time"]:focus {
+    outline: none;
+    border-color: var(--green);
+}
+
+/* SALVA: pulsante primario, evidente */
 .btn-in {
+    font-family: inherit;
     background: var(--green) !important;
     color: var(--on-green) !important;
     font-weight: 700;
-    font-size: 15px;
-    padding: 6px 22px;
+    font-size: 14px;
+    padding: 6px 20px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     box-shadow: 0 0 0 1px var(--green), 0 0 14px rgba(74, 222, 128, 0.55);
 }
 
 .btn-in:hover:not(:disabled) {
     filter: brightness(1.15);
     box-shadow: 0 0 0 1px var(--green), 0 0 20px rgba(74, 222, 128, 0.75);
-}
-
-.btn-out {
-    border-color: var(--red) !important;
-    color: var(--red) !important;
-}
-
-.worktime-actions button:hover:not(:disabled) {
-    filter: brightness(1.1);
 }
 
 button:disabled {
@@ -269,24 +284,6 @@ button:disabled {
     font-size: 13px;
     color: var(--green);
 }
-
-.punch-list {
-    list-style: none;
-    margin: 10px 0 0;
-    padding: 10px 0 0;
-    border-top: 1px dashed var(--divider2);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 12px;
-    font-size: 13px;
-    font-variant-numeric: tabular-nums;
-    color: var(--muted);
-}
-
-.punch-list li { display: flex; gap: 6px; }
-.punch-in { color: var(--green); }
-.punch-sep { color: var(--divider2); }
-.punch-out { color: var(--red); }
 
 /* ---------- Pannello OGGI (log) ---------- */
 .empty {
