@@ -63,7 +63,14 @@ conteggio si **ri-adegua automaticamente** se correggi una riga. Il link del
 bottone è ancora da definire.
 
 Sotto la colonna dei task un riquadro mostra il **totale del tempo** della
-giornata, aggiornato a ogni nuova rilevazione.
+giornata, aggiornato a ogni nuova rilevazione. Sotto il totale il link
+**» storico giornate** apre lo storico.
+
+## Storico giornate (pagina dedicata)
+Il link **» storico giornate** (sotto il totale del tempo) apre l'elenco delle
+giornate passate (oggi resta in home), dalla più recente. Per ogni giornata
+trovi gli **orari** (entrata/pausa/uscita) con il **lavoro netto**, il **totale
+del tempo** con la ripartizione per task, e l'elenco delle attività svolte.
 
 ## Task fissi (pagina dedicata)
 Dal link **Task fissi** nell'header gestisci i task validi per un intero anno

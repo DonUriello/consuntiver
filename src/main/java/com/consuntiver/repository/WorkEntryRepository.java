@@ -14,6 +14,9 @@ public interface WorkEntryRepository extends JpaRepository<WorkEntry, Long> {
     List<WorkEntry> findByUserAndStartedAtBetweenOrderByStartedAtDesc(
             User user, Instant from, Instant to);
 
+    /** Tutte le voci dell'utente, dalla piu' recente alla piu' vecchia (per lo storico). */
+    List<WorkEntry> findByUserOrderByStartedAtDesc(User user);
+
     /** L'eventuale voce ancora "in corso" (senza fine) dell'utente. */
     Optional<WorkEntry> findFirstByUserAndEndedAtIsNullOrderByStartedAtDesc(User user);
 

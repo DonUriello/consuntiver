@@ -7,6 +7,7 @@ import com.consuntiver.repository.WorkDayRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -58,6 +59,23 @@ public class WorkDayService {
         day.setExitAt(parse(exit, today, zone));
 
         workDayRepository.save(day);
+    }
+
+    /**
+     * Secondi di lavoro netto di una giornata conclusa (servono sia entrata sia uscita):
+     * (uscita - entrata) meno la pausa pranzo, che vale comunque almeno {@link #MIN_BREAK_SECONDS}.
+     * Restituisce null se la giornata non ha entrata e uscita.
+     */
+    public static Long netWorkedSeconds(WorkDay day) {
+        if (day == null || day.getEntryAt() == null || day.getExitAt() == null) {
+            return null;
+        }
+        long gross = Duration.between(day.getEntryAt(), day.getExitAt()).getSeconds();
+        if (day.getLunchStartAt() != null && day.getLunchEndAt() != null) {
+            long lunch = Duration.between(day.getLunchStartAt(), day.getLunchEndAt()).getSeconds();
+            gross -= Math.max(lunch, MIN_BREAK_SECONDS);
+        }
+        return Math.max(0, gross);
     }
 
     /** Converte "HH:mm" in un istante sul giorno indicato; null se vuoto/non valido. */

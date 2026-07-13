@@ -3,6 +3,7 @@ package com.consuntiver.controller;
 import com.consuntiver.model.WorkEntry;
 import com.consuntiver.service.ContextTimeService;
 import com.consuntiver.service.FixedTaskService;
+import com.consuntiver.service.TaskColorService;
 import com.consuntiver.service.TaskLinkExtractor;
 import com.consuntiver.service.UserConfigService;
 import com.consuntiver.service.WorkDayService;
@@ -48,19 +49,22 @@ public class HomeController {
     private final ContextTimeService contextTimeService;
     private final UserConfigService userConfigService;
     private final FixedTaskService fixedTaskService;
+    private final TaskColorService taskColorService;
 
     public HomeController(WorkEntryService workEntryService,
                           WorkDayService workDayService,
                           TaskLinkExtractor taskLinkExtractor,
                           ContextTimeService contextTimeService,
                           UserConfigService userConfigService,
-                          FixedTaskService fixedTaskService) {
+                          FixedTaskService fixedTaskService,
+                          TaskColorService taskColorService) {
         this.workEntryService = workEntryService;
         this.workDayService = workDayService;
         this.taskLinkExtractor = taskLinkExtractor;
         this.contextTimeService = contextTimeService;
         this.userConfigService = userConfigService;
         this.fixedTaskService = fixedTaskService;
+        this.taskColorService = taskColorService;
     }
 
     @GetMapping("/")
@@ -80,7 +84,8 @@ public class HomeController {
         model.addAttribute("contextTotal", contextTimes);
         model.addAttribute("taskLinks", taskLinks);
         model.addAttribute("taskClipboard", buildTaskClipboard(taskLinks, entries, contextTimes));
-        model.addAttribute("taskColorCss", buildTaskColorCss(taskLinks));
+        model.addAttribute("taskColorCss",
+                taskColorService.buildCss(taskLinks.stream().map(TaskLinkExtractor.TaskLink::id).toList()));
         model.addAttribute("entryTaskClass", buildEntryTaskClass(entries));
         model.addAttribute("myTasks", fixedTaskService.options(username));
         model.addAttribute("homeUrl", config.getHomeUrl());
@@ -124,19 +129,6 @@ public class HomeController {
         return clipboard;
     }
 
-    /**
-     * CSS con una classe {@code .tc-<idtask>} per ogni task, che imposta la variabile
-     * {@code --tc} col colore del task. La stessa classe colora orario, badge e colonna task.
-     */
-    private String buildTaskColorCss(List<TaskLinkExtractor.TaskLink> taskLinks) {
-        StringBuilder css = new StringBuilder();
-        for (TaskLinkExtractor.TaskLink task : taskLinks) {
-            css.append(".tc-").append(task.id())
-                    .append("{--tc:").append(colorFor(task.id())).append(";}");
-        }
-        return css.toString();
-    }
-
     /** Mappa id-riga -> classe colore ({@code tc-<idtask>}) per le righe che citano un task. */
     private Map<Long, String> buildEntryTaskClass(List<WorkEntry> entries) {
         Map<Long, String> classes = new HashMap<>();
@@ -145,12 +137,6 @@ public class HomeController {
                     .ifPresent(id -> classes.put(entry.getId(), "tc-" + id));
         }
         return classes;
-    }
-
-    /** Colore del task: tinta derivata (stabile) dal numero, cosi' non cambia a ogni ricarica. */
-    private static String colorFor(String taskId) {
-        int hue = Math.floorMod(taskId.hashCode(), 360);
-        return "hsl(" + hue + ", 65%, 45%)";
     }
 
     /** Rimuove il riferimento al task (es. "#129671") dalla descrizione, lasciando l'attivita'. */

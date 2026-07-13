@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storico - Consuntiver</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- Colori per task: una classe .tc-<idtask> per ciascun task, generata a runtime. -->
+    <style th:utext="${history.taskColorCss}"></style>
+</head>
+<body class="term">
+<div class="screen">
+
+    <header class="app-header">
+        <div class="app-brand">
+            <span class="app-title">Consuntiver</span>
+            <span class="brand-ver">v1.0</span>
+            <th:block th:replace="~{fragments/help :: help}"></th:block>
+        </div>
+        <div class="app-nav">
+            <a class="ext-link nav-cyan" th:href="@{/}">[home]</a>
+            <a class="ext-link nav-cyan" th:href="@{/fixed-tasks}">[task fissi]</a>
+            <a class="ext-link nav-cyan" th:href="@{/settings}">[impostazioni]</a>
+            <a class="ext-link nav-yellow" th:href="${homeUrl}" target="_blank" rel="noopener">[easy ↗]</a>
+            <span class="app-user" th:text="${username}">utente</span>
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="link-button nav-red">[esci]</button>
+            </form>
+        </div>
+    </header>
+
+    <main class="hist-page">
+        <h1 class="hist-title">Storico giornate</h1>
+
+        <p th:if="${history.isEmpty()}" class="empty">
+            Nessuno storico: le giornate passate compariranno qui.
+        </p>
+
+        <section class="panel hist-day" th:each="d : ${history.days}">
+            <span class="panel-label" th:text="'╡ ' + ${d.dateLabel} + ' ╞'">╡ mar 08/07 ╞</span>
+
+            <!-- Orari della giornata -->
+            <div class="hist-times" th:if="${d.hasTimes()}">
+                <span>Entrata <strong th:text="${d.entry}">09:00</strong></span>
+                <span>Pausa <strong th:text="${d.lunchStart} + '–' + ${d.lunchEnd}">13:00–14:00</strong></span>
+                <span>Uscita <strong th:text="${d.exit}">18:00</strong></span>
+                <span class="hist-net">Netto <strong th:text="${d.netWorked}">8:00</strong></span>
+            </div>
+
+            <!-- Totale del tempo e ripartizione per task -->
+            <div class="hist-summary" th:if="${d.hasTotal}">
+                <span class="hist-total">Totale
+                    <strong th:text="${d.totalLabel} + ' h'">6,5 h</strong>
+                    <span class="task-total-actual" th:text="'(' + ${d.totalActual} + ')'">(6:12)</span>
+                </span>
+                <ul class="hist-tasks">
+                    <li th:each="t : ${d.tasks}" th:classappend="${t.colorClass}">
+                        <span class="entry-sym">●</span>
+                        <a class="task-id" th:href="${t.url}" target="_blank" rel="noopener"
+                           th:text="'#' + ${t.id}">#12345</a>
+                        <span class="task-time" th:text="${t.label} + ' (' + ${t.actual} + ')'">+1 (1:00)</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Elenco attivita' della giornata -->
+            <ul class="hist-entries">
+                <li th:each="e : ${d.entries}" th:classappend="${e.colorClass}">
+                    <span class="entry-sym">●</span>
+                    <span class="hist-entry-time" th:text="${e.time}">09:00 → 09:45</span>
+                    <span class="entry-text" th:text="${e.description}">descrizione</span>
+                </li>
+            </ul>
+        </section>
+    </main>
+</div><!-- /.screen -->
+</body>
+</html>

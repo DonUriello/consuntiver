@@ -684,6 +684,86 @@ button:hover:not(:disabled) { filter: brightness(1.1); }
 .fixed-page h1 { margin: 0 0 0.35rem; font-size: 1.3rem; color: var(--cyan); text-transform: uppercase; letter-spacing: 1px; }
 .page-hint { margin: 0 0 1.25rem; color: var(--muted); font-size: 0.9rem; }
 
+/* ---------- Link allo storico (sotto TOTALE TEMPO) ---------- */
+.hist-link {
+    display: block;
+    text-align: center;
+    padding: 8px;
+    color: var(--cyan);
+    text-decoration: none;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border: 1px dashed var(--divider2);
+}
+.hist-link:hover { color: var(--yellow); border-color: var(--yellow); }
+
+/* ---------- Pagina Storico ---------- */
+.hist-page {
+    padding: 22px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.hist-title {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.hist-day { display: flex; flex-direction: column; gap: 12px; }
+
+.hist-times {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    font-size: 13px;
+    color: var(--muted);
+}
+.hist-times strong { color: var(--text); font-variant-numeric: tabular-nums; }
+.hist-net strong { color: var(--green); }
+
+.hist-summary {
+    padding-top: 10px;
+    border-top: 1px dashed var(--divider2);
+}
+.hist-total {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--muted);
+}
+.hist-total strong { font-size: 18px; color: var(--yellow); font-variant-numeric: tabular-nums; }
+
+.hist-tasks { list-style: none; margin: 0; padding: 0; }
+.hist-tasks li {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 3px 0;
+}
+.hist-tasks .task-time { margin-left: auto; }
+
+.hist-entries {
+    list-style: none;
+    margin: 0;
+    padding-top: 10px;
+    border-top: 1px dashed var(--divider2);
+}
+.hist-entries li {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 3px 0;
+}
+.hist-entry-time {
+    flex: none;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    min-width: 108px;
+}
+
 .fixed-form {
     display: flex;
     flex-wrap: wrap;
