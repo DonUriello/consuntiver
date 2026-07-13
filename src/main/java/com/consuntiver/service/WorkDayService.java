@@ -20,6 +20,8 @@ public class WorkDayService {
     public static final long TARGET_SECONDS = 8 * 60 * 60;
     /** Pausa pranzo assunta di default (1 ora) finche' non se ne inseriscono gli orari. */
     public static final long DEFAULT_BREAK_SECONDS = 60 * 60;
+    /** Pausa pranzo minima: una pausa piu' breve di 45 minuti vale comunque 45 minuti. */
+    public static final long MIN_BREAK_SECONDS = 45 * 60;
 
     private static final DateTimeFormatter HHMM = DateTimeFormatter.ofPattern("HH:mm");
 

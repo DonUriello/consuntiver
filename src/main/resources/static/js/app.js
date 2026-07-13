@@ -17,6 +17,8 @@
         var exit = num("exit");
         var target = parseInt(el.dataset.target || "28800", 10);
         var defaultBreak = parseInt(el.dataset.defaultBreak || "3600", 10) * 1000;
+        // Pausa pranzo minima: una pausa piu' breve di questo vale comunque questo.
+        var minBreak = parseInt(el.dataset.minBreak || "2700", 10) * 1000;
         var serverNow = parseInt(el.dataset.serverNow || Date.now(), 10);
         // Differenza tra orologio del server e del browser, per non sballare il conteggio.
         var offset = serverNow - Date.now();
@@ -48,7 +50,8 @@
             if (lunchStart !== null && lunchEnd !== null) {
                 if (end <= lunchStart) { ms = end - entry; }
                 else if (end < lunchEnd) { ms = lunchStart - entry; }
-                else { ms = (lunchStart - entry) + (end - lunchEnd); }
+                // Pausa completata: sottrai almeno il minimo (45 min) anche se piu' breve.
+                else { ms = (end - entry) - Math.max(lunchEnd - lunchStart, minBreak); }
             } else if (lunchStart !== null) {
                 ms = (end <= lunchStart) ? (end - entry) : (lunchStart - entry);
             } else {
@@ -68,9 +71,10 @@
             barEl.style.width = Math.min(100, (worked / target) * 100).toFixed(1) + "%";
             barEl.classList.toggle("done", worked >= target);
 
-            // Pausa considerata per stimare l'uscita: effettiva se completa, altrimenti 1h.
+            // Pausa considerata per stimare l'uscita: effettiva (minimo 45 min) se
+            // completa, altrimenti 1h di default.
             var breakMs = (lunchStart !== null && lunchEnd !== null)
-                    ? (lunchEnd - lunchStart) : defaultBreak;
+                    ? Math.max(lunchEnd - lunchStart, minBreak) : defaultBreak;
             if (onBreak && lunchEnd === null) {
                 breakMs = Math.max(defaultBreak, now - lunchStart);
             }

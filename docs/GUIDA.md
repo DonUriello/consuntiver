@@ -29,13 +29,15 @@ quando lo premi (non è più sempre visibile).
 Quattro orari che inserisci a mano e poi salvi con **Salva orari**:
 - **Entrata**: avvia il timer delle 8 ore.
 - **Pausa pranzo** e **Rientro**: delimitano la pausa; il tempo tra i due non
-  conta come lavoro.
+  conta come lavoro. La pausa vale comunque **almeno 45 minuti**: se rientri
+  prima, contano lo stesso 45 minuti.
 - **Uscita**: chiude la giornata.
 
 Un **contatore live** parte dall'orario di entrata e conta il **lavoro netto**
 (esclusa la pausa pranzo) verso le **8 ore**, con barra di avanzamento. La pausa
-è quella effettiva se hai indicato sia pausa che rientro, altrimenti si assume
-**1 ora**; in base a questo il timer stima anche l'orario di uscita previsto.
+è quella effettiva (minimo 45 min) se hai indicato sia pausa che rientro,
+altrimenti si assume **1 ora**; in base a questo il timer stima anche l'orario
+di uscita previsto.
 
 ### Task e link a Easy (colonna a destra)
 Se in una riga citi il numero di un task, l'app lo riconosce e a destra crea il

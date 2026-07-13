@@ -87,6 +87,7 @@ public class HomeController {
         model.addAttribute("workDay", workDay);
         model.addAttribute("targetSeconds", WorkDayService.TARGET_SECONDS);
         model.addAttribute("defaultBreakSeconds", WorkDayService.DEFAULT_BREAK_SECONDS);
+        model.addAttribute("minBreakSeconds", WorkDayService.MIN_BREAK_SECONDS);
         model.addAttribute("serverNowMillis", System.currentTimeMillis());
         model.addAttribute("timeFormat", TIME_FORMAT);
         model.addAttribute("dateTimeFormat", DATE_TIME_FORMAT);
