@@ -6,7 +6,7 @@
     <title>Consuntiver</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <!-- Colori per task: una classe .tc-<idtask> per ciascun task, generata a runtime. -->
     <style th:utext="${taskColorCss}"></style>
@@ -21,12 +21,12 @@
             <th:block th:replace="~{fragments/help :: help}"></th:block>
         </div>
         <div class="app-nav">
-            <a class="ext-link nav-cyan" th:href="@{/fixed-tasks}">[task fissi]</a>
-            <a class="ext-link nav-cyan" th:href="@{/settings}">[impostazioni]</a>
-            <a class="ext-link nav-yellow" th:href="${homeUrl}" target="_blank" rel="noopener">[easy ↗]</a>
+            <a class="ext-link nav-cyan" th:href="@{/fixed-tasks}">Task fissi</a>
+            <a class="ext-link nav-cyan" th:href="@{/settings}">Impostazioni</a>
+            <a class="ext-link nav-yellow" th:href="${homeUrl}" target="_blank" rel="noopener">Easy ✦</a>
             <span class="app-user" th:text="${username}">utente</span>
             <form th:action="@{/logout}" method="post" class="logout-form">
-                <button type="submit" class="link-button nav-red">[esci]</button>
+                <button type="submit" class="link-button nav-red">Esci</button>
             </form>
         </div>
     </header>
@@ -45,7 +45,7 @@
                               data-target=${targetSeconds},
                               data-default-break=${defaultBreakSeconds},
                               data-min-break=${minBreakSeconds}">
-                <span class="panel-label">╡ TIMER ╞</span>
+                <span class="panel-label">❧ TIMER ❧</span>
                 <div class="worktime-top">
                     <div class="worktime-counter">
                         <span id="wt-counter" class="wt-counter">00:00:00</span>
@@ -80,7 +80,7 @@
 
             <!-- ---------- OGGI (log + input) ---------- -->
             <section class="panel history">
-                <span class="panel-label" th:text="'╡ OGGI ── ' + ${todayLabel} + ' ╞'">╡ OGGI ╞</span>
+                <span class="panel-label" th:text="'❧ OGGI ── ' + ${todayLabel} + ' ❧'">❧ OGGI ❧</span>
 
                 <p th:if="${entries.isEmpty()}" class="empty">
                     Nessuna voce per oggi. Scrivi cosa stai facendo qui sotto.
@@ -102,9 +102,7 @@
                                   th:action="@{'/entries/' + ${entry.id} + '/end'}" method="post">
                                 <button type="submit" class="icon-btn icon-end"
                                         title="Termina attività" aria-label="Termina attività">
-                                    <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">
-                                        <rect x="3" y="3" width="10" height="10" rx="1.5"/>
-                                    </svg>
+                                    <span class="medallion" aria-hidden="true"></span>
                                 </button>
                             </form>
                             <span class="ctx-time" th:if="${contextTimes.containsKey(entry.id)}">
@@ -118,17 +116,12 @@
                             </span>
                             <span class="entry-actions">
                                 <button type="button" class="icon-btn edit-toggle" title="Modifica" aria-label="Modifica">
-                                    <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">
-                                        <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                                    </svg>
+                                    <span class="ico-diamond" aria-hidden="true"></span>
                                 </button>
                                 <form class="delete-form" th:action="@{'/entries/' + ${entry.id} + '/delete'}" method="post"
                                       onsubmit="return confirm('Eliminare questa riga?');">
                                     <button type="submit" class="icon-btn icon-delete" title="Elimina" aria-label="Elimina">
-                                        <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">
-                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                        </svg>
+                                        <span class="ico-cross" aria-hidden="true"></span>
                                     </button>
                                 </form>
                             </span>
@@ -165,7 +158,7 @@
         <!-- ---------- colonna destra: TASK + TOTALE ---------- -->
         <aside class="task-sidebar">
             <section class="panel">
-                <span class="panel-label">╡ TASK ╞</span>
+                <span class="panel-label">❧ TASK ❧</span>
                 <p th:if="${taskLinks.isEmpty()}" class="empty">
                     Nessun task rilevato. Cita un numero (es. #12345) in una riga.
                 </p>
@@ -186,7 +179,7 @@
             </section>
 
             <section class="panel panel--yellow task-total" th:if="${contextTotal.hasTotal}">
-                <span class="panel-label">╡ TOTALE TEMPO ╞</span>
+                <span class="panel-label">❧ TOTALE TEMPO ❧</span>
                 <span class="task-total-value">
                     <span class="task-total-quarters" th:text="${contextTotal.totalLabel} + ' h'">2,75 h</span>
                     <span class="task-total-actual" th:text="'(' + ${contextTotal.totalActual} + ')'">(2:32)</span>
