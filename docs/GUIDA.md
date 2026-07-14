@@ -22,8 +22,9 @@ prossima annotazione.
 Sopra la barra vedi le righe della giornata, dalla più recente alla più vecchia.
 Ogni riga mostra **data e ora di inizio → fine**: l'inizio è quando l'hai scritta,
 la fine viene registrata quando inserisci la riga successiva (la riga in corso
-resta con `→ …`). Il pulsante **Modifica** apre il campo di modifica **solo**
-quando lo premi (non è più sempre visibile).
+resta con `→ …`), oppure puoi chiuderla subito con il **medaglione «Termina»**
+accanto alla riga. Il pulsante **Modifica** (sigillo) apre il campo di modifica
+**solo** quando lo premi; con **Elimina** (croce) rimuovi la riga.
 
 ### Orario di lavoro (in alto)
 Quattro orari che inserisci a mano e poi salvi con **Salva orari**:
@@ -48,9 +49,10 @@ Formato del link: `<url base configurato><numero>`:
 - `123456` → numero "nudo" riconosciuto da **5 cifre** in su (così non scambia
   per task orari o anni).
 
-### Bottone tempo per argomento (azzurro)
+### Bottone tempo per argomento
 Le righe che riguardano lo **stesso task** vengono raggruppate. Sulla riga più
-recente di quel task compare un bottone azzurro tipo **`+0,75 (0:47)`**:
+recente di quel task compare un bottone (nel colore del task) tipo
+**`+0,75 (0:47)`**:
 - il numero (`+0,75`) è il tempo dedicato a quell'argomento arrotondato **per
   eccesso** al quarto d'ora (minimo `+0,25`);
 - tra parentesi (`0:47`) c'è il tempo **effettivo** non arrotondato.
@@ -63,22 +65,24 @@ conteggio si **ri-adegua automaticamente** se correggi una riga. Il link del
 bottone è ancora da definire.
 
 Sotto la colonna dei task un riquadro mostra il **totale del tempo** della
-giornata, aggiornato a ogni nuova rilevazione. Sotto il totale il link
-**» storico giornate** apre lo storico.
+giornata, aggiornato a ogni nuova rilevazione.
 
 ## Storico giornate (pagina dedicata)
-Il link **» storico giornate** (sotto il totale del tempo) apre l'elenco delle
+Dal menu in alto col **tuo nome** scegli **Storico**: apre l'elenco delle
 giornate passate (oggi resta in home), dalla più recente. Per ogni giornata
 trovi gli **orari** (entrata/pausa/uscita) con il **lavoro netto**, il **totale
 del tempo** con la ripartizione per task, e l'elenco delle attività svolte.
 
 ## Task fissi (pagina dedicata)
-Dal link **Task fissi** nell'header gestisci i task validi per un intero anno
-(es. manutenzioni annuali): indichi anno, numero task (opzionale, genera il link
-a Easy) e descrizione. Sono raggruppati per anno e si possono eliminare.
+Dal menu **Configurazioni → Task fissi** gestisci i task validi per un intero
+anno (es. manutenzioni annuali): indichi anno, numero task (opzionale, genera il
+link a Easy) e descrizione. Sono raggruppati per anno e si possono eliminare.
 
-## Pulsante Easy
-Apre il gestionale Easy in una nuova scheda.
+## Menu (in alto)
+Le voci sono raggruppate in due tendine:
+- **Home** — la pagina principale.
+- **Configurazioni** — *Task fissi* e *Impostazioni*.
+- **Il tuo nome** — *Storico* e *Esci*.
 
 ## Note tecniche rapide
 - Gli orari sono salvati in UTC e mostrati nel fuso `Europe/Rome`.
