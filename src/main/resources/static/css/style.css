@@ -57,6 +57,7 @@ body {
     margin: 0;
     font-family: var(--font-serif);
     font-size: 16px;
+    font-weight: 500;               /* base piu' marcata (Cormorant non light) */
     line-height: 1.5;
     background: var(--bg);
     color: var(--text);
@@ -111,7 +112,10 @@ body {
     color: var(--text);
     letter-spacing: 0.1em;
     text-transform: uppercase;
+    text-decoration: none;
 }
+
+.app-title:hover { color: var(--bordeaux); }
 
 .brand-ver {
     color: var(--muted);
@@ -131,6 +135,7 @@ body {
 .ext-link {
     color: var(--bordeaux);
     font-style: italic;
+    font-weight: 600;
     text-decoration: none;
 }
 
@@ -145,6 +150,7 @@ body {
 
 .app-user {
     color: #5c4a2e;
+    font-weight: 600;
 }
 
 .logout-form {
@@ -159,6 +165,7 @@ body {
     cursor: pointer;
     font: inherit;
     font-style: italic;
+    font-weight: 600;
     color: var(--bordeaux);
     letter-spacing: 0.05em;
 }
@@ -171,6 +178,45 @@ body {
     text-decoration: underline;
     text-underline-offset: 3px;
 }
+
+/* Pulsante hamburger: nascosto su desktop, mostrato solo su mobile */
+.nav-toggle {
+    display: none;
+    width: 44px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--bordeaux);
+    background: var(--panel-bg);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.nav-toggle-bars,
+.nav-toggle-bars::before,
+.nav-toggle-bars::after {
+    position: absolute;
+    left: 50%;
+    width: 20px;
+    height: 2px;
+    background: var(--bordeaux);
+    transform: translateX(-50%);
+}
+
+.nav-toggle-bars {
+    top: 50%;
+    margin-top: -1px;
+}
+
+.nav-toggle-bars::before,
+.nav-toggle-bars::after {
+    content: "";
+    left: 0;
+    transform: none;
+}
+
+.nav-toggle-bars::before { top: -6px; }
+.nav-toggle-bars::after { top: 6px; }
 
 /* ---------- Pannelli con cornice e titolo "a targa" ---------- */
 .panel {
@@ -302,6 +348,7 @@ body {
 .wt-field input[type="time"] {
     font-family: var(--font-serif);
     font-size: 16px;
+    font-weight: 600;
     padding: 9px 10px;
     background: var(--panel-bg);
     border: 1px solid var(--bordeaux);
@@ -385,20 +432,22 @@ button:disabled {
     font-variant-numeric: tabular-nums;
 }
 
+/* Orario inizio/fine in grassetto per renderlo piu' marcato */
 .entry-start {
     background: none;
     color: inherit;
-    font-weight: 500;
+    font-weight: 700;
     padding: 0;
 }
 
-.entry-end { color: inherit; opacity: 0.85; }
+.entry-end { color: inherit; font-weight: 700; }
 
 .entry-sym { flex: none; font-weight: 700; color: var(--tc, var(--muted)); }
 
 .entry-text {
     color: var(--text);
     font-size: 15px;
+    font-weight: 600;
     flex: 1;
     min-width: 0;
     white-space: normal;
@@ -641,7 +690,7 @@ button:disabled {
 .task-head .entry-sym { display: none; }
 
 .task-id {
-    font-weight: 500;
+    font-weight: 700;
     font-size: 15px;
     color: var(--tc, var(--bordeaux));
     text-decoration: none;
@@ -654,6 +703,7 @@ button:disabled {
 .task-time {
     margin-left: auto;
     font-size: 14px;
+    font-weight: 600;
     color: var(--tc, var(--bordeaux));
     font-variant-numeric: tabular-nums;
 }
@@ -1046,16 +1096,34 @@ button:hover:not(:disabled) { filter: brightness(1.08); }
     }
     .screen::before { inset: 8px; }
 
-    /* Header: brand sopra, nav che va a capo sotto */
+    /* Header: brand + hamburger in riga; il menu si apre sotto a tutta larghezza */
     .app-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px 12px;
         padding-bottom: 14px;
         margin-bottom: 22px;
     }
     .app-title { font-size: 22px; }
-    .app-nav { width: 100%; gap: 12px 18px; font-size: 14px; }
+    .nav-toggle { display: block; }
+    .app-nav {
+        display: none;
+        flex-basis: 100%;
+        width: 100%;
+        font-size: 15px;
+    }
+    .app-nav.open {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-top: 6px;
+        padding-top: 14px;
+        border-top: 1px solid var(--divider);
+    }
+    .app-nav.open .logout-form { display: block; }
 
     /* Pannelli: meno padding, targhetta piu' vicina al bordo */
     .panel { padding: 22px 16px; }
@@ -1084,11 +1152,18 @@ button:hover:not(:disabled) { filter: brightness(1.08); }
     .icon-btn { padding: 8px; }
     .end-form .icon-btn { padding: 8px; }
 
-    /* Barra di inserimento: selettore a tutta larghezza, poi campo + bottone */
+    /* Barra di inserimento: selettore compatto + campo sulla stessa riga,
+       bottone "Registra" a tutta larghezza sotto. */
     .prompt-bar { flex-wrap: wrap; gap: 10px; margin-top: 18px; padding-top: 16px; }
-    .task-picker { flex: 1 1 100%; max-width: none; }
-    .prompt-bar input { flex: 1 1 60%; }
-    .prompt-bar button { flex: 1 1 auto; }
+    .task-picker {
+        flex: 0 0 auto;
+        width: auto;
+        max-width: 42%;
+        padding: 10px 12px;
+        font-size: 15px;
+    }
+    .prompt-bar input { flex: 1 1 46%; min-width: 0; padding: 10px 12px; }
+    .prompt-bar button { flex: 1 1 100%; }
 
     /* Totale tempo leggermente ridotto */
     .task-total-quarters { font-size: 40px; }

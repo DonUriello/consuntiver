@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Header unico dell'app: brand + guida + menu di navigazione.
+     Incluso in tutte le pagine autenticate (home, storico, task fissi,
+     impostazioni) cosi' le voci restano identiche ovunque.
+     Su mobile il menu si apre col pulsante hamburger. -->
+<header th:fragment="header" class="app-header">
+    <div class="app-brand">
+        <a class="app-title" th:href="@{/}">Consuntiver</a>
+        <span class="brand-ver">v1.0</span>
+        <th:block th:replace="~{fragments/help :: help}"></th:block>
+    </div>
+
+    <button type="button" class="nav-toggle" aria-label="Apri il menu"
+            aria-controls="app-nav" aria-expanded="false">
+        <span class="nav-toggle-bars" aria-hidden="true"></span>
+    </button>
+
+    <nav class="app-nav" id="app-nav">
+        <a class="ext-link nav-cyan" th:href="@{/}">Home</a>
+        <a class="ext-link nav-cyan" th:href="@{/fixed-tasks}">Task fissi</a>
+        <a class="ext-link nav-cyan" th:href="@{/storico}">Storico</a>
+        <a class="ext-link nav-cyan" th:href="@{/settings}">Impostazioni</a>
+        <a class="ext-link nav-yellow" th:href="${homeUrl}" target="_blank" rel="noopener">Easy ✦</a>
+        <span class="app-user" th:text="${username}">utente</span>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="link-button nav-red">Esci</button>
+        </form>
+    </nav>
+
+    <!-- Toggle del menu hamburger (il pulsante compare solo su mobile). -->
+    <script>
+        (function () {
+            var btn = document.currentScript.parentNode.querySelector(".nav-toggle");
+            var nav = document.getElementById("app-nav");
+            if (btn && nav) {
+                btn.addEventListener("click", function () {
+                    var open = nav.classList.toggle("open");
+                    btn.setAttribute("aria-expanded", open ? "true" : "false");
+                });
+            }
+        })();
+    </script>
+</header>
+</body>
+</html>
