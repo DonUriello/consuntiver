@@ -4,7 +4,8 @@
 <!-- Header unico dell'app: brand + guida + menu di navigazione.
      Incluso in tutte le pagine autenticate (home, storico, task fissi,
      impostazioni) cosi' le voci restano identiche ovunque.
-     Su mobile il menu si apre col pulsante hamburger. -->
+     Le voci sono raggruppate in due menu a tendina (Configurazioni e nome
+     utente); su mobile il tutto si apre col pulsante hamburger. -->
 <header th:fragment="header" class="app-header">
     <div class="app-brand">
         <a class="app-title" th:href="@{/}">Consuntiver</a>
@@ -19,20 +20,31 @@
 
     <nav class="app-nav" id="app-nav">
         <a class="ext-link nav-cyan" th:href="@{/}">Home</a>
-        <a class="ext-link nav-cyan" th:href="@{/fixed-tasks}">Task fissi</a>
-        <a class="ext-link nav-cyan" th:href="@{/storico}">Storico</a>
-        <a class="ext-link nav-cyan" th:href="@{/settings}">Impostazioni</a>
-        <a class="ext-link nav-yellow" th:href="${homeUrl}" target="_blank" rel="noopener">Easy ✦</a>
-        <span class="app-user" th:text="${username}">utente</span>
-        <form th:action="@{/logout}" method="post" class="logout-form">
-            <button type="submit" class="link-button nav-red">Esci</button>
-        </form>
+
+        <details class="nav-group">
+            <summary class="nav-group-label">Configurazioni</summary>
+            <div class="nav-drop">
+                <a class="ext-link nav-cyan" th:href="@{/fixed-tasks}">Task fissi</a>
+                <a class="ext-link nav-cyan" th:href="@{/settings}">Impostazioni</a>
+            </div>
+        </details>
+
+        <details class="nav-group nav-group--user">
+            <summary class="nav-group-label" th:text="${username}">utente</summary>
+            <div class="nav-drop">
+                <a class="ext-link nav-cyan" th:href="@{/storico}">Storico</a>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="link-button nav-red">Esci</button>
+                </form>
+            </div>
+        </details>
     </nav>
 
-    <!-- Toggle del menu hamburger (il pulsante compare solo su mobile). -->
+    <!-- Toggle dell'hamburger (mobile) + gestione dei menu a tendina. -->
     <script>
         (function () {
-            var btn = document.currentScript.parentNode.querySelector(".nav-toggle");
+            var header = document.currentScript.parentNode;
+            var btn = header.querySelector(".nav-toggle");
             var nav = document.getElementById("app-nav");
             if (btn && nav) {
                 btn.addEventListener("click", function () {
@@ -40,6 +52,21 @@
                     btn.setAttribute("aria-expanded", open ? "true" : "false");
                 });
             }
+            var groups = header.querySelectorAll("details.nav-group");
+            // Aprendo un menu si chiudono gli altri.
+            groups.forEach(function (d) {
+                d.addEventListener("toggle", function () {
+                    if (d.open) {
+                        groups.forEach(function (o) { if (o !== d) { o.open = false; } });
+                    }
+                });
+            });
+            // Un click fuori dai menu li chiude.
+            document.addEventListener("click", function (e) {
+                groups.forEach(function (d) {
+                    if (d.open && !d.contains(e.target)) { d.open = false; }
+                });
+            });
         })();
     </script>
 </header>

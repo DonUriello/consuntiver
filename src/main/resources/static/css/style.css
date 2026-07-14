@@ -218,6 +218,77 @@ body {
 .nav-toggle-bars::before { top: -6px; }
 .nav-toggle-bars::after { top: 6px; }
 
+/* ---------- Menu a tendina (Configurazioni / nome utente) ---------- */
+.nav-group {
+    position: relative;
+    display: inline-flex;
+    align-items: baseline;
+}
+
+.nav-group-label {
+    list-style: none;
+    cursor: pointer;
+    color: var(--bordeaux);
+    font-style: italic;
+    font-weight: 600;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.nav-group-label::-webkit-details-marker { display: none; }
+.nav-group-label::marker { content: ""; }
+
+.nav-group-label::after {
+    content: "▾";
+    font-style: normal;
+    font-size: 0.7em;
+    margin-left: 0.4em;
+    vertical-align: middle;
+}
+.nav-group[open] > .nav-group-label::after { content: "▴"; }
+
+/* Il menu del nome utente e' meno "link" e piu' identita' */
+.nav-group--user > .nav-group-label {
+    color: #5c4a2e;
+    font-style: normal;
+}
+
+.nav-drop {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    min-width: 190px;
+    background: var(--panel-bg);
+    border: 2px solid var(--gold);
+    box-shadow: 0 18px 40px rgba(43, 32, 22, 0.25);
+    padding: 8px 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 120;
+}
+
+/* Piccolo ponte invisibile per non perdere il menu spostando il mouse */
+.nav-drop::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+}
+
+.nav-drop .ext-link,
+.nav-drop .link-button {
+    padding: 9px 20px;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.nav-drop .ext-link:hover { background: rgba(139, 26, 43, 0.07); text-decoration: none; }
+.nav-drop .logout-form { display: block; margin: 0; }
+.nav-drop .link-button { width: 100%; }
+.nav-drop .link-button:hover { background: rgba(107, 20, 32, 0.08); text-decoration: none; }
+
 /* ---------- Pannelli con cornice e titolo "a targa" ---------- */
 .panel {
     position: relative;
@@ -1124,6 +1195,24 @@ button:hover:not(:disabled) { filter: brightness(1.08); }
         border-top: 1px solid var(--divider);
     }
     .app-nav.open .logout-form { display: block; }
+
+    /* Menu a tendina in accordion in-flow dentro l'hamburger */
+    .nav-group { width: 100%; display: block; }
+    .nav-group-label { display: block; padding: 2px 0; }
+    .nav-drop {
+        position: static;
+        border: none;
+        box-shadow: none;
+        background: none;
+        min-width: 0;
+        padding: 12px 0 2px 18px;
+        gap: 14px;
+    }
+    .nav-drop::before { display: none; }
+    .nav-drop .ext-link,
+    .nav-drop .link-button { padding: 0; }
+    .nav-drop .ext-link:hover,
+    .nav-drop .link-button:hover { background: none; }
 
     /* Pannelli: meno padding, targhetta piu' vicina al bordo */
     .panel { padding: 22px 16px; }
