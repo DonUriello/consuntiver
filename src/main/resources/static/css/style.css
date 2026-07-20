@@ -9,13 +9,13 @@
     --panel-bg: #fbf7ec;      /* fondo pannelli */
     --total-bg: #fbf3dd;      /* fondo pannello "Totale tempo" */
 
-    /* Testo */
-    --text: #2b2016;          /* primario */
-    --text2: #3a2c1c;         /* secondario */
-    --muted: #8a6a4a;         /* attenuato */
-    --muted2: #6b5836;        /* attenuato caldo */
-    --faint: #a8916a;         /* placeholder / valori vuoti */
-    --disabled: #a8916a;
+    /* Testo (piu' scuro per contrasto e leggibilita') */
+    --text: #1a1005;          /* primario, bruno quasi nero */
+    --text2: #2b2016;         /* secondario */
+    --muted: #6a4e30;         /* attenuato */
+    --muted2: #51402a;        /* attenuato caldo */
+    --faint: #927b56;         /* placeholder / valori vuoti */
+    --disabled: #927b56;
 
     /* Accenti barocchi */
     --bordeaux: #8b1a2b;
@@ -57,7 +57,7 @@ body {
     margin: 0;
     font-family: var(--font-serif);
     font-size: 16px;
-    font-weight: 500;               /* base piu' marcata (Cormorant non light) */
+    font-weight: 600;               /* base marcata (Cormorant, semibold) */
     line-height: 1.5;
     background: var(--bg);
     color: var(--text);
@@ -149,7 +149,7 @@ body {
 .nav-red { color: var(--bordeaux-dark); }
 
 .app-user {
-    color: #5c4a2e;
+    color: #3f3016;
     font-weight: 600;
 }
 
@@ -249,7 +249,7 @@ body {
 
 /* Il menu del nome utente e' meno "link" e piu' identita' */
 .nav-group--user > .nav-group-label {
-    color: #5c4a2e;
+    color: #3f3016;
     font-style: normal;
 }
 
@@ -306,7 +306,7 @@ body {
     font-family: var(--font-display);
     color: var(--pc, var(--bordeaux));
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     white-space: nowrap;
@@ -748,7 +748,7 @@ button:disabled {
     flex-shrink: 0;
     max-width: 160px;
     background: var(--panel-bg);
-    color: #5c4a2e;
+    color: #3f3016;
     border: 1px solid var(--bordeaux);
     font: inherit;
     font-size: 14px;
