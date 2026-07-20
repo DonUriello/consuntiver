@@ -173,6 +173,16 @@ public class HomeController {
         return "redirect:/";
     }
 
+    /** Modifica gli orari (inizio/fine, "HH:mm") di una voce. */
+    @PostMapping("/entries/{id}/times")
+    public String editTimes(@PathVariable("id") Long id,
+                            @RequestParam(value = "start", required = false) String start,
+                            @RequestParam(value = "end", required = false) String end,
+                            Principal principal) {
+        workEntryService.updateTimes(principal.getName(), id, start, end, ZONE);
+        return "redirect:/";
+    }
+
     @PostMapping("/entries/{id}/delete")
     public String delete(@PathVariable("id") Long id, Principal principal) {
         workEntryService.delete(principal.getName(), id);

@@ -490,6 +490,7 @@ button:disabled {
 .entry-view .entry-sym { display: none; }
 
 /* Orario: un unico badge bordato nel colore del task (--tc), fondo pergamena. */
+/* Badge orari: cliccabile (e' un <button>) per aprire la modifica degli orari */
 .entry-time {
     flex-shrink: 0;
     display: inline-flex;
@@ -501,7 +502,13 @@ button:disabled {
     font-size: 13px;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
+    background: transparent;
+    font-family: inherit;
+    cursor: pointer;
 }
+
+.entry-time:hover { background: rgba(139, 26, 43, 0.07); }
+.entry-time:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
 
 /* Orario inizio/fine in grassetto per renderlo piu' marcato */
 .entry-start {
@@ -546,7 +553,6 @@ button:disabled {
     text-decoration: none;
 }
 
-.ctx-time-btn:hover { text-decoration: underline; text-underline-offset: 2px; }
 .ctx-time-actual { color: rgba(242, 234, 217, 0.8); }
 
 /* Icone azione (sigillo/diamante = modifica, croce = elimina), affiancate */
@@ -663,6 +669,56 @@ button:disabled {
 .entry-edit input:focus { outline: none; border-color: var(--gold); }
 
 .entry-edit button[type="submit"] {
+    padding: 0.5rem 1rem;
+    background: linear-gradient(180deg, var(--bordeaux), var(--bordeaux-dark));
+    color: var(--cream);
+    border: 1px solid var(--gold-bright);
+    font: inherit;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+}
+
+/* ---------- Modifica orari inline (click sul badge data/ora) ---------- */
+.time-edit {
+    display: none;
+    flex-wrap: wrap;
+    gap: 0.6rem 0.9rem;
+    align-items: center;
+    margin-top: 0.6rem;
+}
+
+.time-edit:not([hidden]) { display: flex; }
+
+.time-edit label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.time-edit input[type="time"] {
+    border: 1px solid var(--bordeaux);
+    background: var(--panel-bg);
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    padding: 6px 8px;
+    color-scheme: light;
+}
+
+.time-edit input[type="time"]:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 1px var(--gold);
+}
+
+.time-edit button[type="submit"] {
     padding: 0.5rem 1rem;
     background: linear-gradient(180deg, var(--bordeaux), var(--bordeaux-dark));
     color: var(--cream);

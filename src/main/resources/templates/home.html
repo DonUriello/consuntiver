@@ -75,11 +75,12 @@
                     <li class="entry" th:each="entry : ${entries}"
                         th:classappend="${entryTaskClass.containsKey(entry.id) ? entryTaskClass.get(entry.id) : ''}">
                         <div class="entry-view">
-                            <span class="entry-time">
+                            <button type="button" class="entry-time time-edit-toggle"
+                                    title="Modifica orari" aria-label="Modifica orari">
                                 <span class="entry-start" th:text="${dateTimeFormat.format(entry.startedAt)}">01/07 09:30</span>
                                 <span class="entry-end"
                                       th:text="${entry.endedAt != null ? '→ ' + timeFormat.format(entry.endedAt) : '→ …'}">→ 10:00</span>
-                            </span>
+                            </button>
                             <span class="entry-sym" title="Colore del task">●</span>
                             <span class="entry-text" th:text="${entry.description}">Descrizione</span>
                             <!-- Termina attività: a sinistra del tempo totale, solo sulla riga aperta -->
@@ -91,10 +92,9 @@
                                 </button>
                             </form>
                             <span class="ctx-time" th:if="${contextTimes.containsKey(entry.id)}">
-                                <a class="ctx-time-btn"
-                                   th:href="${contextTimes.get(entry.id).url}"
-                                   th:title="'Tempo totale su questo argomento (ore)'"
-                                   th:text="${contextTimes.get(entry.id).label}">+0,75</a>
+                                <span class="ctx-time-btn"
+                                      th:title="'Tempo totale su questo argomento (ore)'"
+                                      th:text="${contextTimes.get(entry.id).label}">+0,75</span>
                                 <span class="ctx-time-actual"
                                       th:title="'Tempo effettivo'"
                                       th:text="'(' + ${contextTimes.get(entry.id).actual} + ')'">(0:47)</span>
@@ -116,6 +116,19 @@
                                    autocomplete="off" required>
                             <button type="submit">Salva</button>
                             <button type="button" class="edit-cancel link-button">Annulla</button>
+                        </form>
+                        <!-- Modifica orari (nascosta finche' non si clicca sul badge orari) -->
+                        <form class="time-edit" th:action="@{'/entries/' + ${entry.id} + '/times'}" method="post" hidden>
+                            <label>Inizio
+                                <input type="time" name="start"
+                                       th:value="${timeFormat.format(entry.startedAt)}" required>
+                            </label>
+                            <label>Fine
+                                <input type="time" name="end"
+                                       th:value="${entry.endedAt != null ? timeFormat.format(entry.endedAt) : ''}">
+                            </label>
+                            <button type="submit">Salva</button>
+                            <button type="button" class="time-edit-cancel link-button">Annulla</button>
                         </form>
                     </li>
                 </ul>

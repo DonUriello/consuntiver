@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
@@ -67,6 +68,38 @@ public class WorkEntryService {
                 .orElseThrow(() -> new AccessDeniedException("Voce non trovata o non accessibile"));
         entry.setDescription(description.trim());
         entry.setTask(resolveTask(user, entry.getDescription()));
+        return workEntryRepository.save(entry);
+    }
+
+    /**
+     * Modifica gli orari di inizio e fine di una voce, solo se appartiene all'utente.
+     * Gli orari arrivano come "HH:mm" e vengono applicati alla data della voce (nel
+     * fuso indicato). La fine e' facoltativa: vuota = voce ancora in corso. Se la fine
+     * risulta prima dell'inizio si assume la mezzanotte superata (giorno successivo).
+     *
+     * @throws AccessDeniedException se la voce non e' dell'utente o non esiste
+     */
+    public WorkEntry updateTimes(String username, Long entryId, String startTime, String endTime, ZoneId zone) {
+        User user = requireUser(username);
+        WorkEntry entry = workEntryRepository.findById(entryId)
+                .filter(e -> e.getUser().getId().equals(user.getId()))
+                .orElseThrow(() -> new AccessDeniedException("Voce non trovata o non accessibile"));
+        if (startTime == null || startTime.isBlank()) {
+            return entry; // senza un inizio valido non si tocca nulla
+        }
+        LocalDate date = entry.getStartedAt().atZone(zone).toLocalDate();
+        Instant newStart = date.atTime(LocalTime.parse(startTime.trim())).atZone(zone).toInstant();
+
+        Instant newEnd = null;
+        if (endTime != null && !endTime.isBlank()) {
+            Instant candidate = date.atTime(LocalTime.parse(endTime.trim())).atZone(zone).toInstant();
+            if (candidate.isBefore(newStart)) {
+                candidate = date.plusDays(1).atTime(LocalTime.parse(endTime.trim())).atZone(zone).toInstant();
+            }
+            newEnd = candidate;
+        }
+        entry.setStartedAt(newStart);
+        entry.setEndedAt(newEnd);
         return workEntryRepository.save(entry);
     }
 
