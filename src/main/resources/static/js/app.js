@@ -106,24 +106,40 @@
         }
     }
 
-    // ---------- Modifica voci inline ----------
+    // ---------- Modifica descrizione inline (si apre SOTTO la riga) ----------
     document.querySelectorAll(".edit-toggle").forEach(function (btn) {
         btn.addEventListener("click", function () {
-            var li = btn.closest(".entry");
-            li.querySelector(".entry-view").hidden = true;
-            var form = li.querySelector(".entry-edit");
-            form.hidden = false;
-            var input = form.querySelector("input");
-            input.focus();
-            input.setSelectionRange(input.value.length, input.value.length);
+            var form = btn.closest(".entry").querySelector(".entry-edit");
+            form.hidden = !form.hidden;               // toggle: click di nuovo per chiudere
+            if (!form.hidden) {
+                var input = form.querySelector("input");
+                input.focus();
+                input.setSelectionRange(input.value.length, input.value.length);
+            }
         });
     });
 
     document.querySelectorAll(".edit-cancel").forEach(function (btn) {
         btn.addEventListener("click", function () {
-            var li = btn.closest(".entry");
-            li.querySelector(".entry-edit").hidden = true;
-            li.querySelector(".entry-view").hidden = false;
+            btn.closest(".entry").querySelector(".entry-edit").hidden = true;
+        });
+    });
+
+    // ---------- Modifica orari inline (click sul badge data/ora, SOTTO la riga) ----------
+    document.querySelectorAll(".time-edit-toggle").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            var form = btn.closest(".entry").querySelector(".time-edit");
+            form.hidden = !form.hidden;               // toggle: click di nuovo sul badge per chiudere
+            if (!form.hidden) {
+                var input = form.querySelector("input");
+                if (input) { input.focus(); }
+            }
+        });
+    });
+
+    document.querySelectorAll(".time-edit-cancel").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            btn.closest(".entry").querySelector(".time-edit").hidden = true;
         });
     });
 

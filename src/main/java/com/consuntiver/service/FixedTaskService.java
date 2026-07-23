@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FixedTaskService {
@@ -35,14 +36,29 @@ public class FixedTaskService {
                 ? name.trim()
                 : (taskNumber != null ? "#" + taskNumber : "Task");
         String finalDescription = (description != null && !description.isBlank()) ? description.trim() : null;
+
+        // Se esiste gia' un task con lo stesso (utente, codice, anno) - anche cestinato -
+        // lo riusiamo invece di crearne un duplicato: cosi' non si viola il vincolo di
+        // unicita' (id_user, cod_task, year) e riaggiungere un numero cestinato lo ripristina.
+        if (taskNumber != null) {
+            Optional<FixedTask> existing =
+                    fixedTaskRepository.findFirstByUserAndTaskNumberAndYear(user, taskNumber, year);
+            if (existing.isPresent()) {
+                FixedTask task = existing.get();
+                task.setDeleted(false);
+                task.setName(finalName);
+                task.setDescription(finalDescription);
+                return fixedTaskRepository.save(task);
+            }
+        }
         return fixedTaskRepository.save(new FixedTask(taskNumber, finalName, finalDescription, year, user));
     }
 
-    /** Task dell'utente che hanno un codice, per il selettore sulla barra attivita' (dedup per codice). */
+    /** Task ATTIVI dell'utente che hanno un codice, per il selettore sulla barra attivita' (dedup per codice). */
     public List<TaskOption> options(String username) {
         User user = requireUser(username);
         LinkedHashMap<String, TaskOption> byCode = new LinkedHashMap<>();
-        for (FixedTask t : fixedTaskRepository.findByUserOrderByYearDescIdDesc(user)) {
+        for (FixedTask t : fixedTaskRepository.findByUserAndDeletedFalseOrderByYearDescIdDesc(user)) {
             if (t.getTaskNumber() != null) {
                 byCode.putIfAbsent(t.getTaskNumber(), new TaskOption(t.getTaskNumber(), t.getName()));
             }
@@ -67,30 +83,57 @@ public class FixedTaskService {
         return fixedTaskRepository.save(task);
     }
 
-    /** Cancella un task fisso, solo se appartiene all'utente. */
+    /**
+     * Elimina (logicamente) un task fisso, solo se appartiene all'utente: imposta il flag
+     * {@code deleted}. Il task sparisce dagli attivi e dal selettore ma resta a DB (cosi'
+     * non si rompe il collegamento con le attivita' che lo citano) ed e' ripristinabile.
+     */
     public void delete(String username, Long id) {
+        setDeleted(username, id, true);
+    }
+
+    /** Ripristina un task precedentemente eliminato (deleted = false). */
+    public void restore(String username, Long id) {
+        setDeleted(username, id, false);
+    }
+
+    private void setDeleted(String username, Long id, boolean deleted) {
         User user = requireUser(username);
         FixedTask task = fixedTaskRepository.findById(id)
                 .filter(t -> t.getUser().getId().equals(user.getId()))
                 .orElseThrow(() -> new AccessDeniedException("Task non trovato o non accessibile"));
-        fixedTaskRepository.delete(task);
+        task.setDeleted(deleted);
+        fixedTaskRepository.save(task);
     }
 
-    /** Task fissi dell'utente raggruppati per anno (anni piu' recenti prima). */
+    /** Task fissi ATTIVI dell'utente raggruppati per anno (anni piu' recenti prima). */
     public List<YearGroup> listGroupedByYear(String username, String taskBaseUrl) {
         User user = requireUser(username);
-        List<FixedTask> tasks = fixedTaskRepository.findByUserOrderByYearDescIdDesc(user);
+        List<FixedTask> tasks = fixedTaskRepository.findByUserAndDeletedFalseOrderByYearDescIdDesc(user);
 
         LinkedHashMap<Integer, List<FixedTaskView>> byYear = new LinkedHashMap<>();
         for (FixedTask t : tasks) {
-            String url = t.getTaskNumber() != null ? EasyLinks.issueUrl(taskBaseUrl, t.getTaskNumber()) : null;
-            byYear.computeIfAbsent(t.getYear(), y -> new ArrayList<>())
-                    .add(new FixedTaskView(t.getId(), t.getTaskNumber(), url, t.getName(), t.getDescription()));
+            byYear.computeIfAbsent(t.getYear(), y -> new ArrayList<>()).add(toView(t, taskBaseUrl));
         }
 
         List<YearGroup> groups = new ArrayList<>();
         byYear.forEach((year, list) -> groups.add(new YearGroup(year, list)));
         return groups;
+    }
+
+    /** Task ELIMINATI (logicamente) dell'utente, in elenco piatto, i piu' recenti prima. */
+    public List<FixedTaskView> listDeleted(String username, String taskBaseUrl) {
+        User user = requireUser(username);
+        List<FixedTaskView> deleted = new ArrayList<>();
+        for (FixedTask t : fixedTaskRepository.findByUserAndDeletedTrueOrderByYearDescIdDesc(user)) {
+            deleted.add(toView(t, taskBaseUrl));
+        }
+        return deleted;
+    }
+
+    private FixedTaskView toView(FixedTask t, String taskBaseUrl) {
+        String url = t.getTaskNumber() != null ? EasyLinks.issueUrl(taskBaseUrl, t.getTaskNumber()) : null;
+        return new FixedTaskView(t.getId(), t.getTaskNumber(), url, t.getName(), t.getDescription());
     }
 
     /** Estrae solo le cifre; se non ce ne sono restituisce null. */

@@ -11,30 +11,37 @@ Lo storico della giornata appare nell'area sopra la barra.
 - Login / Logout
 - Pagina principale con:
   - storico delle voci **di oggi** (dalla piu' recente alla piu' vecchia)
-  - barra di input in basso per registrare una nuova voce
-  - **Modifica** del testo di ogni voce gia' inserita (in caso di errore)
-  - **Entrata / Uscita**: timbrature dell'orario di lavoro (supporta piu' coppie
-    al giorno, es. pausa pranzo)
-  - **Contatore live** che avanza ogni secondo mentre sei "in servizio", somma le
-    sessioni della giornata, mostra una barra di avanzamento e ti avvisa al
-    raggiungimento delle **8 ore**
-  - Pulsante **Easy** che apre https://prd.galileonetwork.it/easy/
+  - barra di input in basso per registrare una nuova voce; all'inserimento la
+    voce precedente ancora aperta viene chiusa in automatico (la sua fine
+    diventa "adesso")
+  - azioni su ogni voce: **Termina** l'attivita' in corso, **Modifica** il testo
+    (ri-collega il task citato in caso di errore) ed **Elimina** la riga
+  - **Orario di lavoro**: quattro orari inseriti a mano — **Entrata**, **Pausa
+    pranzo**, **Rientro**, **Uscita** — salvati insieme con *Salva orari*
+  - **Contatore live** che dall'entrata conta il **lavoro netto** (esclusa la
+    pausa pranzo: quella effettiva con un minimo di 45 min, oppure 1 ora se non
+    indicata) verso le **8 ore**, con barra di avanzamento e stima dell'uscita
+    prevista
   - **Colonna task** a destra: rileva i numeri di task citati nelle righe
     (es. `#12345` o `123456`) e ne crea il link verso Easy
     (`.../easy/issues/<id>`), con la descrizione presa dalla riga.
     I numeri "nudi" sono riconosciuti come task solo da 5 cifre in su, per
     evitare falsi positivi (orari, anni); con il prefisso `#` basta una cifra.
+  - Pagina **Storico giornate**: le giornate passate (orari con **lavoro netto**,
+    totale del tempo e ripartizione per task, elenco delle attivita' svolte)
   - Pagina **Task fissi**: task validi per un intero anno (es. manutenzioni
     annuali), con numero task opzionale che genera il link a Easy (stessa
     logica della colonna laterale), raggruppati per anno e con cancellazione
-  - Pagina **Impostazioni**: per utente si configurano l'indirizzo **Home**
-    (pulsante Easy) e l'**URL base** con cui si costruiscono i link ai task
-- Ogni utente vede e modifica **solo** le proprie voci, timbrature e task fissi
+  - Pagina **Impostazioni**: per utente si configurano l'indirizzo **Home** e
+    l'**URL base** con cui si costruiscono i link ai task
+- Ogni utente vede e modifica **solo** le proprie voci, orari e task fissi
+- **Navigazione** (menu in alto): **Home**, il menu **Configurazioni**
+  (Task fissi, Impostazioni) e il menu col **tuo nome** (Storico, Esci)
 
 ## Account demo
 
 All'avvio è disponibile un account dimostrativo con una giornata di lavoro
-già simulata (task d'esempio, timbrature, contatore):
+già simulata (task d'esempio, orari, contatore):
 
 - Username: `demo_galileo`
 - Password: `death_earth`
@@ -63,7 +70,7 @@ In locale i suoi dati vengono rigenerati a ogni avvio (seeder, solo fuori dal pr
 ## Avvio
 
 ```bash
-./mvnw spring-boot:run     # oppure: mvn spring-boot:run
+mvn spring-boot:run
 ```
 
 Poi apri http://localhost:8080 — verrai rediretto al login. Registra un
@@ -80,14 +87,18 @@ Disponibile su http://localhost:8080/h2-console con:
 
 ## Deploy su Render
 
-Il repo include un **Blueprint** (`render.yaml`) che crea automaticamente sia il
-web service (build via `Dockerfile`) sia un database **PostgreSQL** gestito.
+Il repo include un **Blueprint** (`render.yaml`) che crea il solo **web service**
+(build via `Dockerfile`). Il database **non** è gestito da Render: è un progetto
+**Supabase** esterno, a cui l'app si collega tramite variabili d'ambiente.
 
 1. Vai su [render.com](https://render.com), accedi e collega il tuo account GitHub.
 2. **New > Blueprint**, seleziona questo repository e il branch.
-3. Render legge `render.yaml`, crea il database `consuntiver-db` e il servizio web,
-   e collega in automatico le credenziali del DB tramite variabili d'ambiente.
-4. Al primo deploy l'app parte col profilo `prod` su PostgreSQL.
+3. Render legge `render.yaml` e crea il servizio web con `SPRING_PROFILES_ACTIVE=prod`.
+4. Imposta a mano, tra le variabili d'ambiente del servizio, le credenziali del
+   datasource Supabase:
+   - `SPRING_DATASOURCE_URL` — es. `jdbc:postgresql://<host-supabase>:5432/postgres?sslmode=require`
+   - `SPRING_DATASOURCE_USERNAME` — es. `postgres.<project-ref>` (session pooler) o `postgres` (diretta)
+   - `SPRING_DATASOURCE_PASSWORD` — la password del database Supabase
 
 > Nota: il piano free di Render mette in pausa il servizio dopo un periodo di
 > inattivita'; la prima richiesta dopo la pausa puo' impiegare qualche secondo.
@@ -95,15 +106,22 @@ web service (build via `Dockerfile`) sia un database **PostgreSQL** gestito.
 ### Locale vs produzione
 
 - **Locale** (nessun profilo): usa **H2 su file** (`./data`). Nessuna configurazione.
-- **Produzione** (profilo `prod`): usa **PostgreSQL**. L'URL viene costruito dalle
-  variabili `DB_HOST`, `DB_PORT`, `DB_NAME`, piu' `SPRING_DATASOURCE_USERNAME` e
-  `SPRING_DATASOURCE_PASSWORD`, tutte iniettate da Render.
+- **Produzione** (profilo `prod`): usa **PostgreSQL su Supabase**. La connessione
+  arriva interamente da `SPRING_DATASOURCE_URL` / `SPRING_DATASOURCE_USERNAME` /
+  `SPRING_DATASOURCE_PASSWORD`. Va usato il **session pooler** (porta 5432) o la
+  connessione **diretta**, non il *transaction pooler* (6543), incompatibile con
+  i prepared statement di Hibernate.
 
 ## Note tecniche
 
 - Gli orari sono salvati a DB in **UTC** (`Instant`) e mostrati nel fuso
   `Europe/Rome`. Il fuso usato per delimitare "la giornata" e' definito in
   `HomeController`.
-- Lo schema viene creato/aggiornato automaticamente da Hibernate
-  (`ddl-auto=update`). Per un uso reale conviene passare a migrazioni
-  gestite (es. Flyway).
+- Schema: in locale (H2) è generato da Hibernate (`ddl-auto=update`); in
+  produzione è gestito su Supabase e Hibernate lo **valida** soltanto
+  (`ddl-auto=validate`), vedi [`docs/schema-supabase.sql`](docs/schema-supabase.sql).
+  Per un uso reale conviene passare a migrazioni gestite (es. Flyway).
+- Il pool di connessioni (HikariCP) in `prod` è tenuto piccolo
+  (`maximum-pool-size=5`): il *session pooler* di Supabase limita i client totali
+  a `pool_size` (di default 15), quindi un pool grande — sommato all'overlap di un
+  redeploy — lo saturerebbe (`EMAXCONNSESSION`).

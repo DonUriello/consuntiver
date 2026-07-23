@@ -3,79 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Storico - Consuntiver</title>
+    <title>Storico - Focus Shield</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <!-- Colori per task: una classe .tc-<idtask> per ciascun task, generata a runtime. -->
-    <style th:utext="${history.taskColorCss}"></style>
+    <style th:utext="${taskColorCss}"></style>
 </head>
 <body class="term">
 <div class="screen">
 
-    <header class="app-header">
-        <div class="app-brand">
-            <span class="app-title">Consuntiver</span>
-            <span class="brand-ver">v1.0</span>
-            <th:block th:replace="~{fragments/help :: help}"></th:block>
-        </div>
-        <div class="app-nav">
-            <a class="ext-link nav-cyan" th:href="@{/}">[home]</a>
-            <a class="ext-link nav-cyan" th:href="@{/fixed-tasks}">[task fissi]</a>
-            <a class="ext-link nav-cyan" th:href="@{/settings}">[impostazioni]</a>
-            <a class="ext-link nav-yellow" th:href="${homeUrl}" target="_blank" rel="noopener">[easy ↗]</a>
-            <span class="app-user" th:text="${username}">utente</span>
-            <form th:action="@{/logout}" method="post" class="logout-form">
-                <button type="submit" class="link-button nav-red">[esci]</button>
-            </form>
-        </div>
-    </header>
+    <header th:replace="~{fragments/header :: header}"></header>
 
     <main class="hist-page">
-        <h1 class="hist-title">Storico giornate</h1>
+        <h1 class="hist-title">Storico</h1>
 
-        <p th:if="${history.isEmpty()}" class="empty">
-            Nessuno storico: le giornate passate compariranno qui.
+        <!-- ---------- Calendario del mese ---------- -->
+        <section class="panel cal">
+            <div class="cal-head">
+                <a class="cal-nav" th:href="@{/storico(month=${calendar.prevMonth})}"
+                   aria-label="Mese precedente">‹</a>
+                <span class="cal-month" th:text="${calendar.monthLabel}">Luglio 2026</span>
+                <a class="cal-nav" th:href="@{/storico(month=${calendar.nextMonth})}"
+                   aria-label="Mese successivo">›</a>
+            </div>
+            <div class="cal-grid cal-weekdays">
+                <span th:each="w : ${calendar.weekdayLabels}" th:text="${w}">lun</span>
+            </div>
+            <div class="cal-grid cal-week" th:each="week : ${calendar.weeks}">
+                <th:block th:each="d : ${week.days}">
+                    <a th:if="${d.inMonth and d.hasData}"
+                       class="cal-cell has-data"
+                       th:classappend="${d.selected} ? ' selected' : (${d.today} ? ' today' : '')"
+                       th:href="@{/storico(day=${d.iso})}"
+                       th:text="${d.day}">1</a>
+                    <span th:unless="${d.inMonth and d.hasData}"
+                          class="cal-cell"
+                          th:classappend="${!d.inMonth} ? ' out' : (${d.today} ? ' today' : '')"
+                          th:text="${d.inMonth} ? ${d.day} : ''">1</span>
+                </th:block>
+            </div>
+        </section>
+
+        <!-- ---------- Consuntivo del giorno selezionato ---------- -->
+        <p th:if="${dayDetail == null}" class="empty">
+            Seleziona un giorno dal calendario per vedere il consuntivo.
         </p>
 
-        <section class="panel hist-day" th:each="d : ${history.days}">
-            <span class="panel-label" th:text="'╡ ' + ${d.dateLabel} + ' ╞'">╡ mar 08/07 ╞</span>
+        <section class="panel hist-day" th:if="${dayDetail != null}">
+            <span class="panel-label" th:text="${dayDetail.dateLabel}">Giovedì 23 luglio</span>
 
-            <!-- Orari della giornata -->
-            <div class="hist-times" th:if="${d.hasTimes()}">
-                <span>Entrata <strong th:text="${d.entry}">09:00</strong></span>
-                <span>Pausa <strong th:text="${d.lunchStart} + '–' + ${d.lunchEnd}">13:00–14:00</strong></span>
-                <span>Uscita <strong th:text="${d.exit}">18:00</strong></span>
-                <span class="hist-net">Netto <strong th:text="${d.netWorked}">8:00</strong></span>
+            <div class="hist-times" th:if="${dayDetail.hasTimes}">
+                <span>Entrata <strong th:text="${dayDetail.entry}">09:00</strong></span>
+                <span>Pausa <strong th:text="${dayDetail.lunchStart} + '–' + ${dayDetail.lunchEnd}">13:00–14:00</strong></span>
+                <span>Uscita <strong th:text="${dayDetail.exit}">18:00</strong></span>
+                <span class="hist-net">Netto <strong th:text="${dayDetail.netWorked}">8:00</strong></span>
             </div>
 
-            <!-- Totale del tempo e ripartizione per task -->
-            <div class="hist-summary" th:if="${d.hasTotal}">
-                <span class="hist-total">Totale
-                    <strong th:text="${d.totalLabel} + ' h'">6,5 h</strong>
-                    <span class="task-total-actual" th:text="'(' + ${d.totalActual} + ')'">(6:12)</span>
-                </span>
-                <ul class="hist-tasks">
-                    <li th:each="t : ${d.tasks}" th:classappend="${t.colorClass}">
-                        <span class="entry-sym">●</span>
-                        <a class="task-id" th:href="${t.url}" target="_blank" rel="noopener"
-                           th:text="'#' + ${t.id}">#12345</a>
-                        <span class="task-time" th:text="${t.label} + ' (' + ${t.actual} + ')'">+1 (1:00)</span>
-                    </li>
-                </ul>
+            <div class="hist-total" th:if="${dayDetail.hasTotal}">Totale
+                <strong th:text="${dayDetail.totalLabel} + ' h'">6,5 h</strong>
+                <span class="task-total-actual" th:text="'(' + ${dayDetail.totalActual} + ')'">(6:12)</span>
             </div>
 
-            <!-- Elenco attivita' della giornata -->
-            <ul class="hist-entries">
-                <li th:each="e : ${d.entries}" th:classappend="${e.colorClass}">
-                    <span class="entry-sym">●</span>
-                    <span class="hist-entry-time" th:text="${e.time}">09:00 → 09:45</span>
-                    <span class="entry-text" th:text="${e.description}">descrizione</span>
-                </li>
-            </ul>
+            <table class="hist-table" th:if="${dayDetail.hasTotal}">
+                <thead>
+                    <tr>
+                        <th class="col-task">Task</th>
+                        <th class="col-acts">Attività</th>
+                        <th class="col-time">Tempo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="t : ${dayDetail.tasks}" th:classappend="${t.colorClass}">
+                        <td class="col-task">
+                            <a class="task-id" th:href="${t.url}" target="_blank" rel="noopener"
+                               th:attr="data-clipboard=${t.clipboard}"
+                               title="Copia «tempo - attività» negli appunti e apri il task"
+                               th:text="${t.code}">#12345</a>
+                        </td>
+                        <td class="col-acts" th:text="${t.comments}">attività concatenate</td>
+                        <td class="col-time">
+                            <span class="task-time"
+                                  th:text="${t.totalLabel} + ' (' + ${t.totalActual} + ')'">+1 (1:00)</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p th:unless="${dayDetail.hasTotal}" class="empty">
+                Nessuna attività con task in questa giornata.
+            </p>
         </section>
     </main>
 </div><!-- /.screen -->
+
+<!-- Riusa la logica della home per copiare negli appunti al click sul task. -->
+<script th:src="@{/js/app.js}"></script>
 </body>
 </html>

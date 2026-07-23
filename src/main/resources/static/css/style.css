@@ -1,111 +1,156 @@
 /* ===========================================================================
-   Consuntiver — tema "anni '80 / CLI" (variante 1a: ANSI multicolore su nero)
+   Focus Shield — tema scuro moderno (redesign)
+   Space Grotesk (UI) + JetBrains Mono (numeri/etichette), verde segnale + ambra,
+   pannelli arrotondati su fondo scuro con glow.
+   Reskin puramente visivo: stessi nomi di classe / ID / hook JS.
+   IMPORTANTE: i colori delle attivita' restano PER-TASK (variabile --tc,
+   generata da TaskColorService): stesso task = stesso colore, task diversi =
+   colori diversi.
    =========================================================================== */
 :root {
-    --bg: #17181c;
-    --panel-bg: #0f0f12;
-    --border: #4a4a52;        /* doppia linea neutra */
-    --divider: #26262c;       /* tratteggio interno */
-    --divider2: #33333b;
-    --text: #e8e8ee;          /* primario */
-    --text2: #d6d6dc;         /* secondario */
-    --muted: #8a8a94;
-    --disabled: #5a5a64;
-    --green: #4ade80;
-    --yellow: #facc15;
-    --red: #f87171;
-    --cyan: #67e8f9;
-    --on-green: #08120b;
-    --on-cyan: #08171a;
-    --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    /* Superfici */
+    --bg: #0b0d10;
+    --panel-bg: #14171b;
+    --input-bg: #101317;
+    --surface-2: #1c2026;
+
+    /* Testo */
+    --heading: #f4f2ec;
+    --text: #e9e7e2;
+    --text-dim: #d7d5cf;
+    --muted: #8b9098;
+    --faint: #6f757d;
+    --faint2: #5c626b;
+
+    /* Accento verde (primario) */
+    --accent: #86e07a;
+    --accent-bright: #9fe895;
+    --accent-deep: #5bbd52;
+    --accent-muted: #6f9c66;
+
+    /* Ambra (in corso) e danger */
+    --amber: #f5b943;
+    --amber-bright: #f5c563;
+    --danger: #f27272;
+
+    /* Font */
+    --font-sans: 'Space Grotesk', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    /* Linee e raggi */
+    --border: rgba(255, 255, 255, 0.07);
+    --border-soft: rgba(255, 255, 255, 0.06);
+    --border-input: rgba(255, 255, 255, 0.09);
+    --radius: 10px;
+    --radius-lg: 18px;
+
+    /* Alias usati dalle classi condivise (pagine secondarie, ecc.) */
+    --text2: var(--text-dim);
+    --divider: var(--border-soft);
+    --divider2: var(--border);
+    --bordeaux: var(--accent);
+    --cream: var(--bg);
+    --cyan: var(--accent-bright);
+    --yellow: var(--amber-bright);
+    --red: var(--danger);
+    --gold: var(--accent);
 }
 
-* {
-    box-sizing: border-box;
+@keyframes fs-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.82); }
 }
 
-/* L'attributo hidden deve sempre nascondere l'elemento, anche se una regola
-   piu' specifica gli assegna display:flex (es. .fixed-form, .entry-edit). */
-[hidden] {
-    display: none !important;
-}
+* { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
 
 body {
     margin: 0;
-    font-family: var(--font-mono);
-    font-size: 13px;
+    font-family: var(--font-sans);
+    font-size: 15px;
     line-height: 1.5;
-    background: var(--bg);
-    color: var(--text2);
+    color: var(--text);
+    background:
+        radial-gradient(1100px 520px at 12% -12%, rgba(134, 224, 122, 0.07), transparent 58%),
+        radial-gradient(900px 500px at 108% 8%, rgba(245, 185, 67, 0.05), transparent 55%),
+        var(--bg);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* ---------- Contenitore schermo (card con cornice a doppia linea) ---------- */
+::selection { background: rgba(134, 224, 122, 0.28); }
+
+/* ---------- Container pagina ---------- */
 .screen {
-    max-width: 1180px;
-    margin: 20px auto;
-    background: var(--panel-bg);
-    border: 3px double var(--border);
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 34px;
 }
 
 /* ---------- Header / brand / nav ---------- */
 .app-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 16px;
     flex-wrap: wrap;
-    padding: 12px 20px;
-    border-bottom: 3px double var(--border);
+    padding-bottom: 18px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .app-brand {
     display: flex;
-    align-items: baseline;
-    gap: 10px;
+    align-items: center;
+    gap: 14px;
 }
 
 .app-title {
+    font-family: var(--font-sans);
     font-weight: 700;
-    font-size: 15px;
-    color: var(--cyan);
-    letter-spacing: 3px;
+    font-size: 22px;
+    letter-spacing: 0.14em;
+    color: var(--text);
     text-transform: uppercase;
+    text-decoration: none;
 }
+.app-title:hover { color: var(--accent-bright); }
 
 .brand-ver {
-    color: var(--disabled);
-    font-size: 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-style: normal;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    padding: 3px 8px;
 }
 
 .app-nav {
+    margin-left: auto;
     display: flex;
-    align-items: baseline;
-    gap: 18px;
-    font-size: 12px;
+    align-items: center;
+    gap: 30px;
+    font-size: 14px;
     flex-wrap: wrap;
 }
 
 .ext-link {
-    color: var(--cyan);
-    text-decoration: none;
-}
-
-.ext-link:hover {
-    text-decoration: underline;
-}
-
-.nav-cyan { color: var(--cyan); }
-.nav-yellow { color: var(--yellow); }
-.nav-red { color: var(--red); }
-
-.app-user {
     color: var(--muted);
+    text-decoration: none;
+    font-style: normal;
+    font-weight: 500;
 }
+.ext-link:hover { color: var(--text); text-decoration: none; }
 
-.logout-form {
-    margin: 0;
-    display: inline;
-}
+.nav-cyan { color: var(--muted); }
+.nav-yellow { color: var(--muted); }
+.nav-red { color: var(--muted); }
+
+.app-user { color: var(--text); font-weight: 500; }
+
+.logout-form { margin: 0; display: inline; }
 
 .link-button {
     background: none;
@@ -113,183 +158,308 @@ body {
     padding: 0;
     cursor: pointer;
     font: inherit;
-    color: var(--cyan);
+    font-weight: 500;
+    font-style: normal;
+    color: var(--muted);
+    letter-spacing: 0;
+}
+.link-button.nav-red { color: var(--muted); }
+.link-button:hover { color: var(--danger); text-decoration: none; }
+
+/* Avatar iniziali nel menu utente */
+.user-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #3f7f38);
+    color: var(--bg);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
 }
 
-.link-button.nav-red {
-    color: var(--red);
-}
-
-.link-button:hover {
-    text-decoration: underline;
-}
-
-/* ---------- Pannelli a doppia cornice con etichetta a linguetta ---------- */
-.panel {
+/* Pulsante hamburger: nascosto su desktop, mostrato solo su mobile */
+.nav-toggle {
+    display: none;
+    width: 42px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--border-input);
+    background: var(--input-bg);
+    border-radius: var(--radius);
+    cursor: pointer;
     position: relative;
-    border: 3px double var(--pc, var(--border));
-    background: var(--panel-bg);
-    padding: 18px;
+    flex: none;
+    margin-left: auto;
+    box-shadow: none;
 }
+.nav-toggle:hover { background: var(--surface-2); border-color: rgba(255, 255, 255, 0.2); }
 
-.panel-label {
+.nav-toggle-bars,
+.nav-toggle-bars::before,
+.nav-toggle-bars::after {
     position: absolute;
-    top: -11px;
-    left: 14px;
-    background: var(--panel-bg);
-    padding: 0 8px;
-    color: var(--pc, var(--text2));
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
+    left: 50%;
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--text);
+    transform: translateX(-50%);
+}
+.nav-toggle-bars { top: 50%; margin-top: -1px; }
+.nav-toggle-bars::before,
+.nav-toggle-bars::after { content: ""; left: 0; transform: none; }
+.nav-toggle-bars::before { top: -6px; }
+.nav-toggle-bars::after { top: 6px; }
+
+/* ---------- Menu a tendina (Configurazioni / nome utente) ---------- */
+.nav-group {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
 }
 
-.panel--green { --pc: var(--green); }
-.panel--yellow { --pc: var(--yellow); }
+.nav-group-label {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-weight: 500;
+    white-space: nowrap;
+    user-select: none;
+}
+.nav-group-label:hover { color: var(--text); }
+.nav-group-label::-webkit-details-marker { display: none; }
+.nav-group-label::marker { content: ""; }
+.nav-group-label::after {
+    content: "▾";
+    font-size: 0.72em;
+    margin-left: 0.1em;
+}
+.nav-group[open] > .nav-group-label { color: var(--text); }
+.nav-group[open] > .nav-group-label::after { content: "▴"; }
+
+.nav-group--user > .nav-group-label { color: var(--text); }
+
+.nav-drop {
+    position: absolute;
+    top: calc(100% + 14px);
+    right: 0;
+    min-width: 200px;
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.5);
+    padding: 8px 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 120;
+}
+.nav-drop::before {
+    content: "";
+    position: absolute;
+    top: -14px;
+    left: 0;
+    right: 0;
+    height: 14px;
+}
+.nav-drop .ext-link,
+.nav-drop .link-button {
+    padding: 10px 18px;
+    white-space: nowrap;
+    text-align: left;
+}
+.nav-drop .ext-link:hover { background: rgba(255, 255, 255, 0.04); color: var(--accent-bright); }
+.nav-drop .logout-form { display: block; margin: 0; }
+.nav-drop .link-button { width: 100%; }
+.nav-drop .link-button:hover { background: rgba(242, 114, 114, 0.08); }
+
+/* ---------- Pannelli ---------- */
+.panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+}
+
+/* Intestazione di sezione: pallino + etichetta mono + filetto */
+.panel-label {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+    margin-bottom: 22px;
+}
+.panel-label::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px rgba(134, 224, 122, 0.8);
+    flex: none;
+}
+.panel-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
 
 /* ---------- Layout a due colonne ---------- */
 .layout {
     display: grid;
-    grid-template-columns: 1fr 330px;
-    gap: 22px;
-    padding: 22px 20px 20px;
+    grid-template-columns: minmax(0, 1.9fr) minmax(300px, 1fr);
+    gap: 26px;
+    align-items: start;
 }
 
 .main-col {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 26px;
     min-width: 0;
 }
 
 .task-sidebar {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 26px;
+    min-width: 0;
 }
 
 /* ---------- Pannello TIMER ---------- */
-.worktime-top {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-}
+.worktime-top { }
 
 .worktime-counter {
     display: flex;
     align-items: baseline;
-    gap: 10px;
+    gap: 18px;
+    flex-wrap: wrap;
 }
 
 .wt-counter {
-    font-size: 34px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: 1px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: clamp(44px, 7vw, 84px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--heading);
     font-variant-numeric: tabular-nums;
 }
 
 .wt-target {
-    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 26px;
+    color: var(--faint);
     font-variant-numeric: tabular-nums;
 }
 
-/* Form dei quattro orari inseriti a mano (entrata / pausa / rientro / uscita) */
-.worktime-form {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 12px;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px dashed var(--divider2);
-}
-
-.wt-field {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.wt-field label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.wt-field input[type="time"] {
-    font-family: inherit;
-    font-size: 14px;
-    padding: 5px 8px;
-    background: #1a1a20;
-    border: 1px solid var(--divider2);
-    color: var(--text);
-    color-scheme: dark;
-}
-
-.wt-field input[type="time"]:focus {
-    outline: none;
-    border-color: var(--green);
-}
-
-/* SALVA: pulsante primario, evidente */
-.btn-in {
-    font-family: inherit;
-    background: var(--green) !important;
-    color: var(--on-green) !important;
-    font-weight: 700;
-    font-size: 14px;
-    padding: 6px 20px;
-    border: 1px solid transparent;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 0 0 1px var(--green), 0 0 14px rgba(74, 222, 128, 0.55);
-}
-
-.btn-in:hover:not(:disabled) {
-    filter: brightness(1.15);
-    box-shadow: 0 0 0 1px var(--green), 0 0 20px rgba(74, 222, 128, 0.75);
-}
-
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
 .wt-progress {
-    margin-top: 12px;
-    height: 12px;
-    background: #1a1a20;
-    border: 1px solid var(--divider2);
+    margin-top: 22px;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
     overflow: hidden;
 }
 
 .wt-progress-fill {
     height: 100%;
     width: 0;
-    background: var(--green);
-    transition: width 0.4s ease;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent-deep), var(--accent));
+    box-shadow: 0 0 14px rgba(134, 224, 122, 0.55);
+    transition: width 0.5s linear;
 }
-
-.wt-progress-fill.done { background: var(--green); }
+.wt-progress-fill.done { background: linear-gradient(90deg, var(--accent-deep), var(--accent)); }
 
 .wt-status {
-    margin-top: 6px;
-    font-size: 13px;
-    color: var(--green);
+    margin-top: 13px;
+    font-size: 13.5px;
+    color: var(--muted);
 }
 
-/* ---------- Pannello OGGI (log) ---------- */
-.empty {
-    color: var(--muted);
-    font-style: italic;
+.worktime-form {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: end;
 }
+
+.wt-field {
+    flex: 1 1 120px;
+    min-width: 0;            /* permette lo shrink sotto la larghezza intrinseca
+                               dell'input, cosi' il bottone Salva entra in linea */
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.wt-field label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--faint);
+}
+
+.wt-field input[type="time"] {
+    height: 44px;
+    padding: 0 12px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    color-scheme: dark;
+}
+.wt-field input[type="time"]:focus { outline: none; border-color: var(--accent); }
+
+/* Salva orari: bottone secondario. In desktop si affianca a destra dei
+   quattro orari (dimensione naturale, adattiva); quando non c'e' spazio va
+   a capo sotto; su mobile diventa a tutta larghezza (vedi media query). */
+.btn-in {
+    flex: 0 1 auto;
+    align-self: end;
+    height: 44px;
+    padding: 0 22px;
+    background: var(--surface-2) !important;
+    color: var(--text) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    text-transform: none;
+    box-shadow: none;
+}
+.btn-in:hover:not(:disabled) {
+    background: #242931 !important;
+    border-color: rgba(255, 255, 255, 0.2);
+    filter: none;
+    box-shadow: none;
+}
+
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---------- Pannello OGGI (log) ---------- */
+.empty { color: var(--muted); font-style: normal; padding: 6px 0; }
 
 .entry-list {
     list-style: none;
@@ -300,229 +470,326 @@ button:disabled {
 }
 
 .entry {
-    padding: 6px 0;
-    border-bottom: 1px dashed var(--divider);
+    padding: 15px 2px;
+    border-bottom: 1px solid var(--border-soft);
 }
+.entry:last-child { border-bottom: none; }
 
 .entry-view {
     display: flex;
-    align-items: flex-start;
-    gap: 12px;
+    align-items: center;
+    gap: 15px;
 }
+.entry-view .entry-sym { display: none; }
 
+/* Range chip (orario) — cliccabile per modificare gli orari; colore PER-TASK */
 .entry-time {
-    flex-shrink: 0;
+    flex: none;
     display: inline-flex;
-    align-items: baseline;
+    align-items: center;
     gap: 6px;
-    font-variant-numeric: tabular-nums;
-}
-
-/* L'orario di inizio e' un badge (angoli vivi) col colore del task (--tc). */
-.entry-start {
-    background: var(--tc, var(--divider2));
-    color: #fff;
-    font-weight: 600;
-    padding: 1px 7px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
     white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    color: var(--tc, var(--muted));
+    color: color-mix(in srgb, var(--tc, var(--muted)), white 24%);
+    background: rgba(255, 255, 255, 0.04);
+    background: color-mix(in srgb, var(--tc, var(--muted)) 12%, transparent);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid color-mix(in srgb, var(--tc, var(--muted)) 32%, transparent);
 }
+.entry-time:hover { background: color-mix(in srgb, var(--tc, var(--muted)) 20%, transparent); }
+.entry-time:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
-.entry-end { color: var(--muted); }
+.entry-start { background: none; color: inherit; font-weight: 500; padding: 0; }
+.entry-end { color: inherit; font-weight: 500; }
 
-/* Simbolo identificativo: colorato col colore del task (--tc), distingue task/righe */
 .entry-sym { flex: none; font-weight: 700; color: var(--tc, var(--muted)); }
 
 .entry-text {
-    color: var(--text);
     flex: 1;
     min-width: 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--text-dim);
     white-space: normal;
     overflow-wrap: anywhere;
 }
 
+/* Value chip (durata) — colore PER-TASK, non un link */
 .ctx-time {
-    flex-shrink: 0;
+    flex: none;
     display: inline-flex;
     align-items: baseline;
-    gap: 0.3rem;
-}
-
-.ctx-time-btn {
-    display: inline-block;
-    padding: 1px 8px;
-    background: var(--tc, var(--cyan));
-    color: #fff;
-    font-weight: 700;
-    text-decoration: none;
+    gap: 6px;
+    padding: 6px 13px;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 13px;
     font-variant-numeric: tabular-nums;
+    color: var(--tc, var(--accent));
+    color: color-mix(in srgb, var(--tc, var(--accent)), white 24%);
+    background: rgba(134, 224, 122, 0.12);
+    background: color-mix(in srgb, var(--tc, var(--accent)) 14%, transparent);
+    border: 1px solid rgba(134, 224, 122, 0.28);
+    border: 1px solid color-mix(in srgb, var(--tc, var(--accent)) 32%, transparent);
 }
+.ctx-time-btn { color: inherit; font-weight: 600; text-decoration: none; }
+.ctx-time-actual { color: inherit; opacity: 0.7; font-size: 11px; }
 
-.ctx-time-btn:hover { filter: brightness(1.1); }
-.ctx-time-actual { color: var(--muted); }
-
-/* Icone azione (matita / cestino), impilate */
+/* Azioni della riga (modifica / elimina) */
 .entry-actions {
-    flex-shrink: 0;
-    align-self: center;
+    flex: none;
     display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
+    align-items: center;
+    gap: 8px;
 }
-
 .entry-actions .delete-form { margin: 0; display: flex; }
 
 .icon-btn {
+    width: 34px;
+    height: 34px;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 0;
+    background: transparent;
+    border: 1px solid var(--border-input);
+    border-radius: 9px;
+    color: var(--muted);
+    cursor: pointer;
+}
+.icon-btn svg { width: 15px; height: 15px; }
+.icon-btn:hover { filter: none; }
+.edit-toggle:hover { border-color: var(--accent); color: var(--accent-bright); }
+.icon-delete { border-color: transparent; color: var(--faint); }
+.icon-delete:hover { color: var(--danger); border-color: rgba(242, 114, 114, 0.35); }
+
+/* Bottone "Termina attivita'": indicatore in corso pulsante, nel colore del task */
+.end-form { margin: 0; flex: none; display: inline-flex; align-items: center; }
+.icon-end {
+    width: auto;
+    height: auto;
+    padding: 4px;
     background: none;
     border: none;
-    padding: 0.1rem;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    line-height: 0;
+    color: var(--tc, var(--amber));
 }
-
-.icon-btn:hover { filter: brightness(1.2); }
-.edit-toggle { color: var(--cyan); }
-.icon-delete { color: var(--red); }
-.icon-end { color: var(--green); }
-
-/* Form del bottone "termina attivita'": inline, a sinistra del tempo totale */
-.end-form {
-    margin: 0;
-    flex-shrink: 0;
-    display: inline-flex;
+.medallion {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--tc, var(--amber));
+    box-shadow: 0 0 8px rgba(245, 185, 67, 0.7);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--tc, var(--amber)) 75%, transparent);
+    animation: fs-pulse 1.5s ease-in-out infinite;
 }
+.medallion::after { content: none; }
+.icon-end:hover .medallion { transform: scale(1.15); animation-play-state: paused; }
 
-/* Modifica inline (nascosta finche' non si preme la matita) */
+/* Ornamenti CSS legacy (non piu' usati nel markup, tenuti per sicurezza) */
+.ico-diamond, .ico-cross { display: inline-block; }
+
+/* Modifica descrizione inline (sotto la riga) */
 .entry-edit {
     display: none;
-    gap: 0.5rem;
+    gap: 0.6rem;
     align-items: center;
-    margin-top: 0.4rem;
+    margin-top: 0.7rem;
 }
-
 .entry-edit:not([hidden]) { display: flex; }
-
 .entry-edit input {
     flex: 1;
-    padding: 0.4rem 0.6rem;
-    border: 1px solid var(--cyan);
-    background: #1a1a20;
+    height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--border-input);
+    background: var(--input-bg);
     color: var(--text);
+    border-radius: var(--radius);
     font: inherit;
 }
-
-.entry-edit input:focus { outline: none; }
-
+.entry-edit input:focus { outline: none; border-color: var(--accent); }
 .entry-edit button[type="submit"] {
-    padding: 0.35rem 0.8rem;
-    background: var(--cyan);
-    color: var(--on-cyan);
+    height: 44px;
+    padding: 0 18px;
+    background: var(--accent);
+    color: var(--bg);
     border: none;
+    border-radius: var(--radius);
     font: inherit;
     font-weight: 600;
     cursor: pointer;
 }
 
-/* ---------- Riga di inserimento ---------- */
-.prompt-bar {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    padding-top: 14px;
-    margin-top: 4px;
+/* Modifica orari inline (sotto la riga) */
+.time-edit {
+    display: none;
+    flex-wrap: wrap;
+    gap: 0.6rem 0.9rem;
+    align-items: center;
+    margin-top: 0.7rem;
 }
-
-.prompt-caret {
-    color: var(--green);
-    font-weight: 700;
+.time-edit:not([hidden]) { display: flex; }
+.time-edit label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--faint);
 }
-
-/* Selettore task nella barra: inserisce #codice come testo nell'input */
-.task-picker {
-    flex-shrink: 0;
-    max-width: 150px;
-    background: #1a1a20;
-    color: var(--cyan);
-    border: 1px solid var(--border);
+.time-edit input[type="time"] {
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--border-input);
+    background: var(--input-bg);
+    color: var(--text);
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    color-scheme: dark;
+}
+.time-edit input[type="time"]:focus { outline: none; border-color: var(--accent); }
+.time-edit button[type="submit"] {
+    height: 44px;
+    padding: 0 18px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius);
     font: inherit;
-    font-size: 12px;
-    padding: 2px 4px;
+    font-weight: 600;
     cursor: pointer;
 }
 
-.task-picker:focus { outline: none; border-color: var(--cyan); }
+/* ---------- Composer (riga di inserimento) ---------- */
+.prompt-bar {
+    margin-top: 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.prompt-caret { display: none; }
+
+.task-picker {
+    flex: 0 0 150px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 46px;
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 0 38px 0 14px;
+    background-color: var(--input-bg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236f757d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius);
+    color: var(--accent-bright);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    max-width: none;
+}
+.task-picker:focus { outline: none; border-color: var(--accent); }
+.task-picker option { background: var(--panel-bg); color: var(--text); }
 
 .prompt-bar input {
     flex: 1;
     min-width: 0;
-    background: none;
-    border: none;
-    border-bottom: 1px solid var(--border);
+    height: 46px;
+    padding: 0 16px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius);
     color: var(--text);
-    font: inherit;
-    padding-bottom: 3px;
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    font-style: normal;
 }
-
-.prompt-bar input::placeholder { color: var(--muted); }
-.prompt-bar input:focus { outline: none; border-bottom-color: var(--cyan); }
+.prompt-bar input::placeholder { color: var(--faint2); font-style: normal; }
+.prompt-bar input:focus { outline: none; border-color: var(--accent); box-shadow: none; }
 
 .prompt-bar button {
-    flex-shrink: 0;
-    background: var(--cyan);
-    color: var(--on-cyan);
+    flex: none;
+    height: 46px;
+    padding: 0 26px;
+    background: var(--accent);
     border: none;
-    font: inherit;
+    border-radius: var(--radius);
+    color: var(--bg);
+    font-family: var(--font-sans);
+    font-size: 13.5px;
     font-weight: 600;
-    padding: 3px 12px;
+    letter-spacing: 0.04em;
     cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    white-space: nowrap;
+    text-transform: none;
+    box-shadow: 0 0 20px rgba(134, 224, 122, 0.28);
 }
+.prompt-bar button:hover { background: #98e88d; filter: none; }
 
-.prompt-bar button::before { content: "[ "; }
-.prompt-bar button::after { content: " ]"; }
-.prompt-bar button:hover { filter: brightness(1.1); }
-
-/* ---------- Pannello TASK ---------- */
-.task-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
+/* ---------- Pannello TASK (riepilogo) ---------- */
+.task-list { list-style: none; margin: 0; padding: 0; }
 
 .task {
-    padding: 8px 0;
-    border-bottom: 1px dashed var(--divider);
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-soft);
 }
+.task:last-child { border-bottom: none; padding-bottom: 0; }
 
 .task-head {
     display: flex;
     align-items: baseline;
-    gap: 8px;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 5px;
 }
+.task-head .entry-sym { display: none; }
 
 .task-id {
-    font-weight: 700;
-    color: var(--tc, var(--cyan));
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 14px;
     text-decoration: none;
-    font-variant-numeric: tabular-nums;
     cursor: pointer;
+    color: var(--tc, var(--text));
+    color: color-mix(in srgb, var(--tc, var(--text)), white 18%);
 }
-
-.task-id:hover { text-decoration: underline; }
+.task-id:hover { color: var(--accent-bright); text-decoration: none; }
 
 .task-time {
     margin-left: auto;
+    font-family: var(--font-mono);
     font-weight: 600;
-    color: var(--tc, var(--cyan));
+    font-size: 13px;
     font-variant-numeric: tabular-nums;
+    color: var(--tc, var(--accent));
+    color: color-mix(in srgb, var(--tc, var(--accent)), white 22%);
 }
 
 .task-desc {
     display: block;
+    font-size: 13px;
+    line-height: 1.45;
     color: var(--muted);
-    padding-left: 20px;
+    padding-left: 0;
+    font-style: normal;
     word-break: break-word;
 }
 
@@ -530,54 +797,81 @@ button:disabled {
     margin-left: 0.4rem;
     font-size: 0.72rem;
     font-weight: 600;
-    color: var(--green);
+    font-style: normal;
+    color: var(--accent-bright);
 }
 
 /* ---------- Pannello TOTALE TEMPO ---------- */
+.task-total {
+    background: linear-gradient(160deg, #16201a, #12161a);
+    border: 1px solid rgba(134, 224, 122, 0.25);
+    text-align: center;
+    padding: 28px 26px;
+}
+.task-total .panel-label {
+    justify-content: center;
+    color: var(--accent-bright);
+    margin-bottom: 18px;
+}
+.task-total .panel-label::after { content: none; }
+
 .task-total-value {
     display: flex;
-    align-items: baseline;
+    flex-direction: column;
+    align-items: center;
     gap: 10px;
 }
-
 .task-total-quarters {
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--yellow);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 70px;
+    line-height: 1;
+    color: var(--accent-bright);
+    text-shadow: 0 0 26px rgba(134, 224, 122, 0.45);
+    font-variant-numeric: tabular-nums;
+}
+.task-total-actual {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    color: var(--accent-muted);
     font-variant-numeric: tabular-nums;
 }
 
-.task-total-actual { color: var(--muted); font-variant-numeric: tabular-nums; }
-
-/* ---------- Icona guida [?] + pannello ---------- */
+/* ---------- Icona guida "?" + pannello ---------- */
 .help { position: relative; display: inline-flex; }
 
 .help-icon {
-    color: var(--disabled);
-    cursor: help;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--muted);
     font-size: 12px;
+    cursor: help;
     user-select: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
-
-.help-icon::before { content: "["; }
-.help-icon::after { content: "]"; }
+.help-icon::before, .help-icon::after { content: none; }
 
 .help-popover {
     position: absolute;
-    top: calc(100% + 10px);
+    top: calc(100% + 12px);
     left: 0;
-    width: 340px;
+    width: 360px;
     max-width: 80vw;
     background: var(--panel-bg);
-    color: var(--text2);
-    border: 3px double var(--border);
-    padding: 1rem 1.1rem;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.2rem;
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.5);
     z-index: 100;
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.15s ease, visibility 0.15s;
 }
-
 .help-popover::before {
     content: "";
     position: absolute;
@@ -586,26 +880,24 @@ button:disabled {
     right: 0;
     height: 12px;
 }
-
 .help:hover .help-popover,
-.help:focus-within .help-popover {
-    visibility: visible;
-    opacity: 1;
-}
+.help:focus-within .help-popover { visibility: visible; opacity: 1; }
 
-.help-title { display: block; color: var(--cyan); font-size: 1rem; margin-bottom: 0.4rem; }
-.help-text { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.6rem; }
-.help-list { margin: 0; padding-left: 1.1rem; font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.help-title { display: block; font-family: var(--font-sans); font-weight: 600; color: var(--accent-bright); font-size: 1rem; margin-bottom: 0.4rem; }
+.help-text { display: block; font-size: 0.9rem; color: var(--muted); margin-bottom: 0.6rem; }
+.help-list { margin: 0; padding-left: 1.1rem; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.3rem; color: var(--muted); }
 .help-list strong { color: var(--text); }
-.help-foot { display: block; margin-top: 0.7rem; font-size: 0.78rem; color: var(--muted); }
+.help-foot { display: block; margin-top: 0.7rem; font-size: 0.8rem; color: var(--faint); }
+.help-foot code, .help-text code { font-family: var(--font-mono); }
 
 /* ===========================================================================
-   Pagine secondarie (login, registrazione, task fissi, impostazioni)
+   Pagine secondarie (login, registrazione, task fissi, impostazioni, storico)
    =========================================================================== */
 .app-page {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    padding: 34px;
 }
 
 /* Login / Registrazione */
@@ -620,229 +912,419 @@ button:disabled {
 .card {
     background: var(--panel-bg);
     width: 100%;
-    max-width: 380px;
-    padding: 2rem;
-    border: 3px double var(--border);
+    max-width: 420px;
+    padding: 2.4rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
+.card::before { content: none; }
 
 .card h1 {
-    margin: 0 0 0.25rem;
-    font-size: 1.4rem;
-    color: var(--cyan);
-    letter-spacing: 2px;
+    margin: 0 0 0.3rem;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: var(--text);
+    letter-spacing: 0.12em;
     text-transform: uppercase;
+    text-align: center;
 }
 
-.subtitle { margin: 0 0 1.5rem; color: var(--muted); font-size: 0.9rem; }
+.subtitle { margin: 0 0 1.6rem; color: var(--muted); font-size: 0.95rem; font-style: normal; text-align: center; }
 
 .card form { display: flex; flex-direction: column; }
-.card label { margin-bottom: 0.3rem; font-size: 0.8rem; font-weight: 600; color: var(--text2); }
+.card label { margin-bottom: 0.4rem; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
 
 .card input {
-    margin-bottom: 1rem;
-    padding: 0.55rem 0.7rem;
-    border: 1px solid var(--border);
-    background: #1a1a20;
+    margin-bottom: 1.1rem;
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius);
+    background: var(--input-bg);
     color: var(--text);
     font: inherit;
 }
+.card input:focus { outline: none; border-color: var(--accent); }
+.card .opt { text-transform: none; letter-spacing: 0; color: var(--faint2); font-weight: 400; }
 
-.card input:focus { outline: none; border-color: var(--cyan); }
+button { cursor: pointer; font-family: var(--font-sans); }
 
-button {
-    cursor: pointer;
+/* Bottoni primari: solo i submit dei form nelle pagine secondarie (login,
+   registrazione, task fissi, impostazioni). Le icon-button sono escluse. */
+.auth-page button[type="submit"]:not(.icon-btn):not(.link-button),
+.fixed-page button[type="submit"]:not(.icon-btn):not(.link-button) {
     border: none;
-    background: var(--cyan);
-    color: var(--on-cyan);
-    padding: 0.6rem 1rem;
-    font: inherit;
+    background: var(--accent);
+    color: var(--bg);
+    padding: 0.85rem 1rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    border-radius: var(--radius);
+    text-transform: none;
+    letter-spacing: 0.04em;
+    box-shadow: 0 0 20px rgba(134, 224, 122, 0.22);
 }
+.auth-page button[type="submit"]:not(.icon-btn):not(.link-button):hover:not(:disabled),
+.fixed-page button[type="submit"]:not(.icon-btn):not(.link-button):hover:not(:disabled) { background: #98e88d; }
 
-button:hover:not(:disabled) { filter: brightness(1.1); }
+.switch { margin-top: 1.3rem; text-align: center; font-size: 0.95rem; color: var(--muted); }
+.switch a { color: var(--accent-bright); text-decoration: none; }
+.switch a:hover { color: #b8efad; }
 
-.switch { margin-top: 1.25rem; text-align: center; font-size: 0.9rem; color: var(--muted); }
-.switch a { color: var(--cyan); text-decoration: none; }
-
-.alert { padding: 0.6rem 0.75rem; margin-bottom: 1rem; font-size: 0.9rem; border: 1px solid; }
-.alert.success { border-color: var(--green); color: var(--green); }
-.alert.error { border-color: var(--red); color: var(--red); }
-.field-error { color: var(--red); font-size: 0.8rem; margin: -0.75rem 0 0.85rem; }
+.alert { padding: 0.7rem 0.85rem; margin-bottom: 1rem; font-size: 0.95rem; border: 1px solid; border-radius: var(--radius); }
+.alert.success { border-color: rgba(134, 224, 122, 0.4); color: var(--accent-bright); background: rgba(134, 224, 122, 0.08); }
+.alert.error { border-color: rgba(242, 114, 114, 0.4); color: var(--danger); background: rgba(242, 114, 114, 0.08); }
+.field-error { color: var(--danger); font-size: 0.85rem; font-style: normal; margin: -0.85rem 0 0.9rem; }
 
 /* Task fissi + Impostazioni */
 .fixed-page {
     flex: 1;
     overflow-y: auto;
-    max-width: 820px;
+    max-width: 900px;
     width: 100%;
     margin: 0 auto;
-    padding: 1.5rem 1.25rem;
+    padding: 0.5rem 0;
 }
+.fixed-page h1 { margin: 0 0 0.4rem; font-family: var(--font-sans); font-weight: 700; font-size: 1.5rem; color: var(--text); text-transform: uppercase; letter-spacing: 0.08em; }
+.page-hint { margin: 0 0 1.4rem; color: var(--muted); font-size: 0.95rem; font-style: normal; }
 
-.fixed-page h1 { margin: 0 0 0.35rem; font-size: 1.3rem; color: var(--cyan); text-transform: uppercase; letter-spacing: 1px; }
-.page-hint { margin: 0 0 1.25rem; color: var(--muted); font-size: 0.9rem; }
-
-/* ---------- Link allo storico (sotto TOTALE TEMPO) ---------- */
+/* Link allo storico (residuo, non piu' in home) */
 .hist-link {
     display: block;
     text-align: center;
-    padding: 8px;
-    color: var(--cyan);
+    padding: 12px;
+    color: var(--accent-bright);
     text-decoration: none;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    border: 1px dashed var(--divider2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
 }
-.hist-link:hover { color: var(--yellow); border-color: var(--yellow); }
+.hist-link:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ---------- Pagina Storico ---------- */
 .hist-page {
-    padding: 22px 20px 20px;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 26px;
 }
-
 .hist-title {
     margin: 0;
-    font-size: 1.3rem;
-    color: var(--cyan);
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--text);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.08em;
 }
-
-.hist-day { display: flex; flex-direction: column; gap: 12px; }
-
+.hist-day { display: flex; flex-direction: column; gap: 14px; }
 .hist-times {
     display: flex;
     flex-wrap: wrap;
     gap: 6px 20px;
-    font-size: 13px;
+    font-size: 14px;
+    font-family: var(--font-mono);
     color: var(--muted);
 }
-.hist-times strong { color: var(--text); font-variant-numeric: tabular-nums; }
-.hist-net strong { color: var(--green); }
+.hist-times strong { color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+.hist-net strong { color: var(--accent-bright); }
 
-.hist-summary {
-    padding-top: 10px;
-    border-top: 1px dashed var(--divider2);
-}
-.hist-total {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--muted);
-}
-.hist-total strong { font-size: 18px; color: var(--yellow); font-variant-numeric: tabular-nums; }
+.hist-summary { padding-top: 12px; border-top: 1px solid var(--border); }
+.hist-total { display: block; margin-bottom: 10px; color: var(--muted); }
+.hist-total strong { font-family: var(--font-mono); font-weight: 500; font-size: 20px; color: var(--accent-bright); font-variant-numeric: tabular-nums; }
 
 .hist-tasks { list-style: none; margin: 0; padding: 0; }
-.hist-tasks li {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding: 3px 0;
-}
+.hist-tasks li { display: flex; align-items: baseline; gap: 8px; padding: 3px 0; }
 .hist-tasks .task-time { margin-left: auto; }
 
-.hist-entries {
-    list-style: none;
-    margin: 0;
-    padding-top: 10px;
-    border-top: 1px dashed var(--divider2);
-}
-.hist-entries li {
+.hist-entries { list-style: none; margin: 0; padding-top: 12px; border-top: 1px solid var(--border); }
+.hist-entries li { display: flex; align-items: baseline; gap: 8px; padding: 3px 0; }
+.hist-entry-time { flex: none; font-family: var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; min-width: 120px; }
+
+/* ---------- Calendario dello storico ---------- */
+.cal-head {
     display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding: 3px 0;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 18px;
 }
-.hist-entry-time {
-    flex: none;
+.cal-month {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    letter-spacing: 0.03em;
+    color: var(--text);
+    min-width: 170px;
+    text-align: center;
+}
+.cal-nav {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-input);
+    border-radius: 9px;
     color: var(--muted);
-    font-variant-numeric: tabular-nums;
-    min-width: 108px;
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 1;
+}
+.cal-nav:hover { border-color: var(--accent); color: var(--accent-bright); }
+
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+.cal-weekdays { margin-bottom: 8px; }
+.cal-weekdays span {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding: 2px 0;
+}
+.cal-week { margin-bottom: 6px; }
+
+.cal-cell {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+}
+.cal-cell.out { color: transparent; }
+.cal-cell.today { border-color: var(--border-input); color: var(--text); }
+
+/* Giorni con dati: cliccabili ed evidenziati */
+a.cal-cell.has-data {
+    color: var(--accent-bright);
+    background: rgba(134, 224, 122, 0.08);
+    border-color: rgba(134, 224, 122, 0.28);
+    cursor: pointer;
+}
+a.cal-cell.has-data:hover { background: rgba(134, 224, 122, 0.16); }
+a.cal-cell.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+}
+
+/* ---------- Consuntivo giornaliero (tabella compatta) ---------- */
+.hist-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.hist-table thead th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding: 0 10px 10px;
+    border-bottom: 1px solid var(--border);
+}
+.hist-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+    color: var(--text-dim);
+    line-height: 1.5;
+}
+.hist-table tr:last-child td { border-bottom: none; }
+.hist-table .col-task { white-space: nowrap; width: 1%; }
+.hist-table .col-task .task-id {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--tc, var(--accent-bright));
+    color: color-mix(in srgb, var(--tc, var(--accent)), white 20%);
+}
+.hist-table .col-acts { overflow-wrap: anywhere; }
+.hist-table th.col-time,
+.hist-table td.col-time { text-align: right; white-space: nowrap; }
+.hist-table .col-time .task-time {
+    margin-left: 0;
+    color: var(--tc, var(--accent));
+    color: color-mix(in srgb, var(--tc, var(--accent)), white 22%);
 }
 
 .fixed-form {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.85rem;
     align-items: flex-end;
-    padding: 1rem;
+    padding: 1.25rem;
     background: var(--panel-bg);
-    border: 3px double var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
     margin-bottom: 1.5rem;
 }
-
-.fixed-form .field { display: flex; flex-direction: column; gap: 0.3rem; }
+.fixed-form .field { display: flex; flex-direction: column; gap: 0.4rem; }
 .fixed-form .field-desc { flex: 1; min-width: 180px; }
 .fixed-form .field-year { width: 90px; }
 .fixed-form .field-num { width: 130px; }
-.fixed-form label { font-size: 0.78rem; font-weight: 600; color: var(--text2); }
-
+.fixed-form label { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
 .fixed-form input {
-    padding: 0.5rem 0.65rem;
-    border: 1px solid var(--border);
-    background: #1a1a20;
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--border-input);
+    background: var(--input-bg);
     color: var(--text);
+    border-radius: var(--radius);
     font: inherit;
 }
-
-.fixed-form input:focus { outline: none; border-color: var(--cyan); }
+.fixed-form input:focus { outline: none; border-color: var(--accent); }
 
 .settings-form { flex-direction: column; align-items: stretch; }
 .settings-form .field-full { width: 100%; }
 .settings-form .field-full input { width: 100%; }
-.settings-form .field-hint { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+.settings-form .field-hint { font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem; }
 .settings-form button[type="submit"] { align-self: flex-start; }
 
 .year-group { margin-bottom: 1.5rem; }
 .year-group h2 {
     margin: 0 0 0.6rem;
-    font-size: 1rem;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.9rem;
     color: var(--muted);
-    border-bottom: 1px dashed var(--border);
-    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.4rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.14em;
 }
 
 .fixed-list { list-style: none; margin: 0; padding: 0; }
-.fixed-item {
-    padding: 0.6rem 0;
-    border-bottom: 1px dashed var(--divider);
-}
+.fixed-item { padding: 0.7rem 0; border-bottom: 1px solid var(--border-soft); }
+.fixed-view { display: flex; align-items: baseline; gap: 0.85rem; }
+.fixed-item .task-id { flex-shrink: 0; min-width: 4.5rem; color: var(--accent-bright); font-family: var(--font-mono); }
+.fixed-item .task-id.no-link { color: var(--faint); font-weight: 400; }
+.fixed-desc { flex: 1; word-break: break-word; color: var(--text-dim); }
+.fixed-desc strong { font-weight: 600; color: var(--text); }
+.fixed-desc-detail { color: var(--muted); font-style: normal; }
 
-.fixed-view {
-    display: flex;
-    align-items: baseline;
-    gap: 0.85rem;
-}
-
-.fixed-item .task-id { flex-shrink: 0; min-width: 4.5rem; color: var(--cyan); }
-.fixed-item .task-id.no-link { color: var(--muted); font-weight: 400; }
-.fixed-desc { flex: 1; word-break: break-word; color: var(--text2); }
-
-/* Icone azione del task fisso (matita / cestino), affiancate */
-.fixed-actions {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-}
+.fixed-actions { flex-shrink: 0; display: flex; align-items: center; gap: 0.5rem; }
 .fixed-actions .delete-form { margin: 0; display: flex; }
-.fixed-actions .edit-btn { color: var(--cyan); }
-.fixed-actions .delete-btn { color: var(--red); }
+.fixed-actions .edit-btn { color: var(--muted); font-size: 1rem; }
+.fixed-actions .edit-btn:hover { color: var(--accent-bright); }
+.fixed-actions .delete-btn { color: var(--faint); font-size: 1rem; }
+.fixed-actions .delete-btn:hover { color: var(--danger); }
 
-/* Form di modifica del task fisso (nascosto finche' non si preme la matita) */
 .fixed-edit { margin-top: 0.6rem; }
 .fixed-edit-cancel { color: var(--muted); }
 
 .delete-form { margin: 0; flex-shrink: 0; }
 
-/* ---------- Responsive: colonna singola su schermi stretti ---------- */
-@media (max-width: 820px) {
-    .layout { grid-template-columns: 1fr; }
+/* ---------- Task eliminati (area a scomparsa) ---------- */
+.deleted-box { margin-top: 1.6rem; }
+.deleted-summary {
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding: 0.7rem 0;
+    border-top: 1px solid var(--border);
+    user-select: none;
+    list-style: none;
+}
+.deleted-summary::-webkit-details-marker { display: none; }
+.deleted-summary::marker { content: ""; }
+.deleted-summary::before { content: "▸"; margin-right: 0.5em; }
+.deleted-box[open] > .deleted-summary::before { content: "▾"; }
+.deleted-summary:hover { color: var(--muted); }
+.deleted-count { color: var(--faint); }
+
+.deleted-list .fixed-item { opacity: 0.65; }
+.deleted-list .fixed-desc strong { text-decoration: line-through; }
+.restore-btn { color: var(--accent-bright); font-style: normal; font-weight: 500; }
+.restore-btn:hover { color: #b8efad; text-decoration: underline; }
+
+/* ===========================================================================
+   Responsive — breakpoint unico a 860px
+   =========================================================================== */
+@media (max-width: 860px) {
+    .screen { padding: 18px; }
+    .app-page { padding: 18px; }
+
+    .layout { grid-template-columns: 1fr; gap: 18px; }
+    .panel { padding: 22px 18px; }
     .entry-list { max-height: none; }
+
+    /* Salva orari: a tutta larghezza sotto gli orari, come prima */
+    .btn-in { flex-basis: 100%; margin-top: 4px; }
+
+    /* Header: brand + hamburger; menu a scomparsa sotto */
+    .app-header { row-gap: 12px; }
+    .app-title { font-size: 20px; }
+    .nav-toggle { display: block; }
+    .app-nav {
+        margin-left: 0;
+        display: none;
+        flex-basis: 100%;
+        width: 100%;
+        font-size: 15px;
+    }
+    .app-nav.open {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+        margin-top: 6px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+    }
+
+    /* Tendine in accordion in-flow */
+    .nav-group { width: 100%; display: block; }
+    .nav-group-label { padding: 2px 0; }
+    .nav-drop {
+        position: static;
+        border: none;
+        box-shadow: none;
+        background: none;
+        min-width: 0;
+        padding: 12px 0 2px 18px;
+    }
+    .nav-drop::before { display: none; }
+    .nav-drop .ext-link,
+    .nav-drop .link-button { padding: 0; }
+    .nav-drop .ext-link:hover,
+    .nav-drop .link-button:hover { background: none; }
+
+    /* Composer impilato */
+    .prompt-bar { flex-wrap: wrap; }
+    .task-picker { flex: 1 1 100%; }
+    .prompt-bar input { flex: 1 1 100%; }
+    .prompt-bar button { flex: 1 1 100%; }
+
+    /* Righe che vanno a capo: descrizione su riga propria in alto */
+    .entry-view { flex-wrap: wrap; gap: 10px 12px; }
+    .entry-text { flex-basis: 100%; order: -1; }
+
+    .wt-counter { font-size: 44px; }
+    .task-total-quarters { font-size: 58px; }
+
+    /* Tooltip guida ancorato al viewport: evita lo scroll orizzontale */
+    .help { position: static; }
+    .help-popover {
+        position: fixed;
+        top: 60px;
+        left: 12px;
+        right: 12px;
+        width: auto;
+        max-width: none;
+    }
 }

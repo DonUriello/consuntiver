@@ -24,8 +24,12 @@ CREATE TABLE task (
     name        VARCHAR(255) NOT NULL,
     description VARCHAR(1000),
     year        INTEGER      NOT NULL,
+    deleted     BOOLEAN      NOT NULL DEFAULT false,   -- eliminazione logica (cestino ripristinabile)
     CONSTRAINT fk_task_user FOREIGN KEY (id_user) REFERENCES users (id)
 );
+
+-- Migrazione su un DB gia' esistente (Supabase): aggiungere la colonna prima del deploy.
+--   ALTER TABLE task ADD COLUMN IF NOT EXISTS deleted BOOLEAN NOT NULL DEFAULT false;
 
 -- Evita duplicati automatici dello stesso ticket per utente/anno
 -- (solo quando il codice e' valorizzato).
