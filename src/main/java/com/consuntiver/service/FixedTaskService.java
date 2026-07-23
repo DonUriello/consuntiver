@@ -4,9 +4,11 @@ import com.consuntiver.model.FixedTask;
 import com.consuntiver.model.User;
 import com.consuntiver.repository.FixedTaskRepository;
 import com.consuntiver.repository.UserRepository;
+import com.consuntiver.repository.WorkEntryRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,10 +19,14 @@ public class FixedTaskService {
 
     private final FixedTaskRepository fixedTaskRepository;
     private final UserRepository userRepository;
+    private final WorkEntryRepository workEntryRepository;
 
-    public FixedTaskService(FixedTaskRepository fixedTaskRepository, UserRepository userRepository) {
+    public FixedTaskService(FixedTaskRepository fixedTaskRepository,
+                            UserRepository userRepository,
+                            WorkEntryRepository workEntryRepository) {
         this.fixedTaskRepository = fixedTaskRepository;
         this.userRepository = userRepository;
+        this.workEntryRepository = workEntryRepository;
     }
 
     /**
@@ -67,12 +73,19 @@ public class FixedTaskService {
         return fixedTaskRepository.save(task);
     }
 
-    /** Cancella un task fisso, solo se appartiene all'utente. */
+    /**
+     * Cancella un task fisso, solo se appartiene all'utente. Prima sgancia il task
+     * dalle eventuali attivita' che lo referenziano (altrimenti il vincolo di chiave
+     * esterna su {@code activity.id_task} farebbe fallire la cancellazione); le voci
+     * restano, perdono solo il collegamento al task.
+     */
+    @Transactional
     public void delete(String username, Long id) {
         User user = requireUser(username);
         FixedTask task = fixedTaskRepository.findById(id)
                 .filter(t -> t.getUser().getId().equals(user.getId()))
                 .orElseThrow(() -> new AccessDeniedException("Task non trovato o non accessibile"));
+        workEntryRepository.clearTask(task);
         fixedTaskRepository.delete(task);
     }
 
