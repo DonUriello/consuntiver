@@ -944,8 +944,8 @@ button { cursor: pointer; font-family: var(--font-sans); }
 
 /* Bottoni primari: solo i submit dei form nelle pagine secondarie (login,
    registrazione, task fissi, impostazioni). Le icon-button sono escluse. */
-.auth-page button[type="submit"]:not(.icon-btn),
-.fixed-page button[type="submit"]:not(.icon-btn) {
+.auth-page button[type="submit"]:not(.icon-btn):not(.link-button),
+.fixed-page button[type="submit"]:not(.icon-btn):not(.link-button) {
     border: none;
     background: var(--accent);
     color: var(--bg);
@@ -956,8 +956,8 @@ button { cursor: pointer; font-family: var(--font-sans); }
     letter-spacing: 0.04em;
     box-shadow: 0 0 20px rgba(134, 224, 122, 0.22);
 }
-.auth-page button[type="submit"]:not(.icon-btn):hover:not(:disabled),
-.fixed-page button[type="submit"]:not(.icon-btn):hover:not(:disabled) { background: #98e88d; }
+.auth-page button[type="submit"]:not(.icon-btn):not(.link-button):hover:not(:disabled),
+.fixed-page button[type="submit"]:not(.icon-btn):not(.link-button):hover:not(:disabled) { background: #98e88d; }
 
 .switch { margin-top: 1.3rem; text-align: center; font-size: 0.95rem; color: var(--muted); }
 .switch a { color: var(--accent-bright); text-decoration: none; }
@@ -1216,6 +1216,32 @@ a.cal-cell.selected {
 .fixed-edit-cancel { color: var(--muted); }
 
 .delete-form { margin: 0; flex-shrink: 0; }
+
+/* ---------- Task eliminati (area a scomparsa) ---------- */
+.deleted-box { margin-top: 1.6rem; }
+.deleted-summary {
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding: 0.7rem 0;
+    border-top: 1px solid var(--border);
+    user-select: none;
+    list-style: none;
+}
+.deleted-summary::-webkit-details-marker { display: none; }
+.deleted-summary::marker { content: ""; }
+.deleted-summary::before { content: "▸"; margin-right: 0.5em; }
+.deleted-box[open] > .deleted-summary::before { content: "▾"; }
+.deleted-summary:hover { color: var(--muted); }
+.deleted-count { color: var(--faint); }
+
+.deleted-list .fixed-item { opacity: 0.65; }
+.deleted-list .fixed-desc strong { text-decoration: line-through; }
+.restore-btn { color: var(--accent-bright); font-style: normal; font-weight: 500; }
+.restore-btn:hover { color: #b8efad; text-decoration: underline; }
 
 /* ===========================================================================
    Responsive — breakpoint unico a 860px

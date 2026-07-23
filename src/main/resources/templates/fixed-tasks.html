@@ -47,7 +47,7 @@
     </form>
 
     <!-- ---------- Elenco per anno ---------- -->
-    <p th:if="${groups.isEmpty()}" class="empty">Nessun task fisso inserito.</p>
+    <p th:if="${groups.isEmpty()}" class="empty">Nessun task attivo.</p>
 
     <section class="year-group" th:each="g : ${groups}">
         <h2 th:text="${g.year}">2026</h2>
@@ -101,6 +101,33 @@
             </li>
         </ul>
     </section>
+
+    <!-- ---------- Task eliminati (area a scomparsa) ---------- -->
+    <details class="deleted-box" th:if="${!deletedTasks.isEmpty()}">
+        <summary class="deleted-summary">
+            Task eliminati <span class="deleted-count" th:text="'(' + ${deletedTasks.size()} + ')'">(0)</span>
+        </summary>
+        <ul class="fixed-list deleted-list">
+            <li class="fixed-item" th:each="t : ${deletedTasks}">
+                <div class="fixed-view">
+                    <a class="task-id" th:if="${t.url != null}" th:href="${t.url}"
+                       target="_blank" rel="noopener" th:text="'#' + ${t.taskNumber}">#12345</a>
+                    <span class="task-id no-link" th:if="${t.url == null}">—</span>
+                    <span class="fixed-desc">
+                        <strong th:text="${t.name}">Nome</strong>
+                        <span class="fixed-desc-detail" th:if="${t.description != null}"
+                              th:text="' — ' + ${t.description}"></span>
+                    </span>
+                    <div class="fixed-actions">
+                        <form th:action="@{'/fixed-tasks/' + ${t.id} + '/restore'}" method="post" class="delete-form">
+                            <button type="submit" class="link-button restore-btn"
+                                    title="Ripristina">Ripristina</button>
+                        </form>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </details>
 </main>
 <script>
     (function () {

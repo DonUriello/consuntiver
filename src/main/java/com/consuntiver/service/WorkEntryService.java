@@ -114,6 +114,14 @@ public class WorkEntryService {
         }
         int year = LocalDate.now(ZONE).getYear();
         return fixedTaskRepository.findFirstByUserAndTaskNumberAndYear(user, code.get(), year)
+                .map(existing -> {
+                    // Se era stato cestinato, citarlo di nuovo lo riattiva.
+                    if (existing.isDeleted()) {
+                        existing.setDeleted(false);
+                        return fixedTaskRepository.save(existing);
+                    }
+                    return existing;
+                })
                 .orElseGet(() -> fixedTaskRepository.save(
                         new FixedTask(code.get(), "#" + code.get(), null, year, user)));
     }

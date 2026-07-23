@@ -31,6 +31,8 @@ public class FixedTaskController {
         UserConfigService.ConfigView config = userConfigService.get(principal.getName());
         model.addAttribute("groups",
                 fixedTaskService.listGroupedByYear(principal.getName(), config.getTaskBaseUrl()));
+        model.addAttribute("deletedTasks",
+                fixedTaskService.listDeleted(principal.getName(), config.getTaskBaseUrl()));
         model.addAttribute("currentYear", Year.now(ZONE).getValue());
         model.addAttribute("username", principal.getName());
         model.addAttribute("homeUrl", config.getHomeUrl());
@@ -69,6 +71,12 @@ public class FixedTaskController {
     @PostMapping("/fixed-tasks/{id}/delete")
     public String delete(@PathVariable("id") Long id, Principal principal) {
         fixedTaskService.delete(principal.getName(), id);
+        return "redirect:/fixed-tasks";
+    }
+
+    @PostMapping("/fixed-tasks/{id}/restore")
+    public String restore(@PathVariable("id") Long id, Principal principal) {
+        fixedTaskService.restore(principal.getName(), id);
         return "redirect:/fixed-tasks";
     }
 }

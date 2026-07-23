@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.ColumnDefault;
 
 /**
  * Un task riutilizzabile (per-utente, con anno di validita'). Puo' essere creato a mano
@@ -33,6 +34,11 @@ public class FixedTask {
 
     @Column(name = "year", nullable = false)
     private int year;
+
+    /** Eliminazione logica: true = "cestinato" (nascosto tra gli attivi, ripristinabile). */
+    @Column(name = "deleted", nullable = false)
+    @ColumnDefault("false")
+    private boolean deleted = false;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_user")
@@ -87,6 +93,14 @@ public class FixedTask {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public User getUser() {
