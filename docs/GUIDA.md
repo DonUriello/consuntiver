@@ -68,10 +68,13 @@ Sotto la colonna dei task un riquadro mostra il **totale del tempo** della
 giornata, aggiornato a ogni nuova rilevazione.
 
 ## Storico giornate (pagina dedicata)
-Dal menu in alto col **tuo nome** scegli **Storico**: apre l'elenco delle
-giornate passate (oggi resta in home), dalla più recente. Per ogni giornata
-trovi gli **orari** (entrata/pausa/uscita) con il **lavoro netto**, il **totale
-del tempo** con la ripartizione per task, e l'elenco delle attività svolte.
+Dal menu in alto col **tuo nome** scegli **Storico**: mostra un **calendario del
+mese** (con frecce per cambiare mese). I giorni con attività sono evidenziati:
+clicca un giorno e sotto compare il suo **consuntivo compatto**, una riga per
+task con tre colonne — **Task** (numero, con link alla pagina del task),
+**Attività** (le attività di quel task concatenate) e **Tempo** (totale).
+Cliccando sul numero del task, come in home, copia negli appunti
+«tempo totale - attività» e apre il task.
 
 ## Task fissi (pagina dedicata)
 Dal menu **Configurazioni → Task fissi** gestisci i task validi per un intero

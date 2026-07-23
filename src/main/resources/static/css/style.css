@@ -1031,6 +1031,125 @@ button { cursor: pointer; font-family: var(--font-sans); }
 .hist-entries li { display: flex; align-items: baseline; gap: 8px; padding: 3px 0; }
 .hist-entry-time { flex: none; font-family: var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; min-width: 120px; }
 
+/* ---------- Calendario dello storico ---------- */
+.cal-head {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+.cal-month {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    letter-spacing: 0.03em;
+    color: var(--text);
+    min-width: 170px;
+    text-align: center;
+}
+.cal-nav {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-input);
+    border-radius: 9px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 1;
+}
+.cal-nav:hover { border-color: var(--accent); color: var(--accent-bright); }
+
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+.cal-weekdays { margin-bottom: 8px; }
+.cal-weekdays span {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding: 2px 0;
+}
+.cal-week { margin-bottom: 6px; }
+
+.cal-cell {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+}
+.cal-cell.out { color: transparent; }
+.cal-cell.today { border-color: var(--border-input); color: var(--text); }
+
+/* Giorni con dati: cliccabili ed evidenziati */
+a.cal-cell.has-data {
+    color: var(--accent-bright);
+    background: rgba(134, 224, 122, 0.08);
+    border-color: rgba(134, 224, 122, 0.28);
+    cursor: pointer;
+}
+a.cal-cell.has-data:hover { background: rgba(134, 224, 122, 0.16); }
+a.cal-cell.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+}
+
+/* ---------- Consuntivo giornaliero (tabella compatta) ---------- */
+.hist-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.hist-table thead th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding: 0 10px 10px;
+    border-bottom: 1px solid var(--border);
+}
+.hist-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+    color: var(--text-dim);
+    line-height: 1.5;
+}
+.hist-table tr:last-child td { border-bottom: none; }
+.hist-table .col-task { white-space: nowrap; width: 1%; }
+.hist-table .col-task .task-id {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--tc, var(--accent-bright));
+    color: color-mix(in srgb, var(--tc, var(--accent)), white 20%);
+}
+.hist-table .col-acts { overflow-wrap: anywhere; }
+.hist-table th.col-time,
+.hist-table td.col-time { text-align: right; white-space: nowrap; }
+.hist-table .col-time .task-time {
+    margin-left: 0;
+    color: var(--tc, var(--accent));
+    color: color-mix(in srgb, var(--tc, var(--accent)), white 22%);
+}
+
 .fixed-form {
     display: flex;
     flex-wrap: wrap;
