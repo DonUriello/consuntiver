@@ -393,13 +393,20 @@ body {
 
 .worktime-form {
     margin-top: 24px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 14px;
     align-items: end;
 }
 
-.wt-field { display: flex; flex-direction: column; gap: 7px; }
+.wt-field {
+    flex: 1 1 120px;
+    min-width: 0;            /* permette lo shrink sotto la larghezza intrinseca
+                               dell'input, cosi' il bottone Salva entra in linea */
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
 
 .wt-field label {
     font-family: var(--font-mono);
@@ -422,12 +429,14 @@ body {
 }
 .wt-field input[type="time"]:focus { outline: none; border-color: var(--accent); }
 
-/* Salva orari: bottone secondario a tutta larghezza */
+/* Salva orari: bottone secondario. In desktop si affianca a destra dei
+   quattro orari (dimensione naturale, adattiva); quando non c'e' spazio va
+   a capo sotto; su mobile diventa a tutta larghezza (vedi media query). */
 .btn-in {
-    grid-column: 1 / -1;
-    margin-top: 10px;
+    flex: 0 1 auto;
+    align-self: end;
     height: 44px;
-    width: 100%;
+    padding: 0 22px;
     background: var(--surface-2) !important;
     color: var(--text) !important;
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -1253,6 +1262,9 @@ a.cal-cell.selected {
     .layout { grid-template-columns: 1fr; gap: 18px; }
     .panel { padding: 22px 18px; }
     .entry-list { max-height: none; }
+
+    /* Salva orari: a tutta larghezza sotto gli orari, come prima */
+    .btn-in { flex-basis: 100%; margin-top: 4px; }
 
     /* Header: brand + hamburger; menu a scomparsa sotto */
     .app-header { row-gap: 12px; }
