@@ -6,7 +6,7 @@
     <title>Storico - Focus Shield</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,600&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <!-- Colori per task: una classe .tc-<idtask> per ciascun task, generata a runtime. -->
     <style th:utext="${history.taskColorCss}"></style>
@@ -24,7 +24,7 @@
         </p>
 
         <section class="panel hist-day" th:each="d : ${history.days}">
-            <span class="panel-label" th:text="'❧ ' + ${d.dateLabel} + ' ❧'">❧ mar 08/07 ❧</span>
+            <span class="panel-label" th:text="${d.dateLabel}">mar 08/07</span>
 
             <!-- Orari della giornata -->
             <div class="hist-times" th:if="${d.hasTimes()}">

@@ -30,7 +30,13 @@
         </details>
 
         <details class="nav-group nav-group--user">
-            <summary class="nav-group-label" th:text="${username}">utente</summary>
+            <summary class="nav-group-label">
+                <span class="user-avatar" aria-hidden="true"
+                      th:text="${username != null and username.length() >= 2
+                                 ? #strings.toUpperCase(username.substring(0,2))
+                                 : #strings.toUpperCase(username)}">DG</span>
+                <span th:text="${username}">utente</span>
+            </summary>
             <div class="nav-drop">
                 <a class="ext-link nav-cyan" th:href="@{/storico}">Storico</a>
                 <form th:action="@{/logout}" method="post" class="logout-form">
