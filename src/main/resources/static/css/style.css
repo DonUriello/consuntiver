@@ -675,7 +675,11 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .prompt-caret { display: none; }
 
 .task-picker {
-    flex: 0 0 210px;
+    flex: 0 0 150px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     height: 46px;
     appearance: none;
     -webkit-appearance: none;
