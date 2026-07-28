@@ -31,20 +31,6 @@ Lo storico della giornata appare nell'area sopra la barra.
     (pulsante Easy) e l'**URL base** con cui si costruiscono i link ai task
 - Ogni utente vede e modifica **solo** le proprie voci, timbrature e task fissi
 
-## Account demo
-
-All'avvio è disponibile un account dimostrativo con una giornata di lavoro
-già simulata (task d'esempio, timbrature, contatore):
-
-- Username: `demo_galileo`
-- Password: `death_earth`
-
-In locale i suoi dati vengono rigenerati a ogni avvio (seeder, solo fuori dal profilo
-`prod`). In produzione la demo si inizializza con [`docs/demo_galileo.sql`](docs/demo_galileo.sql).
-
-> Guida d'uso completa: [`docs/GUIDA.md`](docs/GUIDA.md). In app è anche
-> raggiungibile passando il mouse sull'icona **?** accanto al nome.
-
 ## Stack
 
 - Java 21, Spring Boot 3
